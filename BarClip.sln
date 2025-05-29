@@ -7,12 +7,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Consoles", "Consoles", "{9D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarClip.Console", "BarClip.Console\BarClip.Console.csproj", "{F385C0BD-61E4-4A0E-A936-BC3BD4281F89}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Models", "Models", "{1EF69190-5B13-4386-9ABF-AB963F077054}"
-	ProjectSection(SolutionItems) = preProject
-		Models\PlateDetector.onnx = Models\PlateDetector.onnx
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarClip.Data", "BarClip.Data\BarClip.Data.csproj", "{41AB02FB-3805-4840-86CF-2C9AA2F978CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarClip.Core", "BarClip.Core\BarClip.Core.csproj", "{79E15490-160B-46D9-BEA9-A3560E141450}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,6 +25,10 @@ Global
 		{41AB02FB-3805-4840-86CF-2C9AA2F978CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41AB02FB-3805-4840-86CF-2C9AA2F978CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41AB02FB-3805-4840-86CF-2C9AA2F978CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79E15490-160B-46D9-BEA9-A3560E141450}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79E15490-160B-46D9-BEA9-A3560E141450}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79E15490-160B-46D9-BEA9-A3560E141450}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79E15490-160B-46D9-BEA9-A3560E141450}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,28 +1,18 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Xabe.FFmpeg;
+﻿using Xabe.FFmpeg;
 using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.OnnxRuntime.Tensors;
-//using System.Numerics.Tensors;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
 
 
-
-var frames = await ExtractFrames(@"C:\BarClip.Main\repos\BarClip\BarClip.Console\Assets\206cj.mp4");
-
+var frameData = await ExtractFrames(@"C:\BarClip.Main\repos\BarClip\BarClip.Console\Assets\206cj.mp4");
 
 async Task<float[]> ExtractFrames(string path)
 {
-    string outputFolder = @"C:\BarClip.Main\repos\BarClip\BarClip.Console\Assets";
     IMediaInfo videoInfo = await FFmpeg.GetMediaInfo(path);
     IVideoStream videoStream = videoInfo.VideoStreams.First().SetCodec(VideoCodec.png);
 
+    string outputFolder = @"C:\BarClip.Main\repos\BarClip\BarClip.Console\Assets";
     if (!Directory.Exists(outputFolder))
     {
         Directory.CreateDirectory(outputFolder);
@@ -47,7 +37,6 @@ async Task<float[]> ExtractFrames(string path)
     {
         Console.WriteLine($"Error extracting frames: {ex.Message}");
     }
-
     List<float[]> filesAsFloats = new List<float[]>();
     foreach (var file in Directory.GetFiles(outputFolder, "frame_*.png")
                               .OrderBy(path =>
@@ -60,6 +49,7 @@ async Task<float[]> ExtractFrames(string path)
         try
         {
             float[] fileFloat = ConvertImage(file);
+            await DetectPlates(fileFloat);
         }
         finally
         {
@@ -73,8 +63,6 @@ async Task<float[]> ExtractFrames(string path)
     Console.ReadLine();
     return frameData;
 }
-
-
 
 async Task DetectPlates(float[] frameData)
 {
