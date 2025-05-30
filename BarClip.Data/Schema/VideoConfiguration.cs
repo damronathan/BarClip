@@ -33,11 +33,6 @@ namespace BarClip.Data.Schema
             {
                 entity.HasKey(vs => vs.Id);
 
-                entity.HasMany(vs => vs.PlateDetections)
-                      .WithOne(p => p.VideoConfiguration)
-                      .HasForeignKey(p => p.VideoConfigurationId)
-                      .OnDelete(DeleteBehavior.Cascade);
-
                 entity.HasOne(vs => vs.User)
                       .WithOne(u => u.VideoSettings)
                       .HasForeignKey<VideoConfiguration>(vs => vs.UserId)

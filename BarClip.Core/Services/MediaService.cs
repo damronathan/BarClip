@@ -85,10 +85,6 @@ namespace BarClip.Core.Services
             return video;
         }
         
-        public async Task<float[]> CreateFrameTensorData()
-        {
-
-        }
 
     }
 }

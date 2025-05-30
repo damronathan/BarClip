@@ -3,25 +3,34 @@ using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.OnnxRuntime.Tensors;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
+using System.Runtime.Versioning;
+using BarClip.Data.Schema;
+using SixLabors.ImageSharp;
 
 
-var frameData = await ExtractFrames(@"C:\BarClip.Main\repos\BarClip\BarClip.Console\Assets\206cj.mp4");
+Video video = new Video();
+video.FilePath = @"C:\BarClip.Main\repos\BarClip\BarClip.Console\Assets\206cj.mp4";
+using var session = new InferenceSession(@"C:\Users\19139\runs\detect\train\weights\best.onnx");
 
-async Task<float[]> ExtractFrames(string path)
+
+Console.ReadLine();
+await ExtractFrames(video);
+await DetectPlates(video);
+
+async Task ExtractFrames(Video video)
 {
-    IMediaInfo videoInfo = await FFmpeg.GetMediaInfo(path);
+    IMediaInfo videoInfo = await FFmpeg.GetMediaInfo(video.FilePath);
     IVideoStream videoStream = videoInfo.VideoStreams.First().SetCodec(VideoCodec.png);
 
-    string outputFolder = @"C:\BarClip.Main\repos\BarClip\BarClip.Console\Assets";
-    if (!Directory.Exists(outputFolder))
+    if (!Directory.Exists(video.OutputPath))
     {
-        Directory.CreateDirectory(outputFolder);
+        Directory.CreateDirectory(video.OutputPath);
     }
-    foreach (var file in Directory.GetFiles(outputFolder, "frame_*.png"))
+    foreach (var file in Directory.GetFiles(video.OutputPath, "frame_*.png"))
     {
         File.Delete(file);
     }
-    Func<string, string> outputFileNameBuilder = number => Path.Combine(outputFolder, $"frame_{number}.png");
+    Func<string, string> outputFileNameBuilder = number => Path.Combine(video.OutputPath, $"frame_{number}.png");
     int fps = (int)Math.Round(videoStream.Framerate);
 
     try
@@ -37,8 +46,12 @@ async Task<float[]> ExtractFrames(string path)
     {
         Console.WriteLine($"Error extracting frames: {ex.Message}");
     }
-    List<float[]> filesAsFloats = new List<float[]>();
-    foreach (var file in Directory.GetFiles(outputFolder, "frame_*.png")
+}
+
+async Task DetectPlates(Video video)
+{
+    int frameNumber = 1;
+    foreach (var file in Directory.GetFiles(video.OutputPath, "frame_*.png")
                               .OrderBy(path =>
                               {
                                   string fileName = Path.GetFileNameWithoutExtension(path);
@@ -48,74 +61,82 @@ async Task<float[]> ExtractFrames(string path)
     {
         try
         {
-            float[] fileFloat = ConvertImage(file);
-            await DetectPlates(fileFloat);
+            var frame = new Frame
+            {
+                FrameNumber = frameNumber,
+                FilePath = file
+            };
+            video.Frames.Add(frame);
+
+            frameNumber++;
+            NamedOnnxValue input = ConvertImageWithLetterbox(file);
+            using var outputs = session.Run([input]);
+
+            foreach (var output in outputs)
+            {
+                using (output)
+                {
+                    var outputTensor = output.AsTensor<float>();
+                    float[] rawOutput = outputTensor.ToArray();
+
+                    int detectionSize = 5;
+                    int numDetections = detectionSize;
+                        var plateDetection = new PlateDetection
+                        {
+                            CenterX = rawOutput[0],
+                            CenterY = rawOutput[1],
+                            Width = rawOutput[2],
+                            Height = rawOutput[3],
+                            Confidence = rawOutput[4],
+                            Frame = frame,
+                            FrameId = frame.Id
+                        };
+                        
+                    
+                }
+            }
+
         }
         finally
         {
             File.Delete(file);
         }
-
-    }
-    float[] frameData = filesAsFloats.SelectMany(f => f).ToArray();
-    int count = filesAsFloats.Count;
-    Console.WriteLine($"{filesAsFloats.Count} floats created");
-    Console.ReadLine();
-    return frameData;
-}
-
-async Task DetectPlates(float[] frameData)
-{
-    using var session = new InferenceSession(@"C:\BarClip.Main\repos\BarClip\Models\PlateDetector.onnx");
-
-    var dimensions = new[] { 1, 3, 640, 640 };
-
-    var inputTensor = new DenseTensor<float>(frameData, dimensions);
-
-
-    var input = NamedOnnxValue.CreateFromTensor("images", inputTensor);
-
-    using var results = session.Run(new[] { input });
-    foreach (var result in results)
-    {
-        Console.WriteLine($"Output name: {result.Name}");
-
-        if (result.AsTensor<float>() is Tensor<float> outputTensor)
-        {
-            var outputArray = outputTensor.ToArray();
-            int maxPrint = Math.Min(outputArray.Length, 20);
-
-            Console.Write("Output values (first {0}): ", maxPrint);
-            for (int i = 0; i < maxPrint; i++)
-            {
-                Console.Write(outputArray[i] + " ");
-            }
-            Console.WriteLine();
-        }
-        else
-        {
-            Console.WriteLine("Output is not a float tensor or cannot be cast to Tensor<float>.");
-        }
     }
 }
 
-float[] ConvertImage(string path)
+NamedOnnxValue ConvertImageWithLetterbox(string imagePath, string inputName = "images", int targetSize = 640)
 {
-    using var image = SixLabors.ImageSharp.Image.Load<Rgb24>(path);
-    image.Mutate(x => x.Resize(640, 640));
+    using var image = Image.Load<Rgb24>(imagePath);
 
+    // Calculate resize ratio (preserve aspect ratio)
+    float ratio = Math.Min((float)targetSize / image.Width, (float)targetSize / image.Height);
+    int newWidth = (int)(image.Width * ratio);
+    int newHeight = (int)(image.Height * ratio);
 
-    int width = image.Width;
-    int height = image.Height;
-    float[] data = new float[3 * width * height]; // CHW format
+    // Resize the image with aspect ratio preserved
+    image.Mutate(ctx => ctx.Resize(newWidth, newHeight));
 
+    // Create a black image with target size (640x640)
+    var paddedImage = new Image<Rgb24>(targetSize, targetSize);
+
+    // Calculate padding to center the image
+    int padX = (targetSize - newWidth) / 2;
+    int padY = (targetSize - newHeight) / 2;
+
+    // Paste resized image onto the black canvas at centered position
+    paddedImage.Mutate(ctx => ctx.DrawImage(image, new Point(padX, padY), 1f));
+
+    // Prepare float array for tensor (channels first: 3 x 640 x 640)
+    int width = paddedImage.Width;
+    int height = paddedImage.Height;
+    float[] data = new float[3 * width * height];
     int channelSize = width * height;
 
     for (int y = 0; y < height; y++)
     {
         for (int x = 0; x < width; x++)
         {
-            var pixel = image[x, y];
+            Rgb24 pixel = paddedImage[x, y];
             int idx = y * width + x;
             data[idx] = pixel.R / 255f;
             data[channelSize + idx] = pixel.G / 255f;
@@ -123,6 +144,6 @@ float[] ConvertImage(string path)
         }
     }
 
-
-    return data;
-};
+    var inputTensor = new DenseTensor<float>(data, new[] { 1, 3, height, width });
+    return NamedOnnxValue.CreateFromTensor(inputName, inputTensor);
+}

@@ -8,14 +8,14 @@ namespace BarClip.Data.Schema
         public Guid Id { get; set; }
         public Guid VideoId { get; set; }
         public Video? Video { get; set; }
-        public PlateDetection? PlateDetection { get; set; }
+        public List<PlateDetection>? PlateDetections { get; set; }
         public FrameTensor? FrameTensor { get; set; }
         public string FilePath { get; set; } = string.Empty;
         public TimeSpan Timestamp { get; set; }
         public int FrameNumber { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
-        public bool IsProcessed { get; set; }
+        public int[] Dimensions { get; set; } = [1, 3, 640, 640];
+        public string Name { get; set; } = "images";
+
 
 
 
@@ -28,9 +28,9 @@ namespace BarClip.Data.Schema
                     .WithMany(v => v.Frames)
                     .HasForeignKey(f => f.VideoId)
                     .OnDelete(DeleteBehavior.NoAction);
-                entity.HasOne(f => f.PlateDetection)
+                entity.HasMany(f => f.PlateDetections)
                       .WithOne(pd => pd.Frame)
-                      .HasForeignKey<PlateDetection>(pd => pd.FrameId)
+                      .HasForeignKey(pd => pd.FrameId)
                       .OnDelete(DeleteBehavior.NoAction);
                 entity.HasOne(f => f.FrameTensor)
                       .WithOne(ft => ft.Frame)

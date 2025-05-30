@@ -10,7 +10,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<PlateDetection> PlateDetections { get; set; }
     public DbSet<FrameTensor> FrameTensors { get; set; }
     public DbSet<Frame> Frames { get; set; }
-    public DbSet<DetectionOutput> DetectionOutputs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -21,7 +20,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         PlateDetection.Configure(modelBuilder);
         FrameTensor.Configure(modelBuilder);
         Frame.Configure(modelBuilder);
-        DetectionOutput.Configure(modelBuilder);
 
         base.OnModelCreating(modelBuilder);
     }
