@@ -8,24 +8,51 @@ using SixLabors.ImageSharp;
 using Azure.Storage.Blobs;
 
 using var session = new InferenceSession(@"C:\Users\19139\runs\detect\train\weights\best.onnx");
+
 string tempVideoPath = Path.GetTempPath();
+string blobName;
+
 string tempFramePath = Path.Combine(Path.GetTempPath(), "frames");
 
-tempVideoPath = await DownloadOriginalVideo(tempVideoPath);
+(tempVideoPath, blobName) = await DownloadOriginalVideo(tempVideoPath);
+
 await TrimVideo(tempVideoPath);
+
 async Task TrimVideo(string path)
 {
     Video video = new Video();
     video.FilePath = path;
-
+    string outputPath = @"C:\ImageDetectorVideos\TrimmedVideos";
+    Directory.CreateDirectory(outputPath);
 
     await ExtractFrames(video);
-    var detectedVideo = DetectPlates(video, tempFramePath);
+    var videoWithDetections = DetectPlates(video, tempFramePath);
     int startTime = GetTrimStart(video);
-
+    int finishTime = GetTrimFinish(startTime, video);
+    TimeSpan trimStart = TimeSpan.FromSeconds(startTime);
+    TimeSpan trimFinish = TimeSpan.FromSeconds(finishTime);
+    IMediaInfo videoInfo = await FFmpeg.GetMediaInfo(video.FilePath);
+    IVideoStream videoStream = videoInfo.VideoStreams.First();
+    IVideoStream trimmedVideoStream = videoStream.Split(trimStart, trimFinish - trimStart);
+    var trimmedVideoPath = Path.Combine(outputPath, blobName);
+    
+    try 
+    {
+        var conversion = FFmpeg.Conversions.New()
+            .AddStream(trimmedVideoStream)
+            .SetOutput(trimmedVideoPath);
+            
+        var result = await conversion.Start();
+        Console.WriteLine($"Video trimmed successfully. Output saved to: {trimmedVideoPath}");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error trimming video: {ex.Message}");
+        throw;
+    }
 }
 
-async Task<string> DownloadOriginalVideo(string tempFilePath)
+async Task<(string, string)> DownloadOriginalVideo(string tempFilePath)
 {
     string connectionString = "DefaultEndpointsProtocol=https;AccountName=barclipstorage;AccountKey=D4vHYa+EaLCffbGHQrH2OcmFoUOfCCu/XYBgQKs+D9ugjEHUmTL94I5CQGfAqCUwaYRZDptGhng/+AStd8QXQg==;EndpointSuffix=core.windows.net";
     var blobServiceClient = new BlobServiceClient(connectionString);
@@ -40,7 +67,7 @@ async Task<string> DownloadOriginalVideo(string tempFilePath)
 
     await blobClient.DownloadToAsync(videoFilePath);
 
-    return videoFilePath;
+    return (videoFilePath, blobName);
 }
 
 async Task ExtractFrames(Video video)
@@ -145,6 +172,7 @@ Video DetectPlates(Video video, string framePath)
     return video;
 
 }
+
 List<PlateDetection> RunInference(NamedOnnxValue input)
 {
     var plateDetections = new List<PlateDetection>();
@@ -256,12 +284,64 @@ int GetTrimStart(Video video)
 
 int GetTrimFinish(int trim, Video video)
 {
+    float confidence = 0f;
+    float yValue = new();
+    int consecutiveStableFrames = 0;
+    int frameNumber = trim;
+    PlateDetection plateDetection = new();
+    List<PlateDetection> plateDetections = [];
+
     for (int i = trim; i < video.Frames.Count; i++)
     {
+        Frame frame = video.Frames[i];
+        foreach (PlateDetection detection in frame.PlateDetections)
+        {
+            if (i == trim && detection.Confidence > confidence)
+            {
+                confidence = detection.Confidence;
+                plateDetection = detection;
+            }
+            switch (frame.PlateDetections.Count)
+            {
+                case 0:
+                    break;
+                case 1:
+                    plateDetection = detection;
+                    break;
+                default:
+                    float targetX = plateDetection.X;
+                    PlateDetection closestDetection = frame.PlateDetections
+                        .OrderBy(pd => Math.Abs(pd.X - targetX))
+                        .First();
+                    plateDetection = closestDetection;
+                    break;
+            }
+        }
 
+        if (i == trim)
+        {
+            yValue = plateDetection.Y;
+        }
+        else
+        {
+            if (Math.Abs(plateDetection.Y - yValue) < 10f)
+            {
+                consecutiveStableFrames++;
+                if (consecutiveStableFrames >= 3)
+                {
+                    return frame.FrameNumber - 2;
+                }
+            }
+            else
+            {
+                consecutiveStableFrames = 0;
+            }
+            yValue = plateDetection.Y;
+        }
     }
+    
+    return video.Frames.Count - 1;
 }
-
 
 static int GetFrameNumber(string path)
 {
@@ -269,4 +349,3 @@ static int GetFrameNumber(string path)
     var parts = fileName.Split('_');
     return int.TryParse(parts.Last(), out int n) ? n : int.MaxValue;
 }
-
