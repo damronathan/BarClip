@@ -10,6 +10,12 @@ namespace BarClip.Data.Schema
         public Video? Video { get; set; }
         public List<PlateDetection>? PlateDetections { get; set; }
         public FrameTensor? FrameTensor { get; set; }
+        public float CenterX { get; set; }
+        public float CenterY { get; set; }
+        public float Width { get; set; }
+        public float Height { get; set; }
+        public float Confidence { get; set; }
+        public int DetectionNumber { get; set; }
         public string FilePath { get; set; } = string.Empty;
         public TimeSpan Timestamp { get; set; }
         public int FrameNumber { get; set; }

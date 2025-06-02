@@ -14,7 +14,6 @@ namespace BarClip.Data.Schema
         public Guid UserId { get; set; }
 
         public string FilePath { get; set; } = null!;
-        public string OutputPath { get; set; } = @"C:\BarClip.Main\repos\BarClip\BarClip.Console\Assets";
         public TimeSpan Duration { get; set; }
         public double FrameRate { get; set; }
         public DateTime UploadedAt { get; set; }

@@ -10,10 +10,11 @@ namespace BarClip.Data.Schema
         public Guid FrameId { get; set; }
         public Frame? Frame { get; set; }
         public float Confidence { get; set; }
-        public float CenterX { get; set; }
-        public float CenterY { get; set; }
+        public float X { get; set; }
+        public float Y { get; set; }
         public float Width { get; set; }
         public float Height { get; set; }
+        public int DetectionNumber { get; set; }
 
         public static void Configure(ModelBuilder modelBuilder)
         {
