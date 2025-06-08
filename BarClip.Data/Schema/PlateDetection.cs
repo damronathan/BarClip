@@ -25,9 +25,7 @@ namespace BarClip.Data.Schema
                 entity.HasOne(p => p.Frame)
                     .WithMany(f => f.PlateDetections)
                     .HasForeignKey(p => p.FrameId)
-                    .OnDelete(DeleteBehavior.NoAction);
-
-                
+                    .OnDelete(DeleteBehavior.NoAction);  
             });
         }
     }

@@ -16,42 +16,42 @@ string blobName;
 string tempFramePath = Path.Combine(Path.GetTempPath(), "frames");
 
 (tempVideoPath, blobName) = await DownloadOriginalVideo(tempVideoPath);
-await VideoProcessorService.TrimVideo(tempVideoPath);
+await VideoProcessorService.TrimOriginalVideo("162miss.MOV");
 //await TrimVideo(tempVideoPath);
 
-async Task TrimVideo(string path)
-{
-    Video video = new Video();
-    video.FilePath = path;
-    string outputPath = @"C:\ImageDetectorVideos\TrimmedVideos";
-    Directory.CreateDirectory(outputPath);
+//async Task TrimVideo(string path)
+//{
+//    Video video = new Video();
+//    video.FilePath = path;
+//    string outputPath = @"C:\ImageDetectorVideos\TrimmedVideos";
+//    Directory.CreateDirectory(outputPath);
 
-    await ExtractFrames(video);
-    var videoWithDetections = DetectPlates(video, tempFramePath);
-    int startTime = GetTrimStart(video);
-    int finishTime = GetTrimFinish(startTime, video);
-    TimeSpan trimStart = TimeSpan.FromSeconds(startTime);
-    TimeSpan trimFinish = TimeSpan.FromSeconds(finishTime);
-    IMediaInfo videoInfo = await FFmpeg.GetMediaInfo(video.FilePath);
-    IVideoStream videoStream = videoInfo.VideoStreams.First();
-    IVideoStream trimmedVideoStream = videoStream.Split(trimStart, trimFinish - trimStart);
-    var trimmedVideoPath = Path.Combine(outputPath, blobName);
+//    await ExtractFrames(video);
+//    var videoWithDetections = DetectPlates(video, tempFramePath);
+//    int startTime = GetTrimStart(video);
+//    int finishTime = GetTrimFinish(startTime, video);
+//    TimeSpan trimStart = TimeSpan.FromSeconds(startTime);
+//    TimeSpan trimFinish = TimeSpan.FromSeconds(finishTime);
+//    IMediaInfo videoInfo = await FFmpeg.GetMediaInfo(video.FilePath);
+//    IVideoStream videoStream = videoInfo.VideoStreams.First();
+//    IVideoStream trimmedVideoStream = videoStream.Split(trimStart, trimFinish - trimStart);
+//    var trimmedVideoPath = Path.Combine(outputPath, blobName);
     
-    try 
-    {
-        var conversion = FFmpeg.Conversions.New()
-            .AddStream(trimmedVideoStream)
-            .SetOutput(trimmedVideoPath);
+//    try 
+//    {
+//        var conversion = FFmpeg.Conversions.New()
+//            .AddStream(trimmedVideoStream)
+//            .SetOutput(trimmedVideoPath);
             
-        var result = await conversion.Start();
-        Console.WriteLine($"Video trimmed successfully. Output saved to: {trimmedVideoPath}");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Error trimming video: {ex.Message}");
-        throw;
-    }
-}
+//        var result = await conversion.Start();
+//        Console.WriteLine($"Video trimmed successfully. Output saved to: {trimmedVideoPath}");
+//    }
+//    catch (Exception ex)
+//    {
+//        Console.WriteLine($"Error trimming video: {ex.Message}");
+//        throw;
+//    }
+//}
 
 async Task<(string, string)> DownloadOriginalVideo(string tempFilePath)
 {
