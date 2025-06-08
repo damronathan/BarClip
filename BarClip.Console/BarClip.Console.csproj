@@ -17,6 +17,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\BarClip.Core\BarClip.Core.csproj" />
 	  <ProjectReference Include="..\BarClip.Data\BarClip.Data.csproj" />
 	</ItemGroup>
 

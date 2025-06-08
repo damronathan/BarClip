@@ -6,6 +6,7 @@ using SixLabors.ImageSharp.Processing;
 using BarClip.Data.Schema;
 using SixLabors.ImageSharp;
 using Azure.Storage.Blobs;
+using BarClip.Core.Services;
 
 using var session = new InferenceSession(@"C:\Users\19139\runs\detect\train\weights\best.onnx");
 
@@ -15,8 +16,8 @@ string blobName;
 string tempFramePath = Path.Combine(Path.GetTempPath(), "frames");
 
 (tempVideoPath, blobName) = await DownloadOriginalVideo(tempVideoPath);
-
-await TrimVideo(tempVideoPath);
+await VideoProcessorService.TrimVideo(tempVideoPath);
+//await TrimVideo(tempVideoPath);
 
 async Task TrimVideo(string path)
 {
@@ -73,13 +74,7 @@ async Task<(string, string)> DownloadOriginalVideo(string tempFilePath)
 async Task ExtractFrames(Video video)
 {
     IMediaInfo videoInfo = await FFmpeg.GetMediaInfo(video.FilePath);
-    IVideoStream videoStream = videoInfo.VideoStreams.First().SetCodec(VideoCodec.png);
-
-
-    foreach (var file in Directory.GetFiles(tempFramePath, "frame_*.png"))
-    {
-        File.Delete(file);
-    }
+    IVideoStream videoStream = videoInfo.VideoStreams.First().SetCodec(VideoCodec.png);    
 
     Func<string, string> outputFileNameBuilder = number => Path.Combine(tempFramePath, $"frame_{number}.png");
     int fps = (int)Math.Round(videoStream.Framerate);
