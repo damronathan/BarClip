@@ -9,23 +9,20 @@ namespace BarClip.Data.Schema
     public class Video
     {
         public Guid Id { get; set; }
-
+        public string? Name { get; set; }
         public User User { get; set; } = null!;
         public Guid UserId { get; set; }
 
         public string FilePath { get; set; } = null!;
-        public TimeSpan Duration { get; set; }
-        public double FrameRate { get; set; }
         public DateTime UploadedAt { get; set; }
-        public VideoStatus Status { get; set; }
-
-        public Guid VideoConfigurationId { get; set; }
-        public VideoConfiguration VideoConfiguration { get; set; } = null!;
-
         public List<Frame> Frames { get; set; } = new();
         public List<TrimmedVideo> TrimmedVideos { get; set; } = new();
+        public VideoStatus VideoStatus { get; set; }
+
         [NotMapped]
-        public IVideoStream? VideoStream { get; set; }
+        public required IMediaInfo VideoInfo { get; set; }
+
+
 
         public static void Configure(ModelBuilder modelBuilder)
         {
@@ -36,11 +33,6 @@ namespace BarClip.Data.Schema
                 entity.HasOne(v => v.User)
                       .WithMany(u => u.Videos)
                       .HasForeignKey(v => v.UserId)
-                      .OnDelete(DeleteBehavior.NoAction);
-
-                entity.HasOne(v => v.VideoConfiguration)
-                      .WithMany(vs => vs.Videos)
-                      .HasForeignKey(v => v.VideoConfigurationId)
                       .OnDelete(DeleteBehavior.NoAction);
 
                 entity.HasMany(v => v.Frames)

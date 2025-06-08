@@ -10,7 +10,10 @@ namespace BarClip.Data.Schema
 
         public List<Video> Videos { get; set; } = new();
         public List<TrimmedVideo> TrimmedVideos { get; set; } = new();
-        public VideoConfiguration? VideoSettings { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Email { get; set; }
+
 
         public static void Configure(ModelBuilder modelBuilder)
         {
@@ -28,10 +31,6 @@ namespace BarClip.Data.Schema
                       .HasForeignKey(t => t.UserId)
                       .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasOne(u => u.VideoSettings)
-                      .WithOne(vs => vs.User)
-                      .HasForeignKey<VideoConfiguration>(vs => vs.UserId)
-                      .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

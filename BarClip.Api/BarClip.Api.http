@@ -1,0 +1,6 @@
+@BarClip.Api_HostAddress = http://localhost:5273
+
+GET {{BarClip.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

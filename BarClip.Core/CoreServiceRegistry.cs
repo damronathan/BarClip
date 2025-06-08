@@ -1,0 +1,68 @@
+﻿using Azure.Identity;
+using Azure.Storage.Blobs;
+using BarClip.Core.Services;
+using BarClip.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
+
+
+namespace BarClip.Core
+{
+    public static class CoreServiceRegistry
+    {
+        public static IServiceCollection RegisterCoreServices(this IServiceCollection services, IConfiguration configuration)
+        {
+            // Database registration
+            services.AddDbContext<AppDbContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"), sqlOptions =>
+                {
+                    sqlOptions.EnableRetryOnFailure(
+                        maxRetryCount: 5,
+                        maxRetryDelay: TimeSpan.FromSeconds(10),
+                        errorNumbersToAdd: null
+                    );
+                    sqlOptions.UseRelationalNulls();
+                }));
+
+
+
+            // Repository registration
+            RegisterRepositories(services);
+
+            // Service registration
+            RegisterServices(services);
+
+            RegisterExternalServices(services);
+
+            return services;
+        }
+        private static void RegisterRepositories(IServiceCollection services)
+        {
+
+        }
+
+        private static void RegisterServices(IServiceCollection services)
+        {
+            services.AddScoped<VideoProcessorService>();
+            services.AddScoped<DetectionService>();
+            services.AddScoped<StorageService>();
+            services.AddScoped<TrimService>();
+        }
+        private static void RegisterExternalServices(IServiceCollection services)
+        {
+
+            services.AddSingleton(sp =>
+            {
+                var credential = new DefaultAzureCredential();
+
+                return new BlobServiceClient(
+                    new Uri("https://barclipstorage.blob.core.windows.net"),
+                    credential);
+            });
+        }
+
+
+    }
+}
