@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.ML.OnnxRuntime;
 using System.ComponentModel.DataAnnotations.Schema;
 
-
 namespace BarClip.Data.Schema
 {
     public class Frame
@@ -16,8 +15,6 @@ namespace BarClip.Data.Schema
 
         [NotMapped]
         public NamedOnnxValue? InputValue { get; set; }
-
-
 
         public static void Configure(ModelBuilder modelBuilder)
         {
