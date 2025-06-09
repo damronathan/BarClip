@@ -1,94 +1,107 @@
-﻿using BarClip.Data.Schema;
+﻿using BarClip.Core.Services;
+using BarClip.Data.Schema;
+using FFMpegCore;
 using Microsoft.ML.OnnxRuntime;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp;
-using Xabe.FFmpeg;
-using SixLabors.ImageSharp.Processing;
+using FFMpegCore.Enums;
 using Microsoft.ML.OnnxRuntime.Tensors;
-
-namespace BarClip.Core.Services;
+using SixLabors.ImageSharp.Processing;
+using System.Collections.Concurrent;
 
 public class FrameService
 {
-    public async static Task<List<Frame>> ExtractFrames(Video originalVideo)
+    public async static Task<List<Frame>> ExtractFrames(Video originalVideo) // medium
     {
-        IVideoStream videoStream = originalVideo.VideoInfo.VideoStreams.First().SetCodec(VideoCodec.png);
-
         string tempFramePath = Path.Combine(Path.GetTempPath(), "frames");
+        Directory.CreateDirectory(tempFramePath);
 
-        string outputFileNameBuilder(string number) => Path.Combine(tempFramePath, $"frame_{number}.png");
+        // Get video info to determine framerate
+        var videoStream = originalVideo.VideoAnalysis.VideoStreams.FirstOrDefault();
+        if (videoStream == null)
+            throw new Exception("No video stream found");
 
-        int fps = (int)Math.Round(videoStream.Framerate);
+        double fps = videoStream.FrameRate;
 
         try
         {
-            await FFmpeg.Conversions.New()
-                .AddStream(videoStream)
-                .ExtractEveryNthFrame(fps, outputFileNameBuilder)
-                .Start();
+            await FFMpegArguments
+                .FromFileInput(originalVideo.FilePath)
+                .OutputToFile(Path.Combine(tempFramePath, "frame_%d.png"), overwrite: true, options => options
+                    .WithVideoFilters(filterOptions => filterOptions
+                        .Scale(VideoSize.Original))
+                    .WithCustomArgument("-vf fps=1 -q:v 5"))
+                .ProcessAsynchronously();
         }
         catch (Exception ex)
         {
             throw new Exception($"Error extracting frames: {ex.Message}");
         }
-        var frames = CreateFramesFromPath(tempFramePath);
 
+        var frames = CreateFramesFromPath(tempFramePath); // long
         return frames;
     }
+
     public static List<Frame> CreateFramesFromPath(string tempFramePath)
     {
-        var frames = new List<Frame>();
-        int frameNumber = 0;
-        foreach (var file in Directory.GetFiles(tempFramePath, "frame_*.png").OrderBy(GetFrameNumber))
+        var session = new InferenceSession(@"C:\Users\19139\runs\detect\train\weights\best.onnx");
+
+        var frames = new ConcurrentBag<Frame>();
+
+        var files = Directory.GetFiles(tempFramePath, "frame_*.png")
+                             .OrderBy(GetFrameNumber)
+                             .ToList();
+
+        Parallel.ForEach(files, file =>
         {
             try
             {
                 var frame = new Frame
                 {
-                    FrameNumber = frameNumber,
                     FilePath = file,
                     InputValue = ConvertFrameToOnnxValue(file)
                 };
-
-                frame.PlateDetections = PlateDetectionService.GetDetections(frame);
-
-                frameNumber++;
+                frame.PlateDetections = PlateDetectionService.GetDetections(frame, session);
 
                 frames.Add(frame);
-
             }
             finally
             {
                 File.Delete(file);
             }
+        });
+
+        // After all frames processed, assign frame numbers in correct order:
+        var orderedFrames = frames.OrderBy(f => GetFrameNumber(f.FilePath))
+                                  .Select((f, index) => { f.FrameNumber = index; return f; })
+                                  .ToList();
+
+        // Clean up temp directory
+        if (Directory.Exists(tempFramePath))
+        {
+            Directory.Delete(tempFramePath, true);
         }
-        return frames;
+
+        return orderedFrames;
     }
+
     private static NamedOnnxValue ConvertFrameToOnnxValue(string framePath)
     {
         using var image = Image.Load<Rgb24>(framePath);
-
         int targetSize = 640;
-
         float ratio = Math.Min((float)targetSize / image.Width, (float)targetSize / image.Height);
-
         int newWidth = (int)(image.Width * ratio);
         int newHeight = (int)(image.Height * ratio);
-
         image.Mutate(ctx => ctx.Resize(newWidth, newHeight));
 
         var paddedImage = new Image<Rgb24>(targetSize, targetSize);
-
         int padX = (targetSize - newWidth) / 2;
         int padY = (targetSize - newHeight) / 2;
-
         paddedImage.Mutate(ctx => ctx.DrawImage(image, new Point(padX, padY), 1f));
 
         int width = paddedImage.Width;
         int height = paddedImage.Height;
-
         float[] data = new float[3 * width * height];
-
         int channelSize = width * height;
 
         for (int y = 0; y < height; y++)
@@ -106,6 +119,7 @@ public class FrameService
         var inputTensor = new DenseTensor<float>(data, [1, 3, height, width]);
         return NamedOnnxValue.CreateFromTensor("images", inputTensor);
     }
+
     private static int GetFrameNumber(string path)
     {
         string fileName = Path.GetFileNameWithoutExtension(path);

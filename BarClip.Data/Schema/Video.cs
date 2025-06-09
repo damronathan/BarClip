@@ -1,3 +1,4 @@
+using FFMpegCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,7 @@ namespace BarClip.Data.Schema
         public VideoStatus VideoStatus { get; set; }
 
         [NotMapped]
-        public required IMediaInfo VideoInfo { get; set; }
+        public required IMediaAnalysis VideoAnalysis { get; set; }
 
 
 

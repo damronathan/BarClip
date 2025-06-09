@@ -1,17 +1,21 @@
 ﻿using BarClip.Data.Schema;
-using Xabe.FFmpeg;
+using FFMpegCore;
+using FFMpegCore.Enums;
 
 namespace BarClip.Core.Services;
 
 public class TrimService
 {
-    public static async Task<TrimmedVideo> Trim(Video video)
+    private readonly StorageService _storageService;
+
+    public TrimService(StorageService storageService)
     {
-        (TimeSpan startTime, TimeSpan finishTime) = TrimService.GetTrim(video);
+        _storageService = storageService;
+    }
 
-        IVideoStream videoStream = video.VideoInfo.VideoStreams.First();
-
-        IVideoStream trimmedVideoStream = videoStream.Split(startTime, finishTime - startTime);
+    public async Task<TrimmedVideo> Trim(Video video)
+    {
+        (TimeSpan startTime, TimeSpan finishTime) = GetTrim(video);
 
         string tempTrimmedVideoPath = Path.GetTempPath();
 
@@ -20,28 +24,32 @@ public class TrimService
             Id = Guid.NewGuid(),
             OriginalVideoId = video.Id,
             OriginalVideo = video,
-            FilePath = Path.Combine(tempTrimmedVideoPath + "trimmed-" + video.Name)
+            FilePath = Path.Combine(tempTrimmedVideoPath, "trimmed-video.mp4"),
+            Duration = finishTime - startTime
         };
 
         try
         {
-            var conversion = FFmpeg.Conversions.New()
-                .AddStream(trimmedVideoStream)
-                .SetOutput(trimmedVideo.FilePath);
+            await FFMpegArguments
+                .FromFileInput(video.FilePath)
 
-            var result = await conversion.Start();
+                .OutputToFile(trimmedVideo.FilePath, overwrite: true, options => options
+                .Seek(startTime)
+                .WithDuration(trimmedVideo.Duration)
+                .WithCustomArgument("-c copy"))
+                .ProcessAsynchronously();
         }
-
         catch (Exception ex)
         {
             throw new Exception($"Error trimming video: {ex.Message}");
         }
 
-        await StorageService.UploadVideo(trimmedVideo.Id, trimmedVideo.FilePath, "trimmedvideos");
+        await _storageService.UploadVideo(trimmedVideo.Id, trimmedVideo.FilePath, "trimmedvideos"); // fast
 
         return trimmedVideo;
     }
-    private static (TimeSpan, TimeSpan) GetTrim(Video video)
+
+    private (TimeSpan, TimeSpan) GetTrim(Video video)
     {
         int frameNumber = GetStartFrame(video);
         TimeSpan trimStart = TimeSpan.FromSeconds(frameNumber);
@@ -58,99 +66,93 @@ public class TrimService
 
         foreach (Frame frame in video.Frames)
         {
-            PlateDetection plateDetection = SelectBestDetection(frame, previousDetection);
-
-            if (!initialYFound)
+            if (frame.PlateDetections.Count > 0)
             {
-                yValue = plateDetection.Y;
-                initialYFound = true;
-            }
+                PlateDetection plateDetection = SelectBestDetection(frame, previousDetection);
 
-            if (initialYFound && Math.Abs(plateDetection.Y - yValue) > 50f)
-            {
-                frameNumber = frame.FrameNumber;
-                break;
-            }
+                if (!initialYFound)
+                {
+                    yValue = plateDetection.Y;
+                    initialYFound = true;
+                }
 
-            previousDetection = plateDetection;
+                if (initialYFound && Math.Abs(plateDetection.Y - yValue) > 50f)
+                {
+                    frameNumber = frame.FrameNumber;
+                    break;
+                }
+
+                previousDetection = plateDetection;
+            }
         }
 
-        return Math.Max(frameNumber - 2, 0);
+        return Math.Max(frameNumber - 3, 0);
     }
 
     private static TimeSpan GetTrimFinish(int trim, Video video)
     {
-        float yValue = 0f;
-        int consecutiveStableFrames = 0;
-        PlateDetection plateDetection = new();
-        PlateDetection previousDetection = null;
+        PlateDetection? previousDetection = null;
 
-        for (int i = trim; i < video.Frames.Count; i++)
+        for (int i = video.Frames.Count - 1; i >= trim; i--)
         {
             Frame frame = video.Frames[i];
-            foreach (PlateDetection detection in frame.PlateDetections)
+
+            if (frame.PlateDetections.Count > 0)
             {
-                if (i == trim && detection.Confidence > plateDetection.Confidence)
+                PlateDetection currentDetection = SelectBestDetection(frame, previousDetection);
+                if (currentDetection == null)
                 {
-                    plateDetection = detection;
+                    continue;
                 }
 
-                switch (frame.PlateDetections.Count)
+                if (previousDetection != null)
                 {
-                    case 0:
-                        break;
-                    case 1:
-                        plateDetection = detection;
-                        break;
-                    default:
-                        float targetX = plateDetection.X;
-                        PlateDetection closestDetection = frame.PlateDetections
-                            .OrderBy(pd => Math.Abs(pd.X - targetX))
-                            .First();
-                        plateDetection = closestDetection;
-                        break;
-                }
-            }
-
-            if (i == trim)
-            {
-                yValue = plateDetection.Y;
-            }
-            else
-            {
-                if (Math.Abs(plateDetection.Y - yValue) < 10f)
-                {
-                    consecutiveStableFrames++;
-                    if (consecutiveStableFrames >= 3)
+                    if (Math.Abs(currentDetection.Y - previousDetection.Y) > 50f)
                     {
-                        int finishFrame = frame.FrameNumber - 2;
-                        return TimeSpan.FromSeconds(Math.Max(finishFrame, 0));
+                        return TimeSpan.FromSeconds(frame.FrameNumber + 3);
                     }
                 }
-                else
-                {
-                    consecutiveStableFrames = 0;
-                }
 
-                yValue = plateDetection.Y;
+                previousDetection = currentDetection;
             }
+            continue;
         }
-
-        return TimeSpan.FromSeconds(video.Frames.Last().FrameNumber);
+        return TimeSpan.FromSeconds(video.Frames.Last().FrameNumber - 2);
     }
 
     private static PlateDetection SelectBestDetection(Frame frame, PlateDetection referenceDetection)
     {
-        if (frame.PlateDetections.Count == 0)
-            return new PlateDetection();
+        if (frame.PlateDetections is null)
+            return referenceDetection;
 
-        if (frame.PlateDetections.Count == 1)
-            return frame.PlateDetections[0];
+        if (referenceDetection == null)
+            return frame.PlateDetections.OrderByDescending(pd => pd.Confidence).First();
 
-        float targetX = referenceDetection?.X ?? frame.PlateDetections[0].X;
-        return frame.PlateDetections
-            .OrderBy(pd => Math.Abs(pd.X - targetX))
-            .First();
+        var candidateDetections = frame.PlateDetections
+        .Where(pd => Math.Abs(pd.X - referenceDetection.X) < 50)
+        .ToList();
+
+        if (candidateDetections.Any())
+        {
+            return candidateDetections.OrderBy(pd => Math.Abs(pd.X - referenceDetection.X)).First();
+        }
+
+        if (frame.FrameNumber > 5)
+        {
+            var closestByX = frame.PlateDetections.OrderBy(pd => Math.Abs(pd.X - referenceDetection.X)).First();
+
+            if (Math.Abs(closestByX.Height - referenceDetection.Height) < 20)
+            {
+                return closestByX;
+            }
+            else
+            {
+                return referenceDetection;
+            }
+        }
+
+
+
+        return referenceDetection;
     }
-
 }

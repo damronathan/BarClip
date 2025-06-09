@@ -1,14 +1,23 @@
-﻿using Xabe.FFmpeg;
-using BarClip.Data.Schema;
+﻿using BarClip.Data.Schema;
 using Microsoft.AspNetCore.Http;
+using FFMpegCore;
 
 namespace BarClip.Core.Services;
 
 public class VideoService
 {
-    public static async Task TrimOriginalVideo(IFormFile originalVideoFormFile)
+    private readonly StorageService _storageService;
+    private readonly TrimService _trimService;
+
+    public VideoService(StorageService storageService, TrimService trimService)
     {
-        string tempVideoPath = Path.Combine(Path.GetTempPath() + originalVideoFormFile.FileName);
+        _storageService = storageService;
+        _trimService = trimService;
+    }
+
+    public async Task<TrimmedVideo> TrimOriginalVideo(IFormFile originalVideoFormFile)
+    {
+        string tempVideoPath = Path.Combine(Path.GetTempPath(), originalVideoFormFile.FileName);
 
         using (var videoStream = new FileStream(tempVideoPath, FileMode.Create))
         {
@@ -20,14 +29,11 @@ public class VideoService
             Id = Guid.NewGuid(),
             Name = originalVideoFormFile.FileName,
             FilePath = tempVideoPath,
-            VideoInfo = await FFmpeg.GetMediaInfo(tempVideoPath)
+            VideoAnalysis = await FFProbe.AnalyseAsync(tempVideoPath)
         };
-
-        await StorageService.UploadVideo(originalVideo.Id, originalVideo.FilePath, "originalvideos");
 
         originalVideo.Frames = await FrameService.ExtractFrames(originalVideo);
 
-        await TrimService.Trim(originalVideo);
+        return await _trimService.Trim(originalVideo);
     }
-
 }
