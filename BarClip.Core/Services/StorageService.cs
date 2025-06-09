@@ -1,41 +1,34 @@
 ﻿using Azure.Storage.Blobs;
 
-
 namespace BarClip.Core.Services;
 
 public class StorageService
 {
-    public static async Task<string> DownloadVideo(string blobName)
+    private readonly BlobServiceClient _blobServiceClient;
+    private const string OriginalVideosContainer = "originalvideos";
+
+    public StorageService(BlobServiceClient blobServiceClient)
+    {
+        _blobServiceClient = blobServiceClient;
+    }
+
+    public async Task<string> DownloadVideo(string blobName)
     {
         string tempFilePath = Path.GetTempPath();
-
-        string connectionString = "DefaultEndpointsProtocol=https;AccountName=barclipstorage;AccountKey=D4vHYa+EaLCffbGHQrH2OcmFoUOfCCu/XYBgQKs+D9ugjEHUmTL94I5CQGfAqCUwaYRZDptGhng/+AStd8QXQg==;EndpointSuffix=core.windows.net";
-        var blobServiceClient = new BlobServiceClient(connectionString);
-
-        string containerName = "originalvideos";
-        var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
-
+        var containerClient = _blobServiceClient.GetBlobContainerClient(OriginalVideosContainer);
         var blobClient = containerClient.GetBlobClient(blobName);
-
         string videoFilePath = Path.Combine(tempFilePath, blobName);
 
         await blobClient.DownloadToAsync(videoFilePath);
 
         return videoFilePath;
     }
-    public static async Task UploadVideo(string blobName, string filePath)
+
+    public async Task UploadVideo(Guid blobName, string filePath, string containerName)
     {
-        string connectionString = "DefaultEndpointsProtocol=https;AccountName=barclipstorage;AccountKey=D4vHYa+EaLCffbGHQrH2OcmFoUOfCCu/XYBgQKs+D9ugjEHUmTL94I5CQGfAqCUwaYRZDptGhng/+AStd8QXQg==;EndpointSuffix=core.windows.net";
-        var blobServiceClient = new BlobServiceClient(connectionString);
-
-        string containerName = "trimmedvideos";
-
-        var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
-
-        var blobClient = containerClient.GetBlobClient(blobName);
+        var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+        var blobClient = containerClient.GetBlobClient(blobName.ToString() + ".mp4");
 
         await blobClient.UploadAsync(filePath, overwrite: true);
-
-        
     }
 }
