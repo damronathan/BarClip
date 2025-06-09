@@ -16,7 +16,7 @@ string blobName;
 string tempFramePath = Path.Combine(Path.GetTempPath(), "frames");
 
 (tempVideoPath, blobName) = await DownloadOriginalVideo(tempVideoPath);
-await VideoProcessorService.TrimOriginalVideo("162miss.MOV");
+await VideoService.TrimOriginalVideo("162miss.MOV");
 //await TrimVideo(tempVideoPath);
 
 //async Task TrimVideo(string path)

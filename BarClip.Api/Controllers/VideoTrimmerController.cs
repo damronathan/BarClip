@@ -7,12 +7,13 @@ namespace BarClip.Api.Controllers;
 [Route("api/video-trimmer")]
 [ApiController]
 
-public class VideoTrimmerController(VideoProcessorService service) : ControllerBase
+public class VideoTrimmerController(VideoService service)   : ControllerBase
 {
+    [HttpPost]
     public async Task<IActionResult> TrimVideo([FromForm] TrimVideoRequest request)
     {
-        await VideoProcessorService.TrimOriginalVideo(request.Id.ToString());
-
+        await VideoService.TrimOriginalVideo(request.VideoFile);
+        return Ok(new { success = true });
     }
 
 }

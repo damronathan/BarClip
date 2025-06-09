@@ -45,21 +45,24 @@ namespace BarClip.Core
 
         private static void RegisterServices(IServiceCollection services)
         {
-            services.AddScoped<VideoProcessorService>();
-            services.AddScoped<DetectionService>();
+            services.AddScoped<VideoService>();
+            services.AddScoped<PlateDetectionService>();
             services.AddScoped<StorageService>();
             services.AddScoped<TrimService>();
         }
         private static void RegisterExternalServices(IServiceCollection services)
         {
-
             services.AddSingleton(sp =>
             {
-                var credential = new DefaultAzureCredential();
+                var configuration = sp.GetRequiredService<IConfiguration>();
+                var connectionString = configuration.GetConnectionString("AzureStorage");
+                
+                if (string.IsNullOrEmpty(connectionString))
+                {
+                    throw new InvalidOperationException("Azure Storage connection string is not configured.");
+                }
 
-                return new BlobServiceClient(
-                    new Uri("https://barclipstorage.blob.core.windows.net"),
-                    credential);
+                return new BlobServiceClient(connectionString);
             });
         }
 

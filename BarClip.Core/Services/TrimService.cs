@@ -13,15 +13,14 @@ public class TrimService
 
         IVideoStream trimmedVideoStream = videoStream.Split(startTime, finishTime - startTime);
 
-        string outputPath = @"C:\ImageDetectorVideos\TrimmedVideos";
-
-        Directory.CreateDirectory(outputPath);
+        string tempTrimmedVideoPath = Path.GetTempPath();
 
         TrimmedVideo trimmedVideo = new()
         {
-            Name = "trimmed_" + video.Name,
-            FilePath = Path.Combine(outputPath, "trimmed-" + video.Name),
-            OriginalVideo = video
+            Id = Guid.NewGuid(),
+            OriginalVideoId = video.Id,
+            OriginalVideo = video,
+            FilePath = Path.Combine(tempTrimmedVideoPath + "trimmed-" + video.Name)
         };
 
         try
@@ -32,10 +31,14 @@ public class TrimService
 
             var result = await conversion.Start();
         }
+
         catch (Exception ex)
         {
             throw new Exception($"Error trimming video: {ex.Message}");
         }
+
+        await StorageService.UploadVideo(trimmedVideo.Id, trimmedVideo.FilePath, "trimmedvideos");
+
         return trimmedVideo;
     }
     private static (TimeSpan, TimeSpan) GetTrim(Video video)

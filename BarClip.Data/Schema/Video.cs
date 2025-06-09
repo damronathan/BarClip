@@ -12,7 +12,6 @@ namespace BarClip.Data.Schema
         public string? Name { get; set; }
         public User User { get; set; } = null!;
         public Guid UserId { get; set; }
-
         public string FilePath { get; set; } = null!;
         public DateTime UploadedAt { get; set; }
         public List<Frame> Frames { get; set; } = new();
