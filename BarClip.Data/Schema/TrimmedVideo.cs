@@ -11,6 +11,7 @@ namespace BarClip.Data.Schema
         public User? User { get; set; }
         public Guid OriginalVideoId { get; set; }
         public Video? OriginalVideo { get; set; }
+        public TimeSpan Duration { get; set; }
 
 
         public static void Configure(ModelBuilder modelBuilder)

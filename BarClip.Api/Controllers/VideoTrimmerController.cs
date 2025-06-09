@@ -6,14 +6,24 @@ namespace BarClip.Api.Controllers;
 
 [Route("api/video-trimmer")]
 [ApiController]
-
-public class VideoTrimmerController(VideoService service)   : ControllerBase
+[RequestSizeLimit(200_000_000)]
+public class VideoTrimmerController : ControllerBase
 {
+    private readonly VideoService _videoService;
+    private readonly StorageService _storageService;
+
+    public VideoTrimmerController(VideoService videoService, StorageService storageService)
+    {
+        _videoService = videoService;
+        _storageService = storageService;
+    }
+
     [HttpPost]
     public async Task<IActionResult> TrimVideo([FromForm] TrimVideoRequest request)
     {
-        await VideoService.TrimOriginalVideo(request.VideoFile);
-        return Ok(new { success = true });
+        var trimmedVideo = await _videoService.TrimOriginalVideo(request.VideoFile);
+        var url = _storageService.GenerateSasUrl(trimmedVideo.Id); // fast
+        return Ok(new { sasUrl = url });
+        //return Ok();
     }
-
 }

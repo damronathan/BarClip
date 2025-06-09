@@ -5,10 +5,8 @@ namespace BarClip.Core.Services;
 
 public class PlateDetectionService
 {
-    public static List<PlateDetection> GetDetections(Frame frame)
+    public static List<PlateDetection> GetDetections(Frame frame, InferenceSession session)
     {
-        var session = new InferenceSession(@"C:\Users\19139\runs\detect\train\weights\best.onnx");
-
         var detections = new List<PlateDetection>();
 
         detections = RunInference(frame.InputValue, session);
