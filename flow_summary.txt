@@ -1,0 +1,58 @@
+I'll break down the flow of how frames are processed to determine video trimming based on plate movement:
+
+1. Initial Video Processing (VideoService.cs):
+   - The process starts when a video file is uploaded
+   - The video is temporarily saved and analyzed using FFProbe
+   - FrameService.ExtractFrames() is called to process the video
+
+2. Frame Extraction (FrameService.cs):
+   - Frames are extracted at 1 FPS (frames per second) using FFmpeg
+   - Each frame is processed in parallel through the following steps:
+     - The frame is resized to a 640x640 target size while maintaining aspect ratio
+     - The frame is padded to fill the 640x640 space
+     - The frame is converted to a tensor format for the ONNX model
+     - Each frame is passed to PlateDetectionService for license plate detection
+   - Frames are ordered by their frame number and stored in a list
+
+3. Plate Detection (PlateDetectionService.cs):
+   - Each frame is processed through an ONNX model to detect license plates
+   - The model outputs confidence scores and coordinates for potential plates
+   - Detections are filtered to only include those with confidence > 0.8
+   - Detections are grouped based on their X-coordinates (plates within 5 units of each other are considered the same plate)
+   - For each group, the detection with the highest confidence is selected
+   - Each plate detection includes:
+     - X, Y coordinates
+     - Width, Height
+     - Confidence score
+     - Detection number
+
+4. Trim Determination (TrimService.cs):
+   - The trim points are determined by analyzing plate movement across frames
+   - Start Point Detection:
+     - Looks for the first frame with a plate detection
+     - Tracks the Y-coordinate of the plate
+     - When the Y-coordinate changes by more than 50 units, that frame is marked as the start point
+     - The actual start is set to 3 frames before this point (to ensure the plate is fully in view)
+   
+   - End Point Detection:
+     - Works backwards from the end of the video
+     - Tracks plate Y-coordinates
+     - When the Y-coordinate changes by more than 50 units, that frame is marked as the end point
+     - The actual end is set to 3 frames after this point
+   
+   - Plate Selection Logic:
+     - For each frame, the best plate detection is selected based on:
+       - Proximity to the previous frame's detection (within 50 X-coordinate units)
+       - If no close match is found, it looks for plates with similar height
+       - If still no match, it keeps the previous detection
+
+5. Final Trim:
+   - Once the start and end points are determined, the video is trimmed using FFmpeg
+   - The trimmed video is uploaded to storage
+   - The original temporary files are cleaned up
+
+The key insight is that the system uses the vertical movement of license plates (Y-coordinate changes) to determine when a plate enters and exits the frame, using this to identify the relevant portion of the video to keep. The system is designed to be robust by:
+- Using confidence thresholds to filter out false detections
+- Grouping similar detections to handle multiple plates
+- Adding buffer frames before and after the detected movement
+- Maintaining continuity in plate tracking across frames 

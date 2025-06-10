@@ -32,11 +32,10 @@ public class TrimService
         {
             await FFMpegArguments
                 .FromFileInput(video.FilePath)
-
                 .OutputToFile(trimmedVideo.FilePath, overwrite: true, options => options
-                .Seek(startTime)
-                .WithDuration(trimmedVideo.Duration)
-                .WithCustomArgument("-c copy"))
+                    .Seek(startTime)
+                    .WithDuration(trimmedVideo.Duration)
+                    .WithCustomArgument("-c copy"))
                 .ProcessAsynchronously();
         }
         catch (Exception ex)
@@ -76,7 +75,7 @@ public class TrimService
                     initialYFound = true;
                 }
 
-                if (initialYFound && Math.Abs(plateDetection.Y - yValue) > 50f)
+                if (initialYFound && Math.Abs(plateDetection.Y - yValue) > 20f)
                 {
                     frameNumber = frame.FrameNumber;
                     break;
@@ -107,7 +106,7 @@ public class TrimService
 
                 if (previousDetection != null)
                 {
-                    if (Math.Abs(currentDetection.Y - previousDetection.Y) > 50f)
+                    if (Math.Abs(currentDetection.Y - previousDetection.Y) > 20f)
                     {
                         return TimeSpan.FromSeconds(frame.FrameNumber + 3);
                     }
@@ -120,12 +119,12 @@ public class TrimService
         return TimeSpan.FromSeconds(video.Frames.Last().FrameNumber - 2);
     }
 
-    private static PlateDetection SelectBestDetection(Frame frame, PlateDetection referenceDetection)
+    public static PlateDetection SelectBestDetection(Frame frame, PlateDetection referenceDetection)
     {
         if (frame.PlateDetections is null)
             return referenceDetection;
 
-        if (referenceDetection == null)
+        if (referenceDetection is null)
             return frame.PlateDetections.OrderByDescending(pd => pd.Confidence).First();
 
         var candidateDetections = frame.PlateDetections

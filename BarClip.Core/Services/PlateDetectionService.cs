@@ -1,5 +1,8 @@
 ﻿using BarClip.Data.Schema;
 using Microsoft.ML.OnnxRuntime;
+using OpenCvSharp;
+using OpenCvSharp.Tracking;
+using SixLabors.ImageSharp;
 
 namespace BarClip.Core.Services;
 
@@ -73,6 +76,18 @@ public class PlateDetectionService
 
         return plateDetections;
 
+    }
+
+    public static PlateDetection GetTracker(TrackerCSRT tracker, Mat previousFrame, Rect previousBox, Frame frame)
+    {
+        tracker.Init(previousFrame, previousBox);
+        Rect currentBox = previousBox;
+        bool success = tracker.Update(frame.MatValue, ref currentBox);
+        var detection = new PlateDetection
+        {
+            X = currentBox.X, Y = currentBox.Y, Width = currentBox.Width, Height = currentBox.Height, Confidence = .9F
+        };
+        return detection;
     }
 
 }

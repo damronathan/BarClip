@@ -7,7 +7,8 @@ using SixLabors.ImageSharp;
 using FFMpegCore.Enums;
 using Microsoft.ML.OnnxRuntime.Tensors;
 using SixLabors.ImageSharp.Processing;
-using System.Collections.Concurrent;
+using OpenCvSharp;
+using OpenCvSharp.Tracking;
 
 public class FrameService
 {
@@ -45,31 +46,51 @@ public class FrameService
     public static List<Frame> CreateFramesFromPath(string tempFramePath)
     {
         var session = new InferenceSession(@"C:\Users\19139\runs\detect\train\weights\best.onnx");
+        var tracker = TrackerCSRT.Create();
 
-        var frames = new ConcurrentBag<Frame>();
+        var frames = new List<Frame>();
 
         var files = Directory.GetFiles(tempFramePath, "frame_*.png")
                              .OrderBy(GetFrameNumber)
                              .ToList();
 
-        Parallel.ForEach(files, file =>
+        foreach ( var file in files)
         {
-            try
+            var frame = new Frame
             {
-                var frame = new Frame
-                {
-                    FilePath = file,
-                    InputValue = ConvertFrameToOnnxValue(file)
-                };
-                frame.PlateDetections = PlateDetectionService.GetDetections(frame, session);
+                FilePath = file,
+            };
+            frames.Add(frame);
+        }
+        int n = 5;
+        int i = 0;
+        PlateDetection previousDetection = null;
+        var previousFrame = new Mat();
 
-                frames.Add(frame);
-            }
-            finally
+        while ( i < frames.Count)
+        {
+            var frame = frames[i];
+
+            if (i % n == 0)
             {
-                File.Delete(file);
+                frame.InputValue = ConvertFrameToOnnxValue(frame.FilePath);
+                frame.PlateDetections = PlateDetectionService.GetDetections(frame, session);
+                previousDetection = TrimService.SelectBestDetection(frame, previousDetection);
+                frame.MatValue = ConvertFrameToMat(frame.FilePath);
+                previousFrame = frame.MatValue;
             }
-        });
+            else
+            {
+                frame.PlateDetections = new List<PlateDetection>();
+                var previousBox = new Rect((int)previousDetection.X, (int)previousDetection.Y, (int)previousDetection.Width, (int)previousDetection.Height);
+                var currentImage = ConvertFrameToMat(frame.FilePath);
+                frame.MatValue = ConvertFrameToMat(frame.FilePath);
+                previousDetection = PlateDetectionService.GetTracker(tracker, previousFrame, previousBox, frame);
+                frame.PlateDetections.Add(previousDetection);
+            }
+
+            i++;
+        }
 
         // After all frames processed, assign frame numbers in correct order:
         var orderedFrames = frames.OrderBy(f => GetFrameNumber(f.FilePath))
@@ -79,6 +100,10 @@ public class FrameService
         // Clean up temp directory
         if (Directory.Exists(tempFramePath))
         {
+            foreach(var file in files)
+            {
+                File.Delete(file);
+            }
             Directory.Delete(tempFramePath, true);
         }
 
@@ -87,17 +112,7 @@ public class FrameService
 
     private static NamedOnnxValue ConvertFrameToOnnxValue(string framePath)
     {
-        using var image = Image.Load<Rgb24>(framePath);
-        int targetSize = 640;
-        float ratio = Math.Min((float)targetSize / image.Width, (float)targetSize / image.Height);
-        int newWidth = (int)(image.Width * ratio);
-        int newHeight = (int)(image.Height * ratio);
-        image.Mutate(ctx => ctx.Resize(newWidth, newHeight));
-
-        var paddedImage = new Image<Rgb24>(targetSize, targetSize);
-        int padX = (targetSize - newWidth) / 2;
-        int padY = (targetSize - newHeight) / 2;
-        paddedImage.Mutate(ctx => ctx.DrawImage(image, new Point(padX, padY), 1f));
+        var paddedImage = ResizeAndPad(framePath);
 
         int width = paddedImage.Width;
         int height = paddedImage.Height;
@@ -119,6 +134,37 @@ public class FrameService
         var inputTensor = new DenseTensor<float>(data, [1, 3, height, width]);
         return NamedOnnxValue.CreateFromTensor("images", inputTensor);
     }
+
+    public static Image<Rgb24> ResizeAndPad(string framePath)
+    {
+        using var image = Image.Load<Rgb24>(framePath);
+        int targetSize = 640;
+        float ratio = Math.Min((float)targetSize / image.Width, (float)targetSize / image.Height);
+        int newWidth = (int)(image.Width * ratio);
+        int newHeight = (int)(image.Height * ratio);
+        image.Mutate(ctx => ctx.Resize(newWidth, newHeight));
+
+        var paddedImage = new Image<Rgb24>(targetSize, targetSize);
+        int padX = (targetSize - newWidth) / 2;
+        int padY = (targetSize - newHeight) / 2;
+        paddedImage.Mutate(ctx => ctx.DrawImage(image, new SixLabors.ImageSharp.Point(padX, padY), 1f));
+
+        return paddedImage.Clone();
+    }
+
+    public static Mat ConvertFrameToMat(string framePath)
+    {
+        var paddedImage = ResizeAndPad(framePath);
+
+        using var ms = new MemoryStream();
+        paddedImage.SaveAsPng(ms);
+        ms.Seek(0, SeekOrigin.Begin);
+
+        Mat mat = Mat.FromStream(ms, ImreadModes.Color);
+
+        return mat;
+    }
+
 
     private static int GetFrameNumber(string path)
     {

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.ML.OnnxRuntime;
+using OpenCvSharp;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BarClip.Data.Schema
@@ -15,6 +16,8 @@ namespace BarClip.Data.Schema
 
         [NotMapped]
         public NamedOnnxValue? InputValue { get; set; }
+        public Mat MatValue { get; set; }
+        public Rect BoundingBox { get; set; }
 
         public static void Configure(ModelBuilder modelBuilder)
         {
