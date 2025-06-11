@@ -1,7 +1,6 @@
 ﻿using BarClip.Data.Schema;
 using FFMpegCore;
-using FFMpegCore.Enums;
-
+using BarClip.Models.Domain;
 namespace BarClip.Core.Services;
 
 public class TrimService
@@ -14,27 +13,30 @@ public class TrimService
     }
 
     public async Task<TrimmedVideo> Trim(Video video)
-    {
-        (TimeSpan startTime, TimeSpan finishTime) = GetTrim(video);
+        {
+        if (video.TrimStart == TimeSpan.Zero)
+        {
+            SetTrim(video);
+        }
 
         string tempTrimmedVideoPath = Path.GetTempPath();
 
         TrimmedVideo trimmedVideo = new()
         {
             Id = Guid.NewGuid(),
-            OriginalVideoId = video.Id,
-            OriginalVideo = video,
+            Name = $"{DateTime.Now}",
             FilePath = Path.Combine(tempTrimmedVideoPath, "trimmed-video.mp4"),
-            Duration = finishTime - startTime
+            OriginalVideo = video,
+            OriginalVideoId = video.Id,
+            Duration = video.TrimFinish - video.TrimStart
         };
 
         try
         {
             await FFMpegArguments
                 .FromFileInput(video.FilePath)
-
                 .OutputToFile(trimmedVideo.FilePath, overwrite: true, options => options
-                .Seek(startTime)
+                .Seek(video.TrimStart)
                 .WithDuration(trimmedVideo.Duration)
                 .WithCustomArgument("-c copy"))
                 .ProcessAsynchronously();
@@ -44,17 +46,17 @@ public class TrimService
             throw new Exception($"Error trimming video: {ex.Message}");
         }
 
-        await _storageService.UploadVideo(trimmedVideo.Id, trimmedVideo.FilePath, "trimmedvideos"); // fast
+        await _storageService.UploadVideoAsync(trimmedVideo.Id, trimmedVideo.FilePath, "trimmedvideos");
 
         return trimmedVideo;
     }
 
-    private (TimeSpan, TimeSpan) GetTrim(Video video)
+    private Video SetTrim(Video video)
     {
         int frameNumber = GetStartFrame(video);
-        TimeSpan trimStart = TimeSpan.FromSeconds(frameNumber);
-        TimeSpan trimFinish = GetTrimFinish(frameNumber, video);
-        return (trimStart, trimFinish);
+        video.TrimStart = TimeSpan.FromSeconds(frameNumber);
+        video.TrimFinish = GetTrimFinish(frameNumber, video);
+        return video;
     }
 
     private static int GetStartFrame(Video video)

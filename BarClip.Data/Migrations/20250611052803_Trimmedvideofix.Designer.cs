@@ -4,6 +4,7 @@ using BarClip.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BarClip.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250611052803_Trimmedvideofix")]
+    partial class Trimmedvideofix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,7 +43,8 @@ namespace BarClip.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OriginalVideoId");
+                    b.HasIndex("OriginalVideoId")
+                        .IsUnique();
 
                     b.ToTable("TrimmedVideos");
                 });
@@ -72,8 +76,8 @@ namespace BarClip.Data.Migrations
             modelBuilder.Entity("BarClip.Data.Schema.TrimmedVideo", b =>
                 {
                     b.HasOne("BarClip.Data.Schema.Video", "OriginalVideo")
-                        .WithMany("TrimmedVideos")
-                        .HasForeignKey("OriginalVideoId")
+                        .WithOne("TrimmedVideo")
+                        .HasForeignKey("BarClip.Data.Schema.TrimmedVideo", "OriginalVideoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -82,7 +86,7 @@ namespace BarClip.Data.Migrations
 
             modelBuilder.Entity("BarClip.Data.Schema.Video", b =>
                 {
-                    b.Navigation("TrimmedVideos");
+                    b.Navigation("TrimmedVideo");
                 });
 #pragma warning restore 612, 618
         }

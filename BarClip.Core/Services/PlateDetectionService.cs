@@ -1,9 +1,10 @@
 ﻿using BarClip.Data.Schema;
+using BarClip.Models.Domain;
 using Microsoft.ML.OnnxRuntime;
 
 namespace BarClip.Core.Services;
 
-public class PlateDetectionService
+public class PlateDetectionService()
 {
     public static List<PlateDetection> GetDetections(Frame frame, InferenceSession session)
     {
