@@ -13,19 +13,22 @@ public class StorageService
         _blobServiceClient = blobServiceClient;
     }
 
-    public async Task<string> DownloadVideo(string blobName)
+    public async Task<string> DownloadVideoAsync(Guid blobName)
     {
         string tempFilePath = Path.GetTempPath();
+
         var containerClient = _blobServiceClient.GetBlobContainerClient(OriginalVideosContainer);
-        var blobClient = containerClient.GetBlobClient(blobName);
-        string videoFilePath = Path.Combine(tempFilePath, blobName);
+
+        var blobClient = containerClient.GetBlobClient(blobName.ToString() + ".mp4");
+
+        string videoFilePath = Path.Combine(tempFilePath, blobName.ToString() + ".mp4");
 
         await blobClient.DownloadToAsync(videoFilePath);
 
         return videoFilePath;
     }
 
-    public async Task UploadVideo(Guid blobName, string filePath, string containerName)
+    public async Task UploadVideoAsync(Guid blobName, string filePath, string containerName)
     {
         var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
 
@@ -43,5 +46,16 @@ public class StorageService
         var sasUri = blobClient.GenerateSasUri(BlobSasPermissions.Read, DateTimeOffset.UtcNow.AddHours(1));
 
         return sasUri.ToString();
+    }
+
+    public async Task DeleteVideoAsync(Guid blobName, string containerName)
+    {
+        var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+
+        var blobClient = containerClient.GetBlobClient(blobName.ToString() + ".mp4");
+
+        Console.WriteLine($"{blobName.ToString()}.mp4");
+
+        var response = await blobClient.DeleteIfExistsAsync();
     }
 }

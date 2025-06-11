@@ -1,17 +1,21 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BarClip.Data.Schema
 {
     public class TrimmedVideo
     {
         public Guid Id { get; set; }
-        public string? FilePath { get; set; }
-        public Guid UserId { get; set; }
-        public User? User { get; set; }
+        public required string Name { get; set; }
         public Guid OriginalVideoId { get; set; }
         public Video? OriginalVideo { get; set; }
         public TimeSpan Duration { get; set; }
+
+        [NotMapped]
+        public string? FilePath { get; set; }
+
 
 
         public static void Configure(ModelBuilder modelBuilder)
@@ -23,12 +27,8 @@ namespace BarClip.Data.Schema
                 entity.HasOne(t => t.OriginalVideo)
                     .WithMany(v => v.TrimmedVideos)
                     .HasForeignKey(t => t.OriginalVideoId)
-                    .OnDelete(DeleteBehavior.NoAction);
+                    .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasOne(t => t.User)
-                    .WithMany(u => u.TrimmedVideos)
-                    .HasForeignKey(t => t.UserId)
-                    .OnDelete(DeleteBehavior.NoAction);
             });
         }
     }

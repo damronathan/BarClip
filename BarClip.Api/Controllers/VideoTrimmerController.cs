@@ -18,12 +18,19 @@ public class VideoTrimmerController : ControllerBase
         _storageService = storageService;
     }
 
-    [HttpPost]
+    [HttpPost("trim-video")]
     public async Task<IActionResult> TrimVideo([FromForm] TrimVideoRequest request)
     {
         var trimmedVideo = await _videoService.TrimOriginalVideo(request.VideoFile);
         var url = _storageService.GenerateSasUrl(trimmedVideo.Id); // fast
         return Ok(new { sasUrl = url });
-        //return Ok();
+    }
+
+    [HttpPost("re-trim-video")]
+    public async Task<IActionResult> ReTrimVideo([FromForm] ReTrimVideoRequest request)
+    {
+        var trimmedVideo = await _videoService.ReTrimOriginalVideo(request);
+        var url = _storageService.GenerateSasUrl(trimmedVideo.Id);
+        return Ok(new { sasUrl = url });
     }
 }

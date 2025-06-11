@@ -8,10 +8,11 @@ using FFMpegCore.Enums;
 using Microsoft.ML.OnnxRuntime.Tensors;
 using SixLabors.ImageSharp.Processing;
 using System.Collections.Concurrent;
+using BarClip.Models.Domain;
 
 public class FrameService
 {
-    public async static Task<List<Frame>> ExtractFrames(Video originalVideo) // medium
+    public async Task<List<Frame>> ExtractFrames(Video originalVideo) // medium
     {
         string tempFramePath = Path.Combine(Path.GetTempPath(), "frames");
         Directory.CreateDirectory(tempFramePath);
@@ -42,7 +43,7 @@ public class FrameService
         return frames;
     }
 
-    public static List<Frame> CreateFramesFromPath(string tempFramePath)
+    public List<Frame> CreateFramesFromPath(string tempFramePath)
     {
         var session = new InferenceSession(@"C:\Users\19139\runs\detect\train\weights\best.onnx");
 
@@ -85,7 +86,7 @@ public class FrameService
         return orderedFrames;
     }
 
-    private static NamedOnnxValue ConvertFrameToOnnxValue(string framePath)
+    private NamedOnnxValue ConvertFrameToOnnxValue(string framePath)
     {
         using var image = Image.Load<Rgb24>(framePath);
         int targetSize = 640;
@@ -120,7 +121,7 @@ public class FrameService
         return NamedOnnxValue.CreateFromTensor("images", inputTensor);
     }
 
-    private static int GetFrameNumber(string path)
+    private int GetFrameNumber(string path)
     {
         string fileName = Path.GetFileNameWithoutExtension(path);
         var parts = fileName.Split('_');

@@ -1,26 +1,28 @@
 using FFMpegCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using Xabe.FFmpeg;
+using BarClip.Models.Domain;
 
 namespace BarClip.Data.Schema
 {
     public class Video
     {
         public Guid Id { get; set; }
-        public string? Name { get; set; }
-        public User User { get; set; } = null!;
-        public Guid UserId { get; set; }
-        public string FilePath { get; set; } = null!;
+        public required string Name { get; set; }
         public DateTime UploadedAt { get; set; }
-        public List<Frame> Frames { get; set; } = new();
-        public List<TrimmedVideo> TrimmedVideos { get; set; } = new();
-        public VideoStatus VideoStatus { get; set; }
+        public TimeSpan TrimStart { get; set; }
+        public TimeSpan TrimFinish { get; set; }
+        public List<TrimmedVideo>? TrimmedVideos { get; set; }
 
         [NotMapped]
-        public required IMediaAnalysis VideoAnalysis { get; set; }
+
+        public IMediaAnalysis? VideoAnalysis { get; set; }
+        [NotMapped]
+
+        public List<Frame> Frames { get; set; } = [];
+        [NotMapped]
+
+        public string FilePath { get; set; } = null!;
 
 
 
@@ -30,29 +32,11 @@ namespace BarClip.Data.Schema
             {
                 entity.HasKey(v => v.Id);
 
-                entity.HasOne(v => v.User)
-                      .WithMany(u => u.Videos)
-                      .HasForeignKey(v => v.UserId)
-                      .OnDelete(DeleteBehavior.NoAction);
-
-                entity.HasMany(v => v.Frames)
-                      .WithOne(f => f.Video)
-                      .HasForeignKey(f => f.VideoId)
-                      .OnDelete(DeleteBehavior.Cascade);
-
                 entity.HasMany(v => v.TrimmedVideos)
                       .WithOne(t => t.OriginalVideo)
                       .HasForeignKey(t => t.OriginalVideoId)
-                      .OnDelete(DeleteBehavior.NoAction);
+                      .OnDelete(DeleteBehavior.Cascade);
             });
         }
-    }
-
-    public enum VideoStatus
-    {
-        Uploaded,
-        Processing,
-        Trimmed,
-        Failed
     }
 }

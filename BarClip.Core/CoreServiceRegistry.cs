@@ -1,5 +1,6 @@
 ﻿using Azure.Identity;
 using Azure.Storage.Blobs;
+using BarClip.Core.Repositories;
 using BarClip.Core.Services;
 using BarClip.Data;
 using Microsoft.EntityFrameworkCore;
@@ -40,7 +41,7 @@ namespace BarClip.Core
         }
         private static void RegisterRepositories(IServiceCollection services)
         {
-
+            services.AddScoped<VideoRepository>();
         }
 
         private static void RegisterServices(IServiceCollection services)
@@ -49,6 +50,7 @@ namespace BarClip.Core
             services.AddScoped<PlateDetectionService>();
             services.AddScoped<StorageService>();
             services.AddScoped<TrimService>();
+            services.AddScoped<FrameService>();
         }
         private static void RegisterExternalServices(IServiceCollection services)
         {
