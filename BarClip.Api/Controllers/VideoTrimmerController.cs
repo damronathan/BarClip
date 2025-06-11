@@ -22,7 +22,7 @@ public class VideoTrimmerController : ControllerBase
     public async Task<IActionResult> TrimVideo([FromForm] TrimVideoRequest request)
     {
         var trimmedVideo = await _videoService.TrimOriginalVideo(request.VideoFile);
-        var url = _storageService.GenerateSasUrl(trimmedVideo.Id); // fast
+        var url = _storageService.GenerateSasUrl(trimmedVideo.Id);
         return Ok(new { sasUrl = url });
     }
 

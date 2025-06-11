@@ -62,7 +62,7 @@ public class VideoService
             throw new Exception("No original video found.");
         }
 
-        originalVideo.FilePath = await _storageService.DownloadVideoAsync(originalVideo.Id);
+        originalVideo.FilePath = await _storageService.DownloadVideoAsync(originalVideo.Id, "originalvideos");
 
         if (request.StartEarlier)
         {
