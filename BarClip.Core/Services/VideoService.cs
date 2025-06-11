@@ -48,6 +48,8 @@ public class VideoService
 
         originalVideo.TrimmedVideos.Add(trimmedVideo);
 
+        originalVideo.CurrentTrimmedVideoId = trimmedVideo.Id;
+
         await _videoRepository.SaveVideosAsync(originalVideo, trimmedVideo);
 
         return trimmedVideo;
@@ -55,7 +57,17 @@ public class VideoService
 
     public async Task<TrimmedVideo> ReTrimOriginalVideo(ReTrimVideoRequest request)
     {
-        var originalVideo = await _videoRepository.GetOriginalVideoByIdAsync(request.Id);
+        Guid trimmedVideoId = request.Id;
+
+        if (request.TrimmedVideoFile is not null)
+        {
+            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(request.TrimmedVideoFile.FileName);
+
+            trimmedVideoId = Guid.Parse(fileNameWithoutExtension);
+        }
+
+        var originalVideo = await _videoRepository.GetOriginalVideoByTrimmedIdAsync(trimmedVideoId);
+
 
         if (originalVideo is null)
         {
@@ -88,6 +100,8 @@ public class VideoService
         var trimmedVideo = await _trimService.Trim(originalVideo);
 
         originalVideo.TrimmedVideos.Add(trimmedVideo);
+
+        originalVideo.CurrentTrimmedVideoId = trimmedVideo.Id;
 
         await _videoRepository.SaveVideosAsync(originalVideo, trimmedVideo);
 
