@@ -1,7 +1,10 @@
-﻿namespace BarClip.Models.Requests;
+﻿using Microsoft.AspNetCore.Http;
+
+namespace BarClip.Models.Requests;
 
 public class ReTrimVideoRequest
 {
+    public IFormFile? TrimmedVideoFile { get; set; }
     public Guid Id { get; set; }
     public bool StartEarlier { get; set; }
     public bool FinishEarlier { get; set; }

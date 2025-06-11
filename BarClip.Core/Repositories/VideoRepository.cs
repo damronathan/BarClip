@@ -1,12 +1,6 @@
 ﻿using BarClip.Data;
 using BarClip.Data.Schema;
-using FFMpegCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BarClip.Core.Services;
 
 namespace BarClip.Core.Repositories;
@@ -24,9 +18,9 @@ public class VideoRepository
 
     public async Task SaveChangesAsync() => await _context.SaveChangesAsync();
 
-    public async Task<Video?> GetOriginalVideoByIdAsync(Guid originalVideoId)
+    public async Task<Video?> GetOriginalVideoByTrimmedIdAsync(Guid trimmedVideoId)
     {
-        return await _context.Videos.FirstOrDefaultAsync(v => v.Id == originalVideoId);
+        return await _context.Videos.FirstOrDefaultAsync(v => v.CurrentTrimmedVideoId == trimmedVideoId);
     }
 
     public async Task SaveVideosAsync(Video video, TrimmedVideo trimmedVideo)

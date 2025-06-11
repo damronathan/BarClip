@@ -1,5 +1,5 @@
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Server=(localdb)\\MSSQLLocalDB;Database=BarClipDb5;Trusted_Connection=True;MultipleActiveResultSets=true"
+    "DefaultConnection": "Server=(localdb)\\MSSQLLocalDB;Database=BarClipDb6;Trusted_Connection=True;MultipleActiveResultSets=true"
   }
 }

@@ -13,6 +13,7 @@ namespace BarClip.Data.Schema
         public TimeSpan TrimStart { get; set; }
         public TimeSpan TrimFinish { get; set; }
         public List<TrimmedVideo>? TrimmedVideos { get; set; }
+        public Guid CurrentTrimmedVideoId { get; set; }
 
         [NotMapped]
 
