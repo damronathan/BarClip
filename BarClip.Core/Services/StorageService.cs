@@ -6,18 +6,17 @@ namespace BarClip.Core.Services;
 public class StorageService
 {
     private readonly BlobServiceClient _blobServiceClient;
-    private const string OriginalVideosContainer = "originalvideos";
 
     public StorageService(BlobServiceClient blobServiceClient)
     {
         _blobServiceClient = blobServiceClient;
     }
 
-    public async Task<string> DownloadVideoAsync(Guid blobName)
+    public async Task<string> DownloadVideoAsync(Guid blobName, string containerName)
     {
         string tempFilePath = Path.GetTempPath();
 
-        var containerClient = _blobServiceClient.GetBlobContainerClient(OriginalVideosContainer);
+        var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
 
         var blobClient = containerClient.GetBlobClient(blobName.ToString() + ".mp4");
 
