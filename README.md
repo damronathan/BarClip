@@ -1,6 +1,6 @@
 # BarClip API 🎥✂️
 
-BarClip is a lightweight API that trims weightlifting videos by tracking when the bar moves.
+BarClip is an asp.net web API that trims weightlifting videos by tracking when the bar moves.
 
 ---
 
