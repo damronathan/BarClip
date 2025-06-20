@@ -33,6 +33,8 @@ public class VideoService
         }
 
         string compressedPath = Path.Combine(Path.GetTempPath(), $"compressed_{originalVideoFormFile.FileName}");
+        //string compressedPath = "C:\\ImageDetectorVideos" + originalVideoFormFile.FileName;
+
 
         var originalVideo = new Video()
         {
@@ -49,7 +51,7 @@ public class VideoService
         await FFMpegArguments
             .FromFileInput(tempVideoPath)
             .OutputToFile(compressedPath, overwrite: true, options => options
-                .WithCustomArgument("-vf fps=1 -c:v libx264 -crf 28 -preset veryfast -an"))
+.WithCustomArgument("-vf fps=1 -c:v h264_nvenc -preset p1 -b:v 200k -an"))
             .ProcessAsynchronously();
         stopwatch.Stop();
         Console.WriteLine($"{stopwatch.ElapsedMilliseconds} transcoding");
