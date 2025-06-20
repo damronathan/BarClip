@@ -1,6 +1,6 @@
 # BarClip API 🎥✂️
 
-BarClip is a lightweight API that trims weightlifting videos by tracking when the bar moves.
+BarClip is an asp.net web API that trims weightlifting videos by tracking when the bar moves.
 
 ---
 
@@ -9,14 +9,9 @@ BarClip is a lightweight API that trims weightlifting videos by tracking when th
 ✅ **Upload And Trim Video**
 Upload video file directly and receive a link to the automatically trimmed video.
 
-✅ **Re-trim Videos**  
+✅ **Re-trim Video**  
 Trim started or finished too early or too late? Re-trim existing videos with updated start/finish points. (Make sure not to change the name of the file first)
 
-✅ **Azure Blob Storage Integration**  
-Efficiently store large video files securely.
-
-✅ **SAS URL Playback**  
-Stream videos directly from Azure using secure, expiring URLs.
 
 ---
 
