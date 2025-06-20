@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Http;
 using FFMpegCore;
 using BarClip.Core.Repositories;
 using BarClip.Models.Requests;
+using FFMpegCore.Enums;
+using System.Diagnostics;
 
 namespace BarClip.Core.Services;
 
@@ -30,16 +32,27 @@ public class VideoService
             await originalVideoFormFile.CopyToAsync(videoStream);
         }
 
+        string compressedPath = Path.Combine(Path.GetTempPath(), $"compressed_{originalVideoFormFile.FileName}");
+
         var originalVideo = new Video()
         {
             Id = Guid.NewGuid(),
             Name = DateTime.Now.ToString() + Path.GetExtension(originalVideoFormFile.FileName),
-            FilePath = tempVideoPath,
+            FilePath = compressedPath,
             VideoAnalysis = await FFProbe.AnalyseAsync(tempVideoPath),
             UploadedAt = DateTime.Now,
             TrimmedVideos = new List<TrimmedVideo>()
         };
 
+
+        var stopwatch = Stopwatch.StartNew();
+        await FFMpegArguments
+            .FromFileInput(tempVideoPath)
+            .OutputToFile(compressedPath, overwrite: true, options => options
+                .WithCustomArgument("-vf fps=1 -c:v libx264 -crf 28 -preset veryfast -an"))
+            .ProcessAsynchronously();
+        stopwatch.Stop();
+        Console.WriteLine($"{stopwatch.ElapsedMilliseconds} transcoding");
         originalVideo.Frames = await _frameService.ExtractFrames(originalVideo);
 
         await _storageService.UploadVideoAsync(originalVideo.Id, originalVideo.FilePath, "originalvideos");

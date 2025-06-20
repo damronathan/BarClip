@@ -9,6 +9,7 @@ using Microsoft.ML.OnnxRuntime.Tensors;
 using SixLabors.ImageSharp.Processing;
 using System.Collections.Concurrent;
 using BarClip.Models.Domain;
+using System.Diagnostics;
 
 public class FrameService
 {
@@ -23,23 +24,22 @@ public class FrameService
             throw new Exception("No video stream found");
 
         double fps = videoStream.FrameRate;
+        var stopwatch = Stopwatch.StartNew();
 
         try
-        {
+        {         
             await FFMpegArguments
-                .FromFileInput(originalVideo.FilePath)
-                .OutputToFile(Path.Combine(tempFramePath, "frame_%d.png"), overwrite: true, options => options
-                    .WithVideoFilters(filterOptions => filterOptions
-                        .Scale(VideoSize.Original))
-                    .WithCustomArgument("-vf fps=1 -q:v 5")
-                    .WithCustomArgument("-threads 0"))
-                .ProcessAsynchronously();
+    .FromFileInput(originalVideo.FilePath)
+    .OutputToFile(Path.Combine(tempFramePath, "frame_%d.png"), overwrite: true, options => options
+        .WithCustomArgument("-q:v 5"))
+    .ProcessAsynchronously();
         }
         catch (Exception ex)
         {
             throw new Exception($"Error extracting frames: {ex.Message}");
         }
-
+        stopwatch.Stop();
+        Console.WriteLine($"{stopwatch.ElapsedMilliseconds} extraction");
         var frames = CreateFramesFromPath(tempFramePath); // long
         return frames;
     }
