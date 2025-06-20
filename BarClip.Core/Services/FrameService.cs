@@ -31,7 +31,8 @@ public class FrameService
                 .OutputToFile(Path.Combine(tempFramePath, "frame_%d.png"), overwrite: true, options => options
                     .WithVideoFilters(filterOptions => filterOptions
                         .Scale(VideoSize.Original))
-                    .WithCustomArgument("-vf fps=1 -q:v 5"))
+                    .WithCustomArgument("-vf fps=1 -q:v 5")
+                    .WithCustomArgument("-threads 0"))
                 .ProcessAsynchronously();
         }
         catch (Exception ex)
