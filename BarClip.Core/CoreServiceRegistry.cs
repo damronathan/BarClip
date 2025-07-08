@@ -39,6 +39,14 @@ namespace BarClip.Core
 
             return services;
         }
+        public static IServiceCollection RegisterFunctionServices(this IServiceCollection services)
+        {
+            RegisterServices(services);
+
+            RegisterExternalServices(services);
+
+            return services;
+        }
         private static void RegisterRepositories(IServiceCollection services)
         {
             services.AddScoped<VideoRepository>();
@@ -46,19 +54,21 @@ namespace BarClip.Core
 
         private static void RegisterServices(IServiceCollection services)
         {
-            services.AddScoped<VideoService>();
+            services.AddScoped<IVideoService, VideoService>();
             services.AddScoped<PlateDetectionService>();
             services.AddScoped<StorageService>();
             services.AddScoped<TrimService>();
             services.AddScoped<FrameService>();
+            services.AddScoped<VideoRepository>();
+            services.AddScoped<UserRepository>();
         }
         private static void RegisterExternalServices(IServiceCollection services)
         {
             services.AddSingleton(sp =>
             {
                 var configuration = sp.GetRequiredService<IConfiguration>();
-                var connectionString = configuration.GetConnectionString("AzureStorage");
-                
+                var connectionString = configuration["AzureWebJobsStorage"];
+
                 if (string.IsNullOrEmpty(connectionString))
                 {
                     throw new InvalidOperationException("Azure Storage connection string is not configured.");

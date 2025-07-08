@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using Microsoft.Identity.Client;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -8,9 +9,11 @@ namespace BarClip.Data.Schema
     public class TrimmedVideo
     {
         public Guid Id { get; set; }
-        public required string Name { get; set; }
+        public Guid UserId { get; set; }
+        public required User User { get; set; }
+
         public Guid OriginalVideoId { get; set; }
-        public Video? OriginalVideo { get; set; }
+        public OriginalVideo? OriginalVideo { get; set; }
         public TimeSpan Duration { get; set; }
 
         [NotMapped]

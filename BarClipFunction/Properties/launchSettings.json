@@ -1,0 +1,15 @@
+{
+  "profiles": {
+    "BarClipFunction": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7251"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "containerRunArguments": "--init",
+      "httpPort": 30638,
+      "useSSL": false
+    }
+  }
+}

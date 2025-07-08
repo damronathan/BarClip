@@ -2,7 +2,7 @@
 
 namespace BarClip.Models.Requests;
 
-public class ReTrimVideoRequest
+public class ManualTrimRequest
 {
     public IFormFile? TrimmedVideoFile { get; set; }
     public Guid Id { get; set; }

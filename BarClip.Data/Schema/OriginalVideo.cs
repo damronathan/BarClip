@@ -1,13 +1,12 @@
-using FFMpegCore;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations.Schema;
-using BarClip.Models.Domain;
 
 namespace BarClip.Data.Schema
 {
-    public class Video
+    public class OriginalVideo
     {
         public Guid Id { get; set; }
+        public Guid UserId { get; set; }
+        public required User User { get; set; }
         public required string Name { get; set; }
         public DateTime UploadedAt { get; set; }
         public TimeSpan TrimStart { get; set; }
@@ -15,21 +14,10 @@ namespace BarClip.Data.Schema
         public List<TrimmedVideo>? TrimmedVideos { get; set; }
         public Guid CurrentTrimmedVideoId { get; set; }
 
-        [NotMapped]
-
-        public IMediaAnalysis? VideoAnalysis { get; set; }
-        [NotMapped]
-
-        public List<Frame> Frames { get; set; } = [];
-        [NotMapped]
-
-        public string FilePath { get; set; } = null!;
-
-
-
+        
         public static void Configure(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Video>(entity =>
+            modelBuilder.Entity<OriginalVideo>(entity =>
             {
                 entity.HasKey(v => v.Id);
 

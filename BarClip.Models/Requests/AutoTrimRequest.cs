@@ -2,7 +2,7 @@
 
 namespace BarClip.Models.Requests;
 
-public class TrimVideoRequest
+public class AutoTrimRequest
 {
     public IFormFile VideoFile { get; set; }
 }

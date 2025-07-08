@@ -1,0 +1,40 @@
+# containerapp-servicebus-scale.yaml (Regular Container App)
+name: barclipfunctioncontainer
+type: Microsoft.App/containerApps
+location: centralus
+tags:
+  environment: production
+properties:
+  managedEnvironmentId: /subscriptions/3f8d1fd5-8156-40d9-956d-9280147e06a1/resourceGroups/BarClip/providers/Microsoft.App/managedEnvironments/managedEnvironment-BarClip-a1fe
+  configuration:
+    ingress:
+      external: false
+    activeRevisionsMode: Single
+  template:
+    containers:
+      - name: barclipfunctioncontainer
+        image: barclipregistry.azurecr.io/barclipfunction:latest
+        resources:
+          cpu: 0.5
+          memory: 1Gi
+        env:
+          - name: ServiceBusConnection
+            secretRef: barclipservicebuskey
+          # Remove any Azure Functions specific environment variables
+          # - name: AzureWebJobsStorage (remove this)
+          # - name: FUNCTIONS_WORKER_RUNTIME (remove this)
+    scale:
+      minReplicas: 0
+      maxReplicas: 5
+      rules:
+        - name: servicebus-scaler
+          custom:
+            type: azure-servicebus
+            metadata:
+              queueName: new-video
+              namespace: YOUR_SERVICEBUS_NAMESPACE.servicebus.windows.net
+              messageCount: "10"
+              activationMessageCount: "1"
+            auth:
+              - secretRef: barclipservicebuskey
+                triggerParameter: connection

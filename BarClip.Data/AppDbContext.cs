@@ -3,13 +3,15 @@ using Microsoft.EntityFrameworkCore;
 namespace BarClip.Data;
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
-    public DbSet<Video> Videos { get; set; }
+    public DbSet<OriginalVideo> OriginalVideos { get; set; }
     public DbSet<TrimmedVideo> TrimmedVideos { get; set; }
+    public DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        Video.Configure(modelBuilder);
+        OriginalVideo.Configure(modelBuilder);
         TrimmedVideo.Configure(modelBuilder);
+        User.Configure(modelBuilder);
 
         base.OnModelCreating(modelBuilder);
     }

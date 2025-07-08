@@ -1,19 +1,27 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.17" />
+		<PackageReference Include="Microsoft.Identity.Web" Version="3.10.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\BarClip.Core\BarClip.Core.csproj" />
-    <ProjectReference Include="..\BarClip.Data\BarClip.Data.csproj" />
-    <ProjectReference Include="..\BarClip.Models\BarClip.Models.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\BarClip.Core\BarClip.Core.csproj" />
+		<ProjectReference Include="..\BarClip.Data\BarClip.Data.csproj" />
+		<ProjectReference Include="..\BarClip.Models\BarClip.Models.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="Models\PlateDetector.onnx">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
 </Project>

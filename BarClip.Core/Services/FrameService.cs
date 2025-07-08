@@ -1,5 +1,4 @@
-﻿using BarClip.Core.Services;
-using BarClip.Data.Schema;
+﻿using BarClip.Data.Schema;
 using FFMpegCore;
 using Microsoft.ML.OnnxRuntime;
 using SixLabors.ImageSharp.PixelFormats;
@@ -9,15 +8,26 @@ using Microsoft.ML.OnnxRuntime.Tensors;
 using SixLabors.ImageSharp.Processing;
 using System.Collections.Concurrent;
 using BarClip.Models.Domain;
+using BarClip.Models.Options;
+using Microsoft.Extensions.Options;
+using BarClip.Models.Requests;
+
+namespace BarClip.Core.Services;
 
 public class FrameService
 {
-    public async Task<List<Frame>> ExtractFrames(Video originalVideo) // medium
+    private readonly string _onnxModelPath;
+
+
+    public FrameService(IOptions<OnnxModelOptions> options)
+    {
+        _onnxModelPath = Path.Combine(AppContext.BaseDirectory, options.Value.Path);
+    }
+    public async Task<List<Frame>> ExtractFrames(OriginalVideoRequest originalVideo) // medium
     {
         string tempFramePath = Path.Combine(Path.GetTempPath(), "frames");
         Directory.CreateDirectory(tempFramePath);
 
-        // Get video info to determine framerate
         var videoStream = originalVideo.VideoAnalysis.VideoStreams.FirstOrDefault();
         if (videoStream == null)
             throw new Exception("No video stream found");
@@ -46,7 +56,7 @@ public class FrameService
 
     public List<Frame> CreateFramesFromPath(string tempFramePath)
     {
-        var session = new InferenceSession(@"C:\Users\19139\runs\detect\train\weights\best.onnx");
+        var session = new InferenceSession(_onnxModelPath);
 
         var frames = new ConcurrentBag<Frame>();
 
@@ -69,16 +79,15 @@ public class FrameService
             }
             finally
             {
-                File.Delete(file);
+                if (File.Exists(file))
+                    File.Delete(file);
             }
         });
 
-        // After all frames processed, assign frame numbers in correct order:
         var orderedFrames = frames.OrderBy(f => GetFrameNumber(f.FilePath))
                                   .Select((f, index) => { f.FrameNumber = index; return f; })
                                   .ToList();
 
-        // Clean up temp directory
         if (Directory.Exists(tempFramePath))
         {
             Directory.Delete(tempFramePath, true);

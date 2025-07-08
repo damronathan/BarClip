@@ -1,6 +1,9 @@
 ﻿using BarClip.Data.Schema;
 using FFMpegCore;
 using BarClip.Models.Domain;
+using BarClip.Models.Options;
+using Microsoft.Extensions.Options;
+using BarClip.Models.Requests;
 namespace BarClip.Core.Services;
 
 public class TrimService
@@ -10,9 +13,11 @@ public class TrimService
     public TrimService(StorageService storageService)
     {
         _storageService = storageService;
+
+        var ffmpegFullPath = Path.Combine(AppContext.BaseDirectory);
     }
 
-    public async Task<TrimmedVideo> Trim(Video video)
+    public async Task<TrimmedVideoRequest> Trim(OriginalVideoRequest video)
         {
         if (video.TrimStart == TimeSpan.Zero)
         {
@@ -20,12 +25,12 @@ public class TrimService
         }
 
         string tempTrimmedVideoPath = Path.GetTempPath();
+        var id = Guid.NewGuid();
 
-        TrimmedVideo trimmedVideo = new()
+        TrimmedVideoRequest trimmedVideo = new()
         {
-            Id = Guid.NewGuid(),
-            Name = $"{DateTime.Now}",
-            FilePath = Path.Combine(tempTrimmedVideoPath, "trimmed-video.mp4"),
+            Id = id,
+            FilePath = Path.Combine(tempTrimmedVideoPath, $"{id}.mp4"),
             OriginalVideo = video,
             OriginalVideoId = video.Id,
             Duration = video.TrimFinish - video.TrimStart
@@ -34,32 +39,37 @@ public class TrimService
         try
         {
             await FFMpegArguments
-                .FromFileInput(video.FilePath)
+                .FromFileInput(video.FilePath, true, options => options
+                .Seek(video.TrimStart))
                 .OutputToFile(trimmedVideo.FilePath, overwrite: true, options => options
-                .Seek(video.TrimStart)
                 .WithDuration(trimmedVideo.Duration)
-                .WithCustomArgument("-c copy"))
+                .WithCustomArgument("-c:v copy -c:a aac"))
                 .ProcessAsynchronously();
+
+            await _storageService.UploadVideoAsync(trimmedVideo.Id, trimmedVideo.FilePath, "trimmedvideos");
         }
         catch (Exception ex)
         {
             throw new Exception($"Error trimming video: {ex.Message}");
         }
+        finally
+        {
+            File.Delete(video.FilePath);
+            File.Delete(trimmedVideo.FilePath);
+        }
 
-        await _storageService.UploadVideoAsync(trimmedVideo.Id, trimmedVideo.FilePath, "trimmedvideos");
 
         return trimmedVideo;
     }
 
-    private Video SetTrim(Video video)
+    private void SetTrim(OriginalVideoRequest video)
     {
         int frameNumber = GetStartFrame(video);
         video.TrimStart = TimeSpan.FromSeconds(frameNumber);
         video.TrimFinish = GetTrimFinish(frameNumber, video);
-        return video;
     }
 
-    private static int GetStartFrame(Video video)
+    private static int GetStartFrame(OriginalVideoRequest video)
     {
         float yValue = 0f;
         bool initialYFound = false;
@@ -91,70 +101,100 @@ public class TrimService
         return Math.Max(frameNumber - 3, 0);
     }
 
-    private static TimeSpan GetTrimFinish(int trim, Video video)
+    private static TimeSpan GetTrimFinish(int trim, OriginalVideoRequest video)
     {
         PlateDetection? previousDetection = null;
 
+        bool lastDetectionIsCurrent = false;
+
+        //Loop starting from the end of the video
         for (int i = video.Frames.Count - 1; i >= trim; i--)
-        {
+        { 
             Frame frame = video.Frames[i];
 
             if (frame.PlateDetections.Count > 0)
             {
-                PlateDetection currentDetection = SelectBestDetection(frame, previousDetection);
-                if (currentDetection == null)
+                (PlateDetection currentDetection, lastDetectionIsCurrent) = SelectBestDetection(frame, previousDetection, lastDetectionIsCurrent);
+
+                //Only null if no detection found yet
+                if (currentDetection is null)
                 {
                     continue;
                 }
 
-                if (previousDetection != null)
+                if (previousDetection is not null)
                 {
+                    //If plate has moved up or down
                     if (Math.Abs(currentDetection.Y - previousDetection.Y) > 50f)
                     {
-                        return TimeSpan.FromSeconds(frame.FrameNumber + 3);
+                        if (lastDetectionIsCurrent is false)
+                        {
+                            //If this is past the second detection, create the trim point
+                            return TimeSpan.FromSeconds(frame.FrameNumber + 3);
+                        }
+                        else
+                        {
+                            //If first 2 detections have vertical movement, return whole video.
+                            return TimeSpan.FromSeconds(video.Frames.Last().FrameNumber);
+                        }
+
                     }
+
                 }
 
                 previousDetection = currentDetection;
             }
-            continue;
         }
         return TimeSpan.FromSeconds(video.Frames.Last().FrameNumber - 2);
     }
 
     private static PlateDetection SelectBestDetection(Frame frame, PlateDetection referenceDetection)
     {
+        var (detection, _) = SelectBestDetection(frame, referenceDetection, false);
+        return detection;
+    }
+    private static (PlateDetection, bool) SelectBestDetection(Frame frame, PlateDetection referenceDetection, bool lastDetectionIsCurrent)
+    {
+        //If no detections in frame, return null or reference detection
         if (frame.PlateDetections is null)
-            return referenceDetection;
+            return (referenceDetection, lastDetectionIsCurrent);
 
-        if (referenceDetection == null)
-            return frame.PlateDetections.OrderByDescending(pd => pd.Confidence).First();
+        //If it is the first frame, or no detections yet, reference detection will be null
+        //Return the best detection from the frame, this is the last detection
+        if (referenceDetection is null)
+        {
+            var lastDetection = frame.PlateDetections.OrderByDescending(pd => pd.Confidence).First();
+            return (lastDetection, true);
+        }
 
+        //Filters out the second plate
         var candidateDetections = frame.PlateDetections
         .Where(pd => Math.Abs(pd.X - referenceDetection.X) < 50)
         .ToList();
 
+        //Selects the current plate. Checks to make sure the second isn't close enough to make the list
         if (candidateDetections.Any())
         {
-            return candidateDetections.OrderBy(pd => Math.Abs(pd.X - referenceDetection.X)).First();
+            var currentDetection = candidateDetections.OrderBy(pd => Math.Abs(pd.X - referenceDetection.X)).First();
+            return (currentDetection, false);
         }
 
+        //Allows second plate to be selected if close enough y value to first plate after 5th frame
+        //The y check is to prevent false movement triggers
+        //sometimes first plate will be obstructed and second plate is valid to check height change.
         if (frame.FrameNumber > 5)
         {
             var closestByX = frame.PlateDetections.OrderBy(pd => Math.Abs(pd.X - referenceDetection.X)).First();
 
             if (Math.Abs(closestByX.Height - referenceDetection.Height) < 20)
             {
-                return closestByX;
+                return (closestByX, false);
             }
             else
             {
-                return referenceDetection;
+                return (referenceDetection, false);
             }
         }
-
-
-
-        return referenceDetection;
+        return (referenceDetection, false);
     }
 }

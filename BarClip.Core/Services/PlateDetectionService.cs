@@ -4,40 +4,37 @@ using Microsoft.ML.OnnxRuntime;
 
 namespace BarClip.Core.Services;
 
-public class PlateDetectionService()
+public class PlateDetectionService
 {
     public static List<PlateDetection> GetDetections(Frame frame, InferenceSession session)
     {
-        var detections = new List<PlateDetection>();
-
-        detections = RunInference(frame.InputValue, session);
-
-        frame.PlateDetections = detections;
-
-        return detections;
+        return RunInference(frame.InputValue, session);
     }
     private static List<PlateDetection> RunInference(NamedOnnxValue input, InferenceSession session)
     {
+        const float ConfidenceThreshold = 0.8f;
+
         var plateDetections = new List<PlateDetection>();
-        var detections = new List<(int index, float confidence, float xValue)>();
+        var filteredDetections = new List<(int index, float confidence, float xValue)>();
 
         using var outputs = session.Run([input]);
         var outputTensor = outputs[0].AsTensor<float>();
 
-        for (int i = 0; i < 8400; i++)
+        int numDetections = outputTensor.Dimensions[2];
+        for (int i = 0; i < numDetections; i++)
         {
             float confidence = outputTensor[0, 4, i];
             float xValue = outputTensor[0, 0, i];
 
-            if (confidence > 0.8f)
+            if (confidence > ConfidenceThreshold)
             {
-                detections.Add((i, confidence, xValue));
+                filteredDetections.Add((i, confidence, xValue));
             }
         }
 
         var groupedDetections = new List<List<(int index, float confidence, float xValue)>>();
 
-        foreach (var detection in detections)
+        foreach (var detection in filteredDetections)
         {
             var existingGroup = groupedDetections.FirstOrDefault(
                 group => group.Any(d => Math.Abs(d.xValue - detection.xValue) < 5f)

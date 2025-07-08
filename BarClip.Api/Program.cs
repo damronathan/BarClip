@@ -1,5 +1,7 @@
 using BarClip.Core;
-using Microsoft.AspNetCore.Cors.Infrastructure;
+using BarClip.Models.Options;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Identity.Web;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,29 +13,47 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.RegisterCoreServices(builder.Configuration);
+builder.Services.Configure<OnnxModelOptions>(
+    builder.Configuration.GetSection("OnnxModelOptions"));
+
+
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowReactApp",
+    options.AddPolicy("AllowAll",
         builder =>
         {
-            builder.WithOrigins("http://localhost:3000")
-                   .AllowAnyMethod()
-                   .AllowAnyHeader();
+            builder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .WithExposedHeaders("Content-Disposition");
         });
 });
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApi(options =>
+    {
+        builder.Configuration.Bind("AzureAd", options);
+        options.TokenValidationParameters.NameClaimType = "name";
+    },
+    options => { builder.Configuration.Bind("AzureAd", options); });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+
     app.UseSwagger();
     app.UseSwaggerUI();
-}
 
-app.UseCors("AllowReactApp");
 
-app.UseHttpsRedirection();
+app.UseCors("AllowAll");
 
+
+
+
+// app.UseHttpsRedirection(); // Comment out for development
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
