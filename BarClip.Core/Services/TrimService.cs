@@ -31,8 +31,6 @@ public class TrimService
         {
             Id = id,
             FilePath = Path.Combine(tempTrimmedVideoPath, $"{id}.mp4"),
-            OriginalVideo = video,
-            OriginalVideoId = video.Id,
             Duration = video.TrimFinish - video.TrimStart
         };
 

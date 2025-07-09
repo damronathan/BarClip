@@ -15,9 +15,11 @@ namespace BarClip.Api.Controllers;
 public class UserController : ControllerBase
 {
     private readonly StorageService _storageService;
-    public UserController(StorageService storageService)
+    private readonly UserRepository _repo;
+    public UserController(StorageService storageService, UserRepository repo)
     {
         _storageService = storageService;
+        _repo = repo;
     }
 
     //[HttpGet("me")]
@@ -45,10 +47,21 @@ public class UserController : ControllerBase
     public async Task<UploadSasUrlResponse> UploadSasUrl()
     {
         var claims = User.Claims.Select(c => new { c.Type, c.Value }).ToList();
-        var nameId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var id = claims[14].Value;
+        var email = User.FindFirst(ClaimTypes.Email)?.Value;
+
+        if (id is not null)
+        {
+            await _repo.VerifyOrCreateUser(id, email);
+        }
+        else
+        {
+            throw new ArgumentException("User is missing required claims Name Identifier or Email");
+        }
+
         var response = new UploadSasUrlResponse
         {
-            UserId = nameId,
+            UserId = id,
             UploadSasUrl = _storageService.GenerateUploadSasUrl(Guid.NewGuid())
         };
         return response;

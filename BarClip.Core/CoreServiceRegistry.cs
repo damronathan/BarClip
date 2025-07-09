@@ -41,9 +41,12 @@ namespace BarClip.Core
         }
         public static IServiceCollection RegisterFunctionServices(this IServiceCollection services)
         {
+
             RegisterServices(services);
 
             RegisterExternalServices(services);
+            services.AddSingleton<IApiClientService, ApiClientService>();
+
 
             return services;
         }

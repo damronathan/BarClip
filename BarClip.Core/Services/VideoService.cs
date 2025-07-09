@@ -7,6 +7,11 @@ using BarClip.Data.Schema;
 
 namespace BarClip.Core.Services;
 
+public interface IVideoService
+{
+    Task<SaveVideosRequest> TrimVideoFromStorage(string messageText);
+}
+
 public class VideoService : IVideoService
 {
     private readonly StorageService _storageService;
@@ -29,12 +34,10 @@ public class VideoService : IVideoService
         var originalVideo = new OriginalVideoRequest()
         {
             Id = Guid.NewGuid(),
-            Name = DateTime.Now.ToString() + Path.GetExtension(fileName),
             FilePath = videoFilePath,
+            VideoAnalysis = await FFProbe.AnalyseAsync(videoFilePath),
             UploadedAt = DateTime.Now,
-            TrimmedVideos = []
         };
-        originalVideo.VideoAnalysis = await FFProbe.AnalyseAsync(videoFilePath);
 
         originalVideo.Frames = await _frameService.ExtractFrames(originalVideo);
 
@@ -42,11 +45,7 @@ public class VideoService : IVideoService
 
         var trimmedVideo = await _trimService.Trim(originalVideo);
 
-        originalVideo.TrimmedVideos.Add(trimmedVideo);
-
         originalVideo.CurrentTrimmedVideoId = trimmedVideo.Id;
-
-        var url = _storageService.GenerateDownloadSasUrl(trimmedVideo.Id);
 
         var request = new SaveVideosRequest
         {
@@ -57,6 +56,8 @@ public class VideoService : IVideoService
 
         return request;
     }
+
+
 
     //public async Task<string> TrimVideo(IFormFile originalVideoFormFile)
     //{

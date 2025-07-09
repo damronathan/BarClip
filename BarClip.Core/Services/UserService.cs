@@ -12,9 +12,9 @@ public class UserService
         _userRepository = userRepository;
     }
 
-    public async Task<User> GetOrCreateUserAsync(string azureB2CId, string? email = null)
+    public async Task<User> GetOrCreateUserAsync(string nameIdentifier, string? email = null)
     {
-        var existingUser = await _userRepository.GetByAzureB2CIdAsync(azureB2CId);
+        var existingUser = await _userRepository.GetByNameIdentifierAsync(nameIdentifier);
 
         if (existingUser != null)
         {
@@ -28,10 +28,8 @@ public class UserService
 
         var newUser = new User
         {
-            Id = Guid.NewGuid(),
-            AzureB2CId = azureB2CId,
-            Email = email,
-            
+            Id = nameIdentifier,
+            Email = email,          
         };
 
         await _userRepository.CreateAsync(newUser);

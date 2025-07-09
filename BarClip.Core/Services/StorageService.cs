@@ -13,7 +13,7 @@ public class StorageService
         _blobServiceClient = blobServiceClient;
     }
 
-    public async Task<(string, Guid)> DownloadVideoAsync(string fileName, string containerName)
+    public async Task<(string, string)> DownloadVideoAsync(string fileName, string containerName)
     {
         string tempFilePath = Path.GetTempPath();
 
@@ -71,7 +71,7 @@ public class StorageService
 
         var blobClient = containerClient.GetBlobClient(blobName.ToString() + ".mp4");
 
-        var sasUri = blobClient.GenerateSasUri(BlobSasPermissions.Read, DateTimeOffset.UtcNow.AddHours(1));
+        var sasUri =  blobClient.GenerateSasUri(BlobSasPermissions.Read, DateTimeOffset.UtcNow.AddHours(1));
 
         return sasUri.ToString();
     }
@@ -84,14 +84,16 @@ public class StorageService
 
         var response = await blobClient.DeleteIfExistsAsync();
     }
-    private static Guid GetRequiredGuidFromMetadata(IDictionary<string, string> metadata, string key)
+    private static string GetRequiredGuidFromMetadata(IDictionary<string, string> metadata, string key)
     {
         if (!metadata.TryGetValue(key, out var value))
-            return Guid.Empty;
+        {
+            throw new Exception("No userId");
+        }
+        return value;
+            
 
-        if (!Guid.TryParse(value, out var guid))
-            return Guid.Empty;
 
-        return guid;
+
     }
 }

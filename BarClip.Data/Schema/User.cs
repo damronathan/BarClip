@@ -4,9 +4,8 @@ namespace BarClip.Data.Schema;
 
 public class User
 {
-    public Guid Id { get; set; }
-    public string Email { get; set; }
-    public string AzureB2CId { get; set; }
+    public string Id { get; set; }
+    public string? Email { get; set; }
     public List<TrimmedVideo>? TrimmedVideos { get; set; }
     public List<OriginalVideo>? OriginalVideos { get; set; }
     public static void Configure(ModelBuilder modelBuilder)
@@ -18,7 +17,8 @@ public class User
             entity.HasMany(v => v.TrimmedVideos)
                   .WithOne(t => t.User)
                   .HasForeignKey(t => t.UserId)
-                  .OnDelete(DeleteBehavior.Cascade);
+                  .OnDelete(DeleteBehavior.NoAction);
+
             entity.HasMany(v => v.OriginalVideos)
                   .WithOne(t => t.User)
                   .HasForeignKey(t => t.UserId)

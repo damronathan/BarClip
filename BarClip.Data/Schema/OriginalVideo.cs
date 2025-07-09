@@ -5,9 +5,8 @@ namespace BarClip.Data.Schema
     public class OriginalVideo
     {
         public Guid Id { get; set; }
-        public Guid UserId { get; set; }
+        public string UserId { get; set; }
         public required User User { get; set; }
-        public required string Name { get; set; }
         public DateTime UploadedAt { get; set; }
         public TimeSpan TrimStart { get; set; }
         public TimeSpan TrimFinish { get; set; }
@@ -25,6 +24,11 @@ namespace BarClip.Data.Schema
                       .WithOne(t => t.OriginalVideo)
                       .HasForeignKey(t => t.OriginalVideoId)
                       .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(o => o.User)
+                    .WithMany(u => u.OriginalVideos)
+                    .HasForeignKey(o => o.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

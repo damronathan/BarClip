@@ -9,19 +9,21 @@ public class BarClipQueueTrigger
 {
     private readonly ILogger<BarClipQueueTrigger> _logger;
     private IVideoService _videoService;
+    private IApiClientService _client;
 
-    public BarClipQueueTrigger(ILogger<BarClipQueueTrigger> logger, IVideoService videoService)
+    public BarClipQueueTrigger(ILogger<BarClipQueueTrigger> logger, IVideoService videoService, IApiClientService client)
     {
         _logger = logger;
         _videoService = videoService;
+        _client = client;
     }
 
     [Function(nameof(BarClipQueueTrigger))]
 
     public async Task Run([QueueTrigger("new-video", Connection = "AzureWebJobsStorage")] QueueMessage message)
-    {
+        {
         var request = await _videoService.TrimVideoFromStorage(message.MessageText);
-
+        var response = await _client.SaveVideosAsync(request);
     }
 
 }

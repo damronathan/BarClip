@@ -27,7 +27,7 @@ public class VideoRepository
             .FirstOrDefaultAsync(v => v.CurrentTrimmedVideoId == trimmedVideoId);
     }
 
-    public async Task SaveVideosAsync(SaveVideosRequest request)
+    public async Task<string> SaveVideosAsync(SaveVideosRequest request)
     {
         var user = await _userRepository.GetUserByIdAsync(request.UserId);
 
@@ -36,7 +36,6 @@ public class VideoRepository
             Id = request.OriginalVideo.Id,
             UserId = request.UserId,
             User = user,
-            Name = request.OriginalVideo.Name,
             UploadedAt = request.OriginalVideo.UploadedAt,
             TrimStart = request.OriginalVideo.TrimStart,
             TrimFinish = request.OriginalVideo.TrimFinish,
@@ -88,5 +87,7 @@ public class VideoRepository
         }
 
         await SaveChangesAsync();
+
+        return _storageService.GenerateDownloadSasUrl(request.TrimmedVideo.Id);
     }
 }

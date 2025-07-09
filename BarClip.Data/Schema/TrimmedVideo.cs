@@ -1,7 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-using Microsoft.Identity.Client;
-using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BarClip.Data.Schema
@@ -9,15 +6,11 @@ namespace BarClip.Data.Schema
     public class TrimmedVideo
     {
         public Guid Id { get; set; }
-        public Guid UserId { get; set; }
+        public string UserId { get; set; }
         public required User User { get; set; }
-
         public Guid OriginalVideoId { get; set; }
         public OriginalVideo? OriginalVideo { get; set; }
         public TimeSpan Duration { get; set; }
-
-        [NotMapped]
-        public string? FilePath { get; set; }
 
 
 
@@ -31,6 +24,11 @@ namespace BarClip.Data.Schema
                     .WithMany(v => v.TrimmedVideos)
                     .HasForeignKey(t => t.OriginalVideoId)
                     .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(t => t.User)
+                    .WithMany(u => u.TrimmedVideos)
+                    .HasForeignKey(t => t.UserId)
+                    .OnDelete(DeleteBehavior.NoAction);
 
             });
         }

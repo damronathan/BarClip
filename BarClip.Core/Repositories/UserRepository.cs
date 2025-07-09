@@ -1,4 +1,5 @@
-﻿using BarClip.Data;
+﻿using Azure.Core;
+using BarClip.Data;
 using BarClip.Data.Schema;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,14 +12,14 @@ public class UserRepository
     {
         _context = context;
     }
-    public async Task<User> GetUserByIdAsync(Guid userId)
+    public async Task<User> GetUserByIdAsync(string userId)
     {
         return await _context.Users.FindAsync(userId);
     }
-    public async Task<User?> GetByAzureB2CIdAsync(string azureB2CId)
+    public async Task<User?> GetByNameIdentifierAsync(string nameIdentifier)
     {
         return await _context.Users
-            .FirstOrDefaultAsync(u => u.AzureB2CId == azureB2CId);
+            .FirstOrDefaultAsync(u => u.Id == nameIdentifier);
     }
     public async Task<User> CreateAsync(User user)
     {
@@ -46,7 +47,7 @@ public class UserRepository
         await _context.SaveChangesAsync();
         return user;
     }
-    public async Task DeleteUserAsync(Guid userId)
+    public async Task DeleteUserAsync(string userId)
     {
         var user = await GetUserByIdAsync(userId);
         if (user != null)
@@ -55,5 +56,20 @@ public class UserRepository
             await _context.SaveChangesAsync();
         }
         
+    }
+    public async Task VerifyOrCreateUser(string id, string email)
+    {
+        var existingUser = await GetUserByIdAsync(id);
+
+        if (existingUser is null)
+        {
+            var user = new User
+            {
+                Id = id,
+                Email = email
+            };
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+        }
     }
 }

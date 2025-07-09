@@ -1,6 +1,9 @@
+using BarClip.Api.Hubs;
 using BarClip.Core;
 using BarClip.Models.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Identity.Web;
 
 
@@ -12,29 +15,52 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSignalR();
 builder.Services.RegisterCoreServices(builder.Configuration);
 builder.Services.Configure<OnnxModelOptions>(
     builder.Configuration.GetSection("OnnxModelOptions"));
+builder.Services.AddResponseCompression(opts =>
+{
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+        ["application/octet-stream", "application/json"]);
+});
 
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
-        builder =>
-        {
-            builder
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .WithExposedHeaders("Content-Disposition");
-        });
+    options.AddPolicy("AllowSpecificOrigin", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:3000")  // <-- explicitly allow your client origin
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials()
+            .WithExposedHeaders("Content-Disposition");
+    });
 });
+builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApi(options =>
     {
         builder.Configuration.Bind("AzureAd", options);
-        options.TokenValidationParameters.NameClaimType = "name";
+        options.TokenValidationParameters.NameClaimType = "nameidentifier";
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+                var path = context.HttpContext.Request.Path;
+
+                if (!string.IsNullOrEmpty(accessToken) &&
+                    (path.StartsWithSegments("/videoStatus") ||
+                     path.StartsWithSegments("/videoStatus/negotiate")))
+                {
+                    context.Token = accessToken;
+                }
+                return Task.CompletedTask;
+            }
+        };
     },
     options => { builder.Configuration.Bind("AzureAd", options); });
 
@@ -45,8 +71,8 @@ var app = builder.Build();
     app.UseSwagger();
     app.UseSwaggerUI();
 
-
-app.UseCors("AllowAll");
+app.UseRouting();
+app.UseCors("AllowSpecificOrigin");
 
 
 
@@ -55,6 +81,7 @@ app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapHub<VideoStatusHub>("/videoStatus");
 
 app.MapControllers();
 
