@@ -28,15 +28,15 @@ builder.Services.AddResponseCompression(opts =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowSpecificOrigin", policy =>
-    {
-        policy
-            .WithOrigins("http://localhost:3000")  // <-- explicitly allow your client origin
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-            .AllowCredentials()
-            .WithExposedHeaders("Content-Disposition");
-    });
+    options.AddPolicy("AllowAll",
+        builder =>
+        {
+            builder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .WithExposedHeaders("Content-Disposition");
+        });
 });
 builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
 
@@ -66,18 +66,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 
     app.UseSwagger();
     app.UseSwaggerUI();
 
 app.UseRouting();
-app.UseCors("AllowSpecificOrigin");
+app.UseCors("AllowAll");
 
 
 
 
-// app.UseHttpsRedirection(); // Comment out for development
+app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();

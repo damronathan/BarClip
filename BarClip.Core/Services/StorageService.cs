@@ -68,10 +68,25 @@ public class StorageService
     public string GenerateDownloadSasUrl(Guid blobName)
     {
         var containerClient = _blobServiceClient.GetBlobContainerClient("trimmedvideos");
-
         var blobClient = containerClient.GetBlobClient(blobName.ToString() + ".mp4");
 
-        var sasUri =  blobClient.GenerateSasUri(BlobSasPermissions.Read, DateTimeOffset.UtcNow.AddHours(1));
+        // Build the SAS
+        var sasBuilder = new BlobSasBuilder
+        {
+            BlobContainerName = containerClient.Name,
+            BlobName = blobClient.Name,
+            Resource = "b", // 'b' for blob
+            StartsOn = DateTimeOffset.UtcNow.AddMinutes(-5),
+            ExpiresOn = DateTimeOffset.UtcNow.AddHours(1)
+        };
+
+        sasBuilder.SetPermissions(BlobSasPermissions.Read);
+
+        // Set Content-Disposition for download
+        sasBuilder.ContentDisposition = $"attachment; filename={blobName}.mp4";
+
+        // Generate SAS
+        var sasUri = blobClient.GenerateSasUri(sasBuilder);
 
         return sasUri.ToString();
     }
