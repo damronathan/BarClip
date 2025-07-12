@@ -61,10 +61,6 @@ public class ApiClientService : IApiClientService
         }
 
         return response;
-
-
-
-        return response;
     }
 
     private async Task<string> GetAccessTokenAsync()

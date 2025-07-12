@@ -31,7 +31,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowSpecificOrigin", policy =>
     {
         policy
-            .WithOrigins("https://www.barclip.com")  // <-- explicitly allow your client origin
+            .WithOrigins("https://www.barclip.com")
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials()
@@ -77,7 +77,7 @@ app.UseCors("AllowSpecificOrigin");
 
 
 
-// app.UseHttpsRedirection(); // Comment out for development
+app.UseHttpsRedirection(); // Comment out for development
 
 app.UseAuthentication();
 app.UseAuthorization();

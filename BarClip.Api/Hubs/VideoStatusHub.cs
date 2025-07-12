@@ -11,7 +11,6 @@ public class CustomUserIdProvider : IUserIdProvider
 {
     public string GetUserId(HubConnectionContext connection)
     {
-        // Return the claim value you want to use as user ID
         return connection.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
     }

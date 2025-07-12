@@ -46,10 +46,10 @@ public class VideoController : ControllerBase
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-        //if (string.IsNullOrEmpty(userId))
-        //{
-        //    throw new ArgumentException("User identification not found");
-        //}
+        if (string.IsNullOrEmpty(userId))
+        {
+            throw new ArgumentException("User identification not found");
+        }
 
         var url = _storageService.GenerateUploadSasUrl(Guid.NewGuid());
 
