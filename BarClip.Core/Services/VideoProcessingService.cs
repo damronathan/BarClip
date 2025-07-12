@@ -7,18 +7,18 @@ using BarClip.Data.Schema;
 
 namespace BarClip.Core.Services;
 
-public interface IVideoService
+public interface IVideoProcessingService
 {
     Task<SaveVideosRequest> TrimVideoFromStorage(string messageText);
 }
 
-public class VideoService : IVideoService
+public class VideoProcessingService : IVideoProcessingService
 {
     private readonly StorageService _storageService;
     private readonly TrimService _trimService;
     private readonly FrameService _frameService;
 
-    public VideoService(StorageService storageService, TrimService trimService, FrameService frameService)
+    public VideoProcessingService(StorageService storageService, TrimService trimService, FrameService frameService)
     {
         _storageService = storageService;
         _trimService = trimService;

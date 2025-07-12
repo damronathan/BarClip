@@ -14,20 +14,18 @@ namespace BarClip.Api.Controllers;
 [Authorize]
 public class VideoController : ControllerBase
 {
-    private readonly VideoRepository _repo;
+    private readonly IVideoDataService _service;
     private readonly IHubContext<VideoStatusHub> _hubContext;
-    private readonly StorageService _storageService;
-    public VideoController(VideoRepository repo, IHubContext<VideoStatusHub> hubContext, StorageService storageService)
+    public VideoController(IVideoDataService service, IHubContext<VideoStatusHub> hubContext)
     {
-        _repo = repo;
+        _service = service;
         _hubContext = hubContext;
-        _storageService = storageService;
     }
 
     [HttpPost("save-videos")]
     public async Task<IActionResult> SaveVideos([FromBody] SaveVideosRequest request)
     {
-        var url = _storageService.GenerateDownloadSasUrl(request.TrimmedVideo.Id);
+        var url = _service.GetDownloadSasUrl(request.TrimmedVideo.Id);
 
         if (string.IsNullOrEmpty(url))
         {
@@ -36,7 +34,7 @@ public class VideoController : ControllerBase
 
         await _hubContext.Clients.User(request.UserId).SendAsync("TrimSucceeded", url);
 
-        await _repo.SaveVideosAsync(request);
+        await _service.SaveVideos(request);
 
         return Ok(new { Message = "Videos saved successfully." });
     }
@@ -51,7 +49,7 @@ public class VideoController : ControllerBase
             throw new ArgumentException("User identification not found");
         }
 
-        var url = _storageService.GenerateUploadSasUrl(Guid.NewGuid());
+        var url = _service.GetUploadSasUrl(Guid.NewGuid());
 
         if (string.IsNullOrEmpty(url))
         {

@@ -57,7 +57,7 @@ namespace BarClip.Core
 
         private static void RegisterServices(IServiceCollection services)
         {
-            services.AddScoped<IVideoService, VideoService>();
+            services.AddScoped<IVideoProcessingService, VideoProcessingService>();
             services.AddScoped<PlateDetectionService>();
             services.AddScoped<StorageService>();
             services.AddScoped<TrimService>();
