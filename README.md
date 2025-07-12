@@ -1,7 +1,7 @@
 # BarClip
 
 ## Overview
-BarClip is a platform that automates video trimming for weightlifters using computer vision to determine barbell movement. This repo contains the React web application.
+BarClip is a platform that automates video trimming for weightlifters using computer vision to determine barbell movement. This repo contains the back end source code.
 
 ## Live MVP
 [Try BarClip here](https://www.barclip.com)
