@@ -8,10 +8,10 @@ namespace BarClipFunction;
 public class BarClipQueueTrigger
 {
     private readonly ILogger<BarClipQueueTrigger> _logger;
-    private IVideoService _videoService;
+    private IVideoProcessingService _videoService;
     private IApiClientService _client;
 
-    public BarClipQueueTrigger(ILogger<BarClipQueueTrigger> logger, IVideoService videoService, IApiClientService client)
+    public BarClipQueueTrigger(ILogger<BarClipQueueTrigger> logger, IVideoProcessingService videoService, IApiClientService client)
     {
         _logger = logger;
         _videoService = videoService;
