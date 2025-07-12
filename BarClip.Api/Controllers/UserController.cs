@@ -43,27 +43,5 @@ public class UserController : ControllerBase
     //    //});
     //}
 
-    [HttpGet("upload-sas-url")]
-    public async Task<UploadSasUrlResponse> UploadSasUrl()
-    {
-        var claims = User.Claims.Select(c => new { c.Type, c.Value }).ToList();
-        var id = claims[14].Value;
-        var email = User.FindFirst(ClaimTypes.Email)?.Value;
-
-        if (id is not null)
-        {
-            await _repo.VerifyOrCreateUser(id, email);
-        }
-        else
-        {
-            throw new ArgumentException("User is missing required claims Name Identifier or Email");
-        }
-
-        var response = new UploadSasUrlResponse
-        {
-            UserId = id,
-            UploadSasUrl = _storageService.GenerateUploadSasUrl(Guid.NewGuid())
-        };
-        return response;
-    }
+    
 }

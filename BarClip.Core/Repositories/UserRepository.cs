@@ -57,19 +57,22 @@ public class UserRepository
         }
         
     }
-    public async Task VerifyOrCreateUser(string id, string email)
+    public async Task<User> VerifyOrCreateUser(string id)
     {
         var existingUser = await GetUserByIdAsync(id);
 
-        if (existingUser is null)
+        if (existingUser is not null)
+        {
+            return existingUser;
+        }
+        else
         {
             var user = new User
             {
                 Id = id,
-                Email = email
             };
             _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            return user;
         }
     }
 }

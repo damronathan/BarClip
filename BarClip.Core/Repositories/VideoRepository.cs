@@ -27,9 +27,9 @@ public class VideoRepository
             .FirstOrDefaultAsync(v => v.CurrentTrimmedVideoId == trimmedVideoId);
     }
 
-    public async Task<string> SaveVideosAsync(SaveVideosRequest request)
+    public async Task SaveVideosAsync(SaveVideosRequest request)
     {
-        var user = await _userRepository.GetUserByIdAsync(request.UserId);
+        var user = await _userRepository.VerifyOrCreateUser(request.UserId);
 
         var originalVideo = new OriginalVideo
         {
@@ -87,7 +87,5 @@ public class VideoRepository
         }
 
         await SaveChangesAsync();
-
-        return _storageService.GenerateDownloadSasUrl(request.TrimmedVideo.Id);
     }
 }
