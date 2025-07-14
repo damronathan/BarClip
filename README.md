@@ -45,7 +45,7 @@ BarClip is a platform that automates video trimming for weightlifters using comp
 ### Infrastructure
 - Cloudflare (React frontend hosting)
 - Azure App Service (ASP.NET Core Web API hosting)
-- Docker (containerization)
+- Docker/DockerHub (containerization and hosting)
 - Azure Container Apps (Azure Function hosting)
 - Azure SQL Server (database hosting)
 - Azure Storage Account (cloud storage)
