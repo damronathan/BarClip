@@ -37,9 +37,6 @@ BarClip is a platform that automates video trimming for weightlifters using comp
 
 ### Authentication
 - Microsoft Entra External ID
-
-### Security
-- Microsoft Entra External ID for user authentication
 - App role authentication for Azure Functions
 
 ### Infrastructure
