@@ -1,0 +1,27 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BarClip.Maui.SessionLibrary"
+             Title="Sessions">
+
+    <CollectionView ItemsSource="{Binding Sessions}" Margin="10">
+        <CollectionView.ItemTemplate>
+            <DataTemplate>
+                <Frame Margin="5" Padding="12" CornerRadius="10" HasShadow="True" BorderColor="Transparent">
+                    <Frame.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnSessionTapped"/>
+                    </Frame.GestureRecognizers>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="{Binding Title}" 
+                               FontSize="30"
+                               FontAttributes="Bold"
+                               TextColor="#FFF"
+                               HorizontalOptions="Center"/>
+                        
+                    </VerticalStackLayout>
+                </Frame>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+    </CollectionView>
+
+</ContentPage>

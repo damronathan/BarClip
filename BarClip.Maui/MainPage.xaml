@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BarClip.Maui.MainPage">
+
+    <ScrollView>
+        <VerticalStackLayout
+            Padding="30,0"
+            Spacing="25"
+            VerticalOptions="Center"
+            >
+            <Label
+                Text="BarClip"
+                HeightRequest="100"
+                FontSize="70"
+                SemanticProperties.Description="Bar Clip Logo"
+                HorizontalOptions="Center"
+                FontAttributes="Bold"
+                />
+
+            <Button
+                x:Name="CreateBtn"
+                Text="Create Session" 
+                SemanticProperties.Hint="Prompts user to select files for new session"
+                Clicked="CreateSession"
+                HorizontalOptions="Fill"
+                BorderColor="White"
+                FontAttributes="Bold"
+                FontSize="40"
+                />
+            <Button
+                x:Name="SessionBtn"
+                Text="Session Library" 
+                SemanticProperties.Hint="Directs user to session library"
+                Clicked="NavigateToSessionLibrary"
+                HorizontalOptions="Fill"
+                BorderColor="White"
+                FontAttributes="Bold"
+                FontSize="40"
+                />
+            
+            
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
