@@ -1,4 +1,8 @@
 <Solution>
   <Project Path="BarClip.Core/BarClip.Core.csproj" />
   <Project Path="BarClip.Data/BarClip.Data.csproj" />
+  <Project Path="BarClip.Maui/BarClip.Maui.csproj">
+    <Deploy />
+  </Project>
+  <Project Path="BarClip.Models/BarClip.Models.csproj" />
 </Solution>

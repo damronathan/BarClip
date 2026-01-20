@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "dgSpecHash": "BqYnI1fvIyU=",
+  "success": true,
+  "projectFilePath": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Models\\BarClip.Models.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\19139\\.nuget\\packages\\ffmpegcore\\5.4.0\\ffmpegcore.5.4.0.nupkg.sha512",
+    "C:\\Users\\19139\\.nuget\\packages\\instances\\3.0.2\\instances.3.0.2.nupkg.sha512",
+    "C:\\Users\\19139\\.nuget\\packages\\microsoft.aspnetcore.http.features\\5.0.17\\microsoft.aspnetcore.http.features.5.0.17.nupkg.sha512",
+    "C:\\Users\\19139\\.nuget\\packages\\microsoft.extensions.primitives\\5.0.1\\microsoft.extensions.primitives.5.0.1.nupkg.sha512",
+    "C:\\Users\\19139\\.nuget\\packages\\microsoft.ml.onnxruntime\\1.23.2\\microsoft.ml.onnxruntime.1.23.2.nupkg.sha512",
+    "C:\\Users\\19139\\.nuget\\packages\\microsoft.ml.onnxruntime.managed\\1.23.2\\microsoft.ml.onnxruntime.managed.1.23.2.nupkg.sha512",
+    "C:\\Users\\19139\\.nuget\\packages\\system.numerics.tensors\\9.0.0\\system.numerics.tensors.9.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}
