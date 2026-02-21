@@ -40,7 +40,7 @@ public class FFMpegHelper
 
         .OutputToFile(processedVideo.FilePath, overwrite: true, options => options
             .WithDuration(processedVideo.Duration)
-            .WithCustomArgument($"-vf drawtext=text='{weightText}':fontfile='C\\:/Windows/Fonts/arial.ttf':fontcolor=white:bordercolor=black:borderw=16:fontsize=150:x=(w-text_w)/2:y=h-text_h-350")
+            .WithCustomArgument($"-vf drawtext=text='{weightText}':fontfile='C\\:/Windows/Fonts/arial.ttf':fontcolor=white:bordercolor=black:borderw=16:fontsize=85:x=w-text_w-10:y=h-text_h-20")
             .WithCustomArgument("-c:v hevc_nvenc -color_primaries bt2020 -color_trc arib-std-b67 -colorspace bt2020nc")
             .WithCustomArgument("-preset p4")
             .WithCustomArgument("-cq 20")

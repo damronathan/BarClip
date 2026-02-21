@@ -61,3 +61,4 @@ C:\BarClip.Main\repos\BarClip\BarClip.Core\obj\Debug\net10.0\BarClip.Core.dll
 C:\BarClip.Main\repos\BarClip\BarClip.Core\obj\Debug\net10.0\refint\BarClip.Core.dll
 C:\BarClip.Main\repos\BarClip\BarClip.Core\obj\Debug\net10.0\BarClip.Core.pdb
 C:\BarClip.Main\repos\BarClip\BarClip.Core\obj\Debug\net10.0\ref\BarClip.Core.dll
+C:\BarClip.Main\repos\BarClip\BarClip.Core\obj\Debug\net10.0\BarClip.Core.sourcelink.json

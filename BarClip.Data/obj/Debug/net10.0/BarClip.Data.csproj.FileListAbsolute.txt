@@ -61,3 +61,4 @@ C:\BarClip.Main\repos\BarClip\BarClip.Data\obj\Debug\net10.0\refint\BarClip.Data
 C:\BarClip.Main\repos\BarClip\BarClip.Data\obj\Debug\net10.0\BarClip.Data.pdb
 C:\BarClip.Main\repos\BarClip\BarClip.Data\obj\Debug\net10.0\BarClip.Data.genruntimeconfig.cache
 C:\BarClip.Main\repos\BarClip\BarClip.Data\obj\Debug\net10.0\ref\BarClip.Data.dll
+C:\BarClip.Main\repos\BarClip\BarClip.Data\obj\Debug\net10.0\BarClip.Data.sourcelink.json
