@@ -169,7 +169,7 @@ public partial class SessionPage : ContentPage
 
             var finalOutputPath = await _videoEditor.MergeVideos(_sessionFolderPaths, _sessionId);
 
-            await DisplayAlertAsync("Success", "Video processed successfully!", "OK");
+            await DisplayAlert("Success", "Video processed successfully!", "OK");
 
         }
         finally
@@ -179,7 +179,7 @@ public partial class SessionPage : ContentPage
     }
     private async Task OnDeleteSessionAsync()
     {
-        bool confirm = await Application.Current.MainPage.DisplayAlertAsync(
+        bool confirm = await Application.Current.MainPage.DisplayAlert(
             "Delete Session",
             "Are you sure you want to delete this session? This cannot be undone.",
             "Delete",

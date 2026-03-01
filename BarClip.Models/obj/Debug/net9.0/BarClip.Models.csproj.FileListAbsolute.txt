@@ -1,0 +1,13 @@
+C:\BarClip.Main\repos\BarClip\BarClip.Models\bin\Debug\net9.0\BarClip.Models.deps.json
+C:\BarClip.Main\repos\BarClip\BarClip.Models\bin\Debug\net9.0\BarClip.Models.dll
+C:\BarClip.Main\repos\BarClip\BarClip.Models\bin\Debug\net9.0\BarClip.Models.pdb
+C:\BarClip.Main\repos\BarClip\BarClip.Models\obj\Debug\net9.0\BarClip.Models.csproj.AssemblyReference.cache
+C:\BarClip.Main\repos\BarClip\BarClip.Models\obj\Debug\net9.0\BarClip.Models.GeneratedMSBuildEditorConfig.editorconfig
+C:\BarClip.Main\repos\BarClip\BarClip.Models\obj\Debug\net9.0\BarClip.Models.AssemblyInfoInputs.cache
+C:\BarClip.Main\repos\BarClip\BarClip.Models\obj\Debug\net9.0\BarClip.Models.AssemblyInfo.cs
+C:\BarClip.Main\repos\BarClip\BarClip.Models\obj\Debug\net9.0\BarClip.Models.csproj.CoreCompileInputs.cache
+C:\BarClip.Main\repos\BarClip\BarClip.Models\obj\Debug\net9.0\BarClip.Models.sourcelink.json
+C:\BarClip.Main\repos\BarClip\BarClip.Models\obj\Debug\net9.0\BarClip.Models.dll
+C:\BarClip.Main\repos\BarClip\BarClip.Models\obj\Debug\net9.0\refint\BarClip.Models.dll
+C:\BarClip.Main\repos\BarClip\BarClip.Models\obj\Debug\net9.0\BarClip.Models.pdb
+C:\BarClip.Main\repos\BarClip\BarClip.Models\obj\Debug\net9.0\ref\BarClip.Models.dll

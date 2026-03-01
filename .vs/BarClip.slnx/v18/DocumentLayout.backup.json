@@ -3,6 +3,22 @@
   "WorkspaceRootPath": "C:\\BarClip.Main\\repos\\BarClip\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{51454B99-C93D-1F3B-4677-38D561AE8448}|BarClip.Maui\\BarClip.Maui.csproj|c:\\barclip.main\\repos\\barclip\\barclip.maui\\sessionpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{51454B99-C93D-1F3B-4677-38D561AE8448}|BarClip.Maui\\BarClip.Maui.csproj|solutionrelative:barclip.maui\\sessionpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7D221288-3354-BEB0-8152-74618C36EF41}|BarClip.Core\\BarClip.Core.csproj|c:\\barclip.main\\repos\\barclip\\barclip.core\\barclip.core.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{7D221288-3354-BEB0-8152-74618C36EF41}|BarClip.Core\\BarClip.Core.csproj|solutionrelative:barclip.core\\barclip.core.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8E2C891E-F21A-AB70-6E3F-FC0D12A6D732}|BarClip.Models\\BarClip.Models.csproj|c:\\barclip.main\\repos\\barclip\\barclip.models\\barclip.models.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{8E2C891E-F21A-AB70-6E3F-FC0D12A6D732}|BarClip.Models\\BarClip.Models.csproj|solutionrelative:barclip.models\\barclip.models.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C3BA940F-3611-CCEC-1ECD-C293401D07E7}|BarClip.Data\\BarClip.Data.csproj|c:\\barclip.main\\repos\\barclip\\barclip.data\\barclip.data.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{C3BA940F-3611-CCEC-1ECD-C293401D07E7}|BarClip.Data\\BarClip.Data.csproj|solutionrelative:barclip.data\\barclip.data.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{51454B99-C93D-1F3B-4677-38D561AE8448}|BarClip.Maui\\BarClip.Maui.csproj|c:\\barclip.main\\repos\\barclip\\barclip.maui\\barclip.maui.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
       "RelativeMoniker": "D:0:0:{51454B99-C93D-1F3B-4677-38D561AE8448}|BarClip.Maui\\BarClip.Maui.csproj|solutionrelative:barclip.maui\\barclip.maui.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
@@ -43,18 +59,6 @@
       "RelativeMoniker": "D:0:0:{8E2C891E-F21A-AB70-6E3F-FC0D12A6D732}|BarClip.Models\\BarClip.Models.csproj|solutionrelative:barclip.models\\base\\baseentity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8E2C891E-F21A-AB70-6E3F-FC0D12A6D732}|BarClip.Models\\BarClip.Models.csproj|c:\\barclip.main\\repos\\barclip\\barclip.models\\barclip.models.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{8E2C891E-F21A-AB70-6E3F-FC0D12A6D732}|BarClip.Models\\BarClip.Models.csproj|solutionrelative:barclip.models\\barclip.models.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C3BA940F-3611-CCEC-1ECD-C293401D07E7}|BarClip.Data\\BarClip.Data.csproj|c:\\barclip.main\\repos\\barclip\\barclip.data\\barclip.data.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{C3BA940F-3611-CCEC-1ECD-C293401D07E7}|BarClip.Data\\BarClip.Data.csproj|solutionrelative:barclip.data\\barclip.data.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7D221288-3354-BEB0-8152-74618C36EF41}|BarClip.Core\\BarClip.Core.csproj|c:\\barclip.main\\repos\\barclip\\barclip.core\\barclip.core.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{7D221288-3354-BEB0-8152-74618C36EF41}|BarClip.Core\\BarClip.Core.csproj|solutionrelative:barclip.core\\barclip.core.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{7D221288-3354-BEB0-8152-74618C36EF41}|BarClip.Core\\BarClip.Core.csproj|c:\\barclip.main\\repos\\barclip\\barclip.core\\helpers\\filehelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{7D221288-3354-BEB0-8152-74618C36EF41}|BarClip.Core\\BarClip.Core.csproj|solutionrelative:barclip.core\\helpers\\filehelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
@@ -66,7 +70,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 246,
-          "SelectedChildIndex": 20,
+          "SelectedChildIndex": 15,
           "Children": [
             {
               "$type": "Bookmark",
@@ -130,19 +134,68 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "WindowsVideoEditor.cs",
-              "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Maui\\Platforms\\Windows\\Services\\WindowsVideoEditor.cs",
-              "RelativeDocumentMoniker": "BarClip.Maui\\Platforms\\Windows\\Services\\WindowsVideoEditor.cs",
-              "ToolTip": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Maui\\Platforms\\Windows\\Services\\WindowsVideoEditor.cs",
-              "RelativeToolTip": "BarClip.Maui\\Platforms\\Windows\\Services\\WindowsVideoEditor.cs",
-              "ViewState": "AgIAAA8AAAAAAAAAAAA5wCAAAAAfAAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "SessionPage.xaml.cs",
+              "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Maui\\SessionPage.xaml.cs",
+              "RelativeDocumentMoniker": "BarClip.Maui\\SessionPage.xaml.cs",
+              "ToolTip": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Maui\\SessionPage.xaml.cs",
+              "RelativeToolTip": "BarClip.Maui\\SessionPage.xaml.cs",
+              "ViewState": "AgIAALQAAAAAAAAAAAAowMQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-12T01:25:54.767Z"
+              "WhenOpened": "2026-03-01T17:19:48.538Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "PlateDetection.cs",
+              "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Models\\Domain\\PlateDetection.cs",
+              "RelativeDocumentMoniker": "BarClip.Models\\Domain\\PlateDetection.cs",
+              "ToolTip": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Models\\Domain\\PlateDetection.cs",
+              "RelativeToolTip": "BarClip.Models\\Domain\\PlateDetection.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-21T02:16:30.315Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
+              "Title": "BarClip.Maui.csproj",
+              "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Maui\\BarClip.Maui.csproj",
+              "RelativeDocumentMoniker": "BarClip.Maui\\BarClip.Maui.csproj",
+              "ToolTip": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Maui\\BarClip.Maui.csproj",
+              "RelativeToolTip": "BarClip.Maui\\BarClip.Maui.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAZAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-01-21T02:16:01.167Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "BarClip.Core.csproj",
+              "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Core\\BarClip.Core.csproj",
+              "RelativeDocumentMoniker": "BarClip.Core\\BarClip.Core.csproj",
+              "ToolTip": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Core\\BarClip.Core.csproj",
+              "RelativeToolTip": "BarClip.Core\\BarClip.Core.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAA+AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-01-21T02:15:28.499Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "BarClip.Data.csproj",
+              "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Data\\BarClip.Data.csproj",
+              "RelativeDocumentMoniker": "BarClip.Data\\BarClip.Data.csproj",
+              "ToolTip": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Data\\BarClip.Data.csproj",
+              "RelativeToolTip": "BarClip.Data\\BarClip.Data.csproj",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAA0AAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-01-21T02:15:51.969Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
               "Title": "PlateAnalysisService.cs",
               "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Core\\Services\\PlateAnalysisService.cs",
               "RelativeDocumentMoniker": "BarClip.Core\\Services\\PlateAnalysisService.cs",
@@ -155,18 +208,18 @@
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "FFMpegHelper.cs",
-              "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Maui\\Platforms\\Windows\\Helpers\\FFMpegHelper.cs",
-              "RelativeDocumentMoniker": "BarClip.Maui\\Platforms\\Windows\\Helpers\\FFMpegHelper.cs",
-              "ToolTip": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Maui\\Platforms\\Windows\\Helpers\\FFMpegHelper.cs",
-              "RelativeToolTip": "BarClip.Maui\\Platforms\\Windows\\Helpers\\FFMpegHelper.cs",
-              "ViewState": "AgIAABAAAAAAAAAAAAAUwCEAAAAdAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-24T19:48:51.686Z"
+              "Title": "BarClip.Models.csproj",
+              "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Models\\BarClip.Models.csproj",
+              "RelativeDocumentMoniker": "BarClip.Models\\BarClip.Models.csproj",
+              "ToolTip": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Models\\BarClip.Models.csproj",
+              "RelativeToolTip": "BarClip.Models\\BarClip.Models.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAABQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-01-21T02:16:06.382Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 11,
               "Title": "CreateLiftDto.cs",
               "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Models\\Dto\\CreateLiftDto.cs",
               "RelativeDocumentMoniker": "BarClip.Models\\Dto\\CreateLiftDto.cs",
@@ -178,32 +231,31 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "PlateDetection.cs",
-              "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Models\\Domain\\PlateDetection.cs",
-              "RelativeDocumentMoniker": "BarClip.Models\\Domain\\PlateDetection.cs",
-              "ToolTip": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Models\\Domain\\PlateDetection.cs",
-              "RelativeToolTip": "BarClip.Models\\Domain\\PlateDetection.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAsAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-21T02:16:30.315Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "BarClip.Maui.csproj",
-              "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Maui\\BarClip.Maui.csproj",
-              "RelativeDocumentMoniker": "BarClip.Maui\\BarClip.Maui.csproj",
-              "ToolTip": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Maui\\BarClip.Maui.csproj",
-              "RelativeToolTip": "BarClip.Maui\\BarClip.Maui.csproj",
-              "ViewState": "AgIAAAcAAAAAAAAAAAAEwBMAAAATAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-01-21T02:16:01.167Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 6,
+              "Title": "FFMpegHelper.cs",
+              "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Maui\\Platforms\\Windows\\Helpers\\FFMpegHelper.cs",
+              "RelativeDocumentMoniker": "BarClip.Maui\\Platforms\\Windows\\Helpers\\FFMpegHelper.cs",
+              "ToolTip": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Maui\\Platforms\\Windows\\Helpers\\FFMpegHelper.cs",
+              "RelativeToolTip": "BarClip.Maui\\Platforms\\Windows\\Helpers\\FFMpegHelper.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAAUwCEAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-24T19:48:51.686Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "WindowsVideoEditor.cs",
+              "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Maui\\Platforms\\Windows\\Services\\WindowsVideoEditor.cs",
+              "RelativeDocumentMoniker": "BarClip.Maui\\Platforms\\Windows\\Services\\WindowsVideoEditor.cs",
+              "ToolTip": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Maui\\Platforms\\Windows\\Services\\WindowsVideoEditor.cs",
+              "RelativeToolTip": "BarClip.Maui\\Platforms\\Windows\\Services\\WindowsVideoEditor.cs",
+              "ViewState": "AgIAAA8AAAAAAAAAAAA5wCAAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-12T01:25:54.767Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
               "Title": "FrameHelper.cs",
               "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Core\\Helpers\\FrameHelper.cs",
               "RelativeDocumentMoniker": "BarClip.Core\\Helpers\\FrameHelper.cs",
@@ -215,7 +267,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 9,
               "Title": "TrimService.cs",
               "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Core\\Services\\TrimService.cs",
               "RelativeDocumentMoniker": "BarClip.Core\\Services\\TrimService.cs",
@@ -227,7 +279,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 12,
               "Title": "Frame.cs",
               "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Models\\Domain\\Frame.cs",
               "RelativeDocumentMoniker": "BarClip.Models\\Domain\\Frame.cs",
@@ -239,7 +291,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 13,
               "Title": "BaseEntity.cs",
               "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Models\\Base\\BaseEntity.cs",
               "RelativeDocumentMoniker": "BarClip.Models\\Base\\BaseEntity.cs",
@@ -251,33 +303,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "BarClip.Models.csproj",
-              "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Models\\BarClip.Models.csproj",
-              "RelativeDocumentMoniker": "BarClip.Models\\BarClip.Models.csproj",
-              "ToolTip": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Models\\BarClip.Models.csproj",
-              "RelativeToolTip": "BarClip.Models\\BarClip.Models.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-01-21T02:16:06.382Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "BarClip.Data.csproj",
-              "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Data\\BarClip.Data.csproj",
-              "RelativeDocumentMoniker": "BarClip.Data\\BarClip.Data.csproj",
-              "ToolTip": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Data\\BarClip.Data.csproj",
-              "RelativeToolTip": "BarClip.Data\\BarClip.Data.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-01-21T02:15:51.969Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 14,
               "Title": "FileHelper.cs",
               "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Core\\Helpers\\FileHelper.cs",
               "RelativeDocumentMoniker": "BarClip.Core\\Helpers\\FileHelper.cs",
@@ -286,19 +312,6 @@
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-21T02:15:37.048Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "BarClip.Core.csproj",
-              "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Core\\BarClip.Core.csproj",
-              "RelativeDocumentMoniker": "BarClip.Core\\BarClip.Core.csproj",
-              "ToolTip": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Core\\BarClip.Core.csproj",
-              "RelativeToolTip": "BarClip.Core\\BarClip.Core.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-01-21T02:15:28.499Z",
-              "EditorCaption": ""
             }
           ]
         }
