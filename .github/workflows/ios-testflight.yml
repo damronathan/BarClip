@@ -55,6 +55,8 @@ jobs:
           -c Release \
           -r ios-arm64 \
           /p:ArchiveOnBuild=true \
+          /p:RuntimeIdentifier=ios-arm64 \
+          /p:PlatformTarget=arm64 \
           /p:CodesignKey="Apple Distribution" \
           /p:CodesignProvision="BarClip App Store"
           
