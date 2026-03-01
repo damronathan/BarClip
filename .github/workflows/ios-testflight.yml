@@ -53,6 +53,7 @@ jobs:
         dotnet publish BarClip.Maui/BarClip.Maui.csproj \
           -f net10.0-ios \
           -c Release \
+          -r ios-arm64 \
           /p:ArchiveOnBuild=true \
           /p:CodesignKey="Apple Distribution" \
           /p:CodesignProvision="BarClip App Store"
