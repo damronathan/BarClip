@@ -57,8 +57,10 @@ jobs:
           /p:ArchiveOnBuild=true \
           /p:RuntimeIdentifier=ios-arm64 \
           /p:PlatformTarget=arm64 \
+          /p:_RequireCodeSigning=false \
           /p:CodesignKey="Apple Distribution" \
-          /p:CodesignProvision="BarClip App Store"
+          /p:CodesignProvision="BarClip App Store" \
+          /p:IgnoreXcodeVersionCheck=true
           
     - name: Upload to TestFlight
       env:
