@@ -1,0 +1,6 @@
+*.p12
+*.key
+*.pem
+*.cer
+*.mobileprovision
+*.certSigningRequest
