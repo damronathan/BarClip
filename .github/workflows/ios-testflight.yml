@@ -16,7 +16,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '10.0.x'
+        dotnet-version: '9.0.x'
         
     - name: Install MAUI workload
       run: dotnet workload install maui
@@ -51,16 +51,14 @@ jobs:
     - name: Build iOS app
       run: |
         dotnet publish BarClip.Maui/BarClip.Maui.csproj \
-          -f net10.0-ios \
+          -f net9.0-ios \
           -c Release \
           -r ios-arm64 \
           /p:ArchiveOnBuild=true \
           /p:RuntimeIdentifier=ios-arm64 \
           /p:PlatformTarget=arm64 \
-          /p:_RequireCodeSigning=false \
           /p:CodesignKey="Apple Distribution" \
-          /p:CodesignProvision="BarClip App Store" \
-          /p:IgnoreXcodeVersionCheck=true
+          /p:CodesignProvision="BarClip App Store"
           
     - name: Upload to TestFlight
       env:
@@ -73,7 +71,7 @@ jobs:
         
         xcrun altool --upload-app \
           --type ios \
-          --file BarClip.Maui/bin/Release/net10.0-ios/ios-arm64/publish/*.ipa \
+          --file BarClip.Maui/bin/Release/net9.0-ios/ios-arm64/publish/*.ipa \
           --apiKey $API_KEY_ID \
           --apiIssuer $API_ISSUER_ID \
           --apiKeyPath $API_KEY_PATH
