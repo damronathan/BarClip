@@ -3,16 +3,16 @@
   "WorkspaceRootPath": "C:\\BarClip.Main\\repos\\BarClip\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{51454B99-C93D-1F3B-4677-38D561AE8448}|BarClip.Maui\\BarClip.Maui.csproj|c:\\barclip.main\\repos\\barclip\\barclip.maui\\barclip.maui.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{51454B99-C93D-1F3B-4677-38D561AE8448}|BarClip.Maui\\BarClip.Maui.csproj|solutionrelative:barclip.maui\\barclip.maui.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\BarClip.Main\\repos\\BarClip\\global.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:global.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{51454B99-C93D-1F3B-4677-38D561AE8448}|BarClip.Maui\\BarClip.Maui.csproj|c:\\barclip.main\\repos\\barclip\\barclip.maui\\barclip.maui.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|",
       "RelativeMoniker": "D:0:0:{51454B99-C93D-1F3B-4677-38D561AE8448}|BarClip.Maui\\BarClip.Maui.csproj|solutionrelative:barclip.maui\\barclip.maui.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{51454B99-C93D-1F3B-4677-38D561AE8448}|BarClip.Maui\\BarClip.Maui.csproj|c:\\barclip.main\\repos\\barclip\\barclip.maui\\barclip.maui.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{51454B99-C93D-1F3B-4677-38D561AE8448}|BarClip.Maui\\BarClip.Maui.csproj|solutionrelative:barclip.maui\\barclip.maui.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
     {
       "AbsoluteMoniker": "D:0:0:{51454B99-C93D-1F3B-4677-38D561AE8448}|BarClip.Maui\\BarClip.Maui.csproj|c:\\barclip.main\\repos\\barclip\\barclip.maui\\sessionpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -78,7 +78,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 246,
-          "SelectedChildIndex": 15,
+          "SelectedChildIndex": 19,
           "Children": [
             {
               "$type": "Bookmark",
@@ -142,7 +142,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "global.json",
               "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\global.json",
               "RelativeDocumentMoniker": "global.json",
@@ -155,7 +155,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "BarClip.Maui",
               "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Maui\\BarClip.Maui.csproj",
               "RelativeDocumentMoniker": "BarClip.Maui\\BarClip.Maui.csproj",
@@ -175,8 +175,7 @@
               "RelativeToolTip": "BarClip.Maui\\SessionPage.xaml.cs",
               "ViewState": "AgIAALQAAAAAAAAAAAAowMAAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-01T17:19:48.538Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-01T17:19:48.538Z"
             },
             {
               "$type": "Document",
@@ -192,13 +191,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
               "Title": "BarClip.Maui.csproj",
               "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Maui\\BarClip.Maui.csproj",
               "RelativeDocumentMoniker": "BarClip.Maui\\BarClip.Maui.csproj",
               "ToolTip": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Maui\\BarClip.Maui.csproj",
               "RelativeToolTip": "BarClip.Maui\\BarClip.Maui.csproj",
-              "ViewState": "AgIAADwAAAAAAAAAAAAAAAgAAAAZAAAAAAAAAA==",
+              "ViewState": "AgIAABIAAAAAAAAAAAAAABcAAAB3AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
               "WhenOpened": "2026-01-21T02:16:01.167Z",
               "EditorCaption": ""
