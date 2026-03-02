@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BarClip.Models")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7ab880916b16e025755633aa6c01760a29b5f009")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b32e161aeb76f51737973e037a2f324b76925fce")]
 [assembly: System.Reflection.AssemblyProductAttribute("BarClip.Models")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BarClip.Models")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

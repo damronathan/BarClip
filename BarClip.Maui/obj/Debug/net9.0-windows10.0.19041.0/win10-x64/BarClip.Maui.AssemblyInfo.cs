@@ -11,10 +11,14 @@
 using System;
 using System.Reflection;
 
+[assembly: System.Reflection.AssemblyMetadataAttribute("Microsoft.Maui.ApplicationModel.AppInfo.PackageName", "com.nathandamron.barclip.maui")]
+[assembly: System.Reflection.AssemblyMetadataAttribute("Microsoft.Maui.ApplicationModel.AppInfo.PublisherName", "User Name")]
+[assembly: System.Reflection.AssemblyMetadataAttribute("Microsoft.Maui.ApplicationModel.AppInfo.Name", "BarClip.Maui")]
+[assembly: System.Reflection.AssemblyMetadataAttribute("Microsoft.Maui.ApplicationModel.AppInfo.Version", "1.0.0.1")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("BarClip.Maui")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b6f1d357a6f410267a0e2fb2562a7be1f76ebf06")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0+b32e161aeb76f51737973e037a2f324b76925fce")]
 [assembly: System.Reflection.AssemblyProductAttribute("BarClip.Maui")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BarClip.Maui")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
