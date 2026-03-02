@@ -23,7 +23,7 @@ jobs:
         dotnet workload install maui --version 9.0.104
       
     - name: Restore dependencies
-      run: dotnet restore BarClip.slnx
+      run: dotnet restore BarClip.Maui/BarClip.Maui.csproj
       
     - name: Import certificate
       env:
