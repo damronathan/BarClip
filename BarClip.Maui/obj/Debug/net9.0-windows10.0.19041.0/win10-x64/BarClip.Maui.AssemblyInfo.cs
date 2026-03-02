@@ -18,7 +18,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BarClip.Maui")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0+7ab880916b16e025755633aa6c01760a29b5f009")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0+7776a32df2aa6efc6caeabdfdde216421d38d78c")]
 [assembly: System.Reflection.AssemblyProductAttribute("BarClip.Maui")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BarClip.Maui")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
