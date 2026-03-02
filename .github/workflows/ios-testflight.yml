@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: macos-latest
+    runs-on: macos-14
     
     steps:
     - name: Checkout code
@@ -16,12 +16,11 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '9.0.x'
+        dotnet-version: '9.0.104'
         
-    - name: Install MAUI workload with specific version
+    - name: Install specific workload version
       run: |
-        dotnet workload install maui-ios --version 9.0.100
-        dotnet workload install ios --version 9.0.100
+        dotnet workload install maui --version 9.0.104
       
     - name: Restore dependencies
       run: dotnet restore
