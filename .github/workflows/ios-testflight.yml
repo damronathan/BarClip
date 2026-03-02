@@ -59,7 +59,7 @@ jobs:
           /p:RuntimeIdentifier=ios-arm64 \
           /p:PlatformTarget=arm64 \
           /p:CodesignKey="Apple Distribution" \
-          /p:CodesignProvision="BarClip App Store"
+          /p:CodesignProvision="BarClip Distribution"
           
     - name: Upload to TestFlight
       env:
