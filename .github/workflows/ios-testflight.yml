@@ -38,7 +38,7 @@ jobs:
         bundle-id: 'com.nathandamron.barclip.maui'
         issuer-id: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
         api-key-id: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
-        api-private-key: ${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}
+        api-private-key: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
         
     - name: Restore dependencies
       run: dotnet restore BarClip.Maui/BarClip.Maui.csproj
@@ -57,4 +57,4 @@ jobs:
         app-path: 'BarClip.Maui/bin/Release/net9.0-ios/ios-arm64/publish/BarClip.Maui.ipa'
         issuer-id: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
         api-key-id: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
-        api-private-key: ${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}
+        api-private-key: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
