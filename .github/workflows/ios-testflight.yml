@@ -22,7 +22,7 @@ jobs:
       - name: Set Xcode version
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '16.2'
+          xcode-version: '16.4'
 
       - name: Setup .NET SDK 9.0.104
         uses: actions/setup-dotnet@v4
