@@ -16,14 +16,7 @@ jobs:
     - name: Set Xcode version
       uses: maxim-lobanov/setup-xcode@v1
       with:
-        xcode-version: '16.0'
-        
-    - name: Download iOS Simulator Runtime
-      run: |
-        echo "Downloading iOS simulator runtime..."
-        xcodebuild -downloadPlatform iOS || echo "Download failed, continuing anyway..."
-        echo "Available simulator runtimes:"
-        xcrun simctl runtime list
+        xcode-version: '16.1'
         
     - name: Setup .NET SDK 9.0.104
       uses: actions/setup-dotnet@v4
