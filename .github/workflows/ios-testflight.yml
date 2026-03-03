@@ -59,7 +59,10 @@ jobs:
           /p:PlatformTarget=arm64 \
           /p:CodesignKey="Apple Distribution: Nathan Damron (7DT4H73JRQ)" \
           /p:CodesignProvision="86a5e3ef-51f1-438d-829b-4a323807bf21" \
-          /p:EnableAssemblyILStripping=false
+          /p:EnableAssemblyILStripping=false \
+          /p:MtouchNoSymbolStrip=false \
+          /p:_UseSimulator=false \
+          /p:BuildIpa=true
           
     - name: Upload to TestFlight
       uses: apple-actions/upload-testflight-build@v1
