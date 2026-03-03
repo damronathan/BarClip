@@ -18,6 +18,13 @@ jobs:
       with:
         xcode-version: '16.0'
         
+    - name: Download iOS Simulator Runtime
+      run: |
+        echo "Downloading iOS simulator runtime..."
+        xcodebuild -downloadPlatform iOS || echo "Download failed, continuing anyway..."
+        echo "Available simulator runtimes:"
+        xcrun simctl runtime list
+        
     - name: Setup .NET SDK 9.0.104
       uses: actions/setup-dotnet@v4
       with:
@@ -60,8 +67,6 @@ jobs:
           /p:CodesignKey="Apple Distribution: Nathan Damron (7DT4H73JRQ)" \
           /p:CodesignProvision="86a5e3ef-51f1-438d-829b-4a323807bf21" \
           /p:EnableAssemblyILStripping=false \
-          /p:MtouchNoSymbolStrip=false \
-          /p:_UseSimulator=false \
           /p:BuildIpa=true
           
     - name: Upload to TestFlight
