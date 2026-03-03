@@ -10,6 +10,11 @@ jobs:
     runs-on: macos-15
     
     steps:
+- name: Print Xcode Version
+  run: |
+    xcodebuild -version
+    xcode-select -p
+    xcrun simctl list runtimes
     - name: Checkout code
       uses: actions/checkout@v4
       
