@@ -37,6 +37,10 @@ jobs:
         p12-file-base64: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
         p12-password: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
         
+    - name: Verify certificates
+      run: |
+        security find-identity -v -p codesigning
+        
     - name: Download Apple Provisioning Profiles
       uses: Apple-Actions/download-provisioning-profiles@v3
       with:
@@ -44,6 +48,10 @@ jobs:
         issuer-id: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
         api-key-id: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
         api-private-key: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
+        
+    - name: Verify provisioning profiles
+      run: |
+        ls -la ~/Library/MobileDevice/Provisioning\ Profiles/
         
     - name: Restore dependencies
       run: dotnet restore BarClip.Maui/BarClip.Maui.csproj
