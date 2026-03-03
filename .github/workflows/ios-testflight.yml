@@ -67,6 +67,7 @@ jobs:
             /p:CodesignProvision="86a5e3ef-51f1-438d-829b-4a323807bf21" \
             /p:EnableAssemblyILStripping=false \
             /p:BuildIpa=true
+	    /p:UseInterpreter=true
 
       - name: Upload to TestFlight
         uses: apple-actions/upload-testflight-build@v1
