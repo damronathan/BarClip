@@ -48,6 +48,7 @@ jobs:
         dotnet publish BarClip.Maui/BarClip.Maui.csproj \
           -f net9.0-ios \
           -c Release \
+          -r ios-arm64 \
           /p:ArchiveOnBuild=true \
           /p:EnableAssemblyILStripping=false
           
