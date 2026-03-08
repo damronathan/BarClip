@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\BarClip.Main\\repos\\BarClip\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{51454B99-C93D-1F3B-4677-38D561AE8448}|BarClip.Maui\\BarClip.Maui.csproj|c:\\barclip.main\\repos\\barclip\\barclip.maui\\mainpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{51454B99-C93D-1F3B-4677-38D561AE8448}|BarClip.Maui\\BarClip.Maui.csproj|solutionrelative:barclip.maui\\mainpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{51454B99-C93D-1F3B-4677-38D561AE8448}|BarClip.Maui\\BarClip.Maui.csproj|c:\\barclip.main\\repos\\barclip\\barclip.maui\\barclip.maui.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
       "RelativeMoniker": "D:0:0:{51454B99-C93D-1F3B-4677-38D561AE8448}|BarClip.Maui\\BarClip.Maui.csproj|solutionrelative:barclip.maui\\barclip.maui.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
@@ -84,8 +88,21 @@
       "DocumentGroups": [
         {
           "DockedWidth": 246,
-          "SelectedChildIndex": 18,
+          "SelectedChildIndex": 0,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "MainPage.xaml.cs",
+              "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Maui\\MainPage.xaml.cs",
+              "RelativeDocumentMoniker": "BarClip.Maui\\MainPage.xaml.cs",
+              "ToolTip": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Maui\\MainPage.xaml.cs*",
+              "RelativeToolTip": "BarClip.Maui\\MainPage.xaml.cs*",
+              "ViewState": "AgIAABMAAAAAAAAAAAAQwCcAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-08T04:25:28.612Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
@@ -148,7 +165,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "Microsoft.NET.Sdk.DefaultItems.targets",
               "DocumentMoniker": "C:\\Program Files\\dotnet\\sdk\\10.0.103\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.NET.Sdk.DefaultItems.targets",
               "RelativeDocumentMoniker": "..\\..\\..\\Program Files\\dotnet\\sdk\\10.0.103\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.NET.Sdk.DefaultItems.targets",
@@ -156,12 +173,11 @@
               "RelativeToolTip": "..\\..\\..\\Program Files\\dotnet\\sdk\\10.0.103\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.NET.Sdk.DefaultItems.targets",
               "ViewState": "AgIAABMAAAAAAAAAAAAIwBkAAAA8AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
-              "WhenOpened": "2026-03-02T19:28:49.508Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-02T19:28:49.508Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "Microsoft.NET.EolTargetFrameworks.targets",
               "DocumentMoniker": "C:\\Program Files\\dotnet\\sdk\\10.0.103\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.NET.EolTargetFrameworks.targets",
               "RelativeDocumentMoniker": "..\\..\\..\\Program Files\\dotnet\\sdk\\10.0.103\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.NET.EolTargetFrameworks.targets",
@@ -173,7 +189,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 12,
               "Title": "PlateDetection.cs",
               "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Models\\Domain\\PlateDetection.cs",
               "RelativeDocumentMoniker": "BarClip.Models\\Domain\\PlateDetection.cs",
@@ -185,7 +201,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "BarClip.Maui.csproj",
               "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Maui\\BarClip.Maui.csproj",
               "RelativeDocumentMoniker": "BarClip.Maui\\BarClip.Maui.csproj",
@@ -198,7 +214,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "BarClip.Core.csproj",
               "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Core\\BarClip.Core.csproj",
               "RelativeDocumentMoniker": "BarClip.Core\\BarClip.Core.csproj",
@@ -211,7 +227,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "BarClip.Data.csproj",
               "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Data\\BarClip.Data.csproj",
               "RelativeDocumentMoniker": "BarClip.Data\\BarClip.Data.csproj",
@@ -224,7 +240,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "BarClip.Models.csproj",
               "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Models\\BarClip.Models.csproj",
               "RelativeDocumentMoniker": "BarClip.Models\\BarClip.Models.csproj",
@@ -237,7 +253,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "SessionPage.xaml.cs",
               "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Maui\\SessionPage.xaml.cs",
               "RelativeDocumentMoniker": "BarClip.Maui\\SessionPage.xaml.cs",
@@ -249,7 +265,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "BarClip.Maui",
               "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Maui\\BarClip.Maui.csproj",
               "RelativeDocumentMoniker": "BarClip.Maui\\BarClip.Maui.csproj",
@@ -261,7 +277,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "global.json",
               "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\global.json",
               "RelativeDocumentMoniker": "global.json",
@@ -273,7 +289,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 13,
               "Title": "PlateAnalysisService.cs",
               "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Core\\Services\\PlateAnalysisService.cs",
               "RelativeDocumentMoniker": "BarClip.Core\\Services\\PlateAnalysisService.cs",
@@ -285,7 +301,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 16,
               "Title": "CreateLiftDto.cs",
               "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Models\\Dto\\CreateLiftDto.cs",
               "RelativeDocumentMoniker": "BarClip.Models\\Dto\\CreateLiftDto.cs",
@@ -297,7 +313,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 11,
               "Title": "FFMpegHelper.cs",
               "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Maui\\Platforms\\Windows\\Helpers\\FFMpegHelper.cs",
               "RelativeDocumentMoniker": "BarClip.Maui\\Platforms\\Windows\\Helpers\\FFMpegHelper.cs",
@@ -309,7 +325,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "WindowsVideoEditor.cs",
               "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Maui\\Platforms\\Windows\\Services\\WindowsVideoEditor.cs",
               "RelativeDocumentMoniker": "BarClip.Maui\\Platforms\\Windows\\Services\\WindowsVideoEditor.cs",
@@ -321,7 +337,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 15,
               "Title": "FrameHelper.cs",
               "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Core\\Helpers\\FrameHelper.cs",
               "RelativeDocumentMoniker": "BarClip.Core\\Helpers\\FrameHelper.cs",
@@ -333,7 +349,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 14,
               "Title": "TrimService.cs",
               "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Core\\Services\\TrimService.cs",
               "RelativeDocumentMoniker": "BarClip.Core\\Services\\TrimService.cs",
@@ -345,7 +361,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 17,
               "Title": "Frame.cs",
               "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Models\\Domain\\Frame.cs",
               "RelativeDocumentMoniker": "BarClip.Models\\Domain\\Frame.cs",
@@ -357,7 +373,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 18,
               "Title": "BaseEntity.cs",
               "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Models\\Base\\BaseEntity.cs",
               "RelativeDocumentMoniker": "BarClip.Models\\Base\\BaseEntity.cs",
@@ -369,7 +385,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 19,
               "Title": "FileHelper.cs",
               "DocumentMoniker": "C:\\BarClip.Main\\repos\\BarClip\\BarClip.Core\\Helpers\\FileHelper.cs",
               "RelativeDocumentMoniker": "BarClip.Core\\Helpers\\FileHelper.cs",
