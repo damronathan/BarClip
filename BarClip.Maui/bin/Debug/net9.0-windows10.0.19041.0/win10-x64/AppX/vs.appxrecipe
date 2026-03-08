@@ -30,25 +30,25 @@
     <AppXManifest Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\bin\Debug\net9.0-windows10.0.19041.0\win10-x64\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2026-03-01T21:51:18.175</Modified>
+      <Modified>2026-03-08T15:54:58.801</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\bin\Debug\net9.0-windows10.0.19041.0\win10-x64\resources.pri">
       <PackagePath>resources.pri</PackagePath>
-      <Modified>2026-03-01T21:48:51.281</Modified>
+      <Modified>2026-03-08T15:54:58.574</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\bin\Debug\net9.0-windows10.0.19041.0\win10-x64\BarClip.Maui.runtimeconfig.json">
       <PackagePath>BarClip.Maui.runtimeconfig.json</PackagePath>
-      <Modified>2026-03-01T21:48:51.014</Modified>
+      <Modified>2026-03-08T15:54:58.312</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\bin\Debug\net9.0-windows10.0.19041.0\win10-x64\BarClip.Maui.dll">
       <PackagePath>BarClip.Maui.dll</PackagePath>
-      <Modified>2026-03-01T21:48:49.829</Modified>
+      <Modified>2026-03-08T15:54:57.259</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\apphost.exe">
       <PackagePath>BarClip.Maui.exe</PackagePath>
-      <Modified>2026-03-01T21:48:49.846</Modified>
+      <Modified>2026-03-08T15:54:57.280</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\Resources\Raw\AboutAssets.txt">
       <PackagePath>AboutAssets.txt</PackagePath>
@@ -64,23 +64,23 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\sp\splashSplashScreen.scale-100.png">
       <PackagePath>splashSplashScreen.scale-100.png</PackagePath>
-      <Modified>2026-03-01T21:48:48.109</Modified>
+      <Modified>2026-03-01T21:53:56.781</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\sp\splashSplashScreen.scale-125.png">
       <PackagePath>splashSplashScreen.scale-125.png</PackagePath>
-      <Modified>2026-03-01T21:48:48.140</Modified>
+      <Modified>2026-03-01T21:53:56.802</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\sp\splashSplashScreen.scale-150.png">
       <PackagePath>splashSplashScreen.scale-150.png</PackagePath>
-      <Modified>2026-03-01T21:48:48.172</Modified>
+      <Modified>2026-03-01T21:53:56.833</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\sp\splashSplashScreen.scale-200.png">
       <PackagePath>splashSplashScreen.scale-200.png</PackagePath>
-      <Modified>2026-03-01T21:48:48.204</Modified>
+      <Modified>2026-03-01T21:53:56.887</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\sp\splashSplashScreen.scale-400.png">
       <PackagePath>splashSplashScreen.scale-400.png</PackagePath>
-      <Modified>2026-03-01T21:48:48.346</Modified>
+      <Modified>2026-03-01T21:53:57.103</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\f\OpenSans-Regular.ttf">
       <PackagePath>OpenSans-Regular.ttf</PackagePath>
@@ -92,207 +92,207 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appicon.ico">
       <PackagePath>appicon.ico</PackagePath>
-      <Modified>2026-03-01T21:48:49.071</Modified>
+      <Modified>2026-03-01T21:53:57.697</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconLargeTile.scale-100.png">
       <PackagePath>appiconLargeTile.scale-100.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.060</Modified>
+      <Modified>2026-03-01T21:53:57.688</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconLargeTile.scale-125.png">
       <PackagePath>appiconLargeTile.scale-125.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.060</Modified>
+      <Modified>2026-03-01T21:53:57.688</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconLargeTile.scale-150.png">
       <PackagePath>appiconLargeTile.scale-150.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.059</Modified>
+      <Modified>2026-03-01T21:53:57.688</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconLargeTile.scale-200.png">
       <PackagePath>appiconLargeTile.scale-200.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.059</Modified>
+      <Modified>2026-03-01T21:53:57.688</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconLargeTile.scale-400.png">
       <PackagePath>appiconLargeTile.scale-400.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.059</Modified>
+      <Modified>2026-03-01T21:53:57.687</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconLogo.altform-lightunplated_targetsize-16.png">
       <PackagePath>appiconLogo.altform-lightunplated_targetsize-16.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.068</Modified>
+      <Modified>2026-03-01T21:53:57.694</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconLogo.altform-lightunplated_targetsize-24.png">
       <PackagePath>appiconLogo.altform-lightunplated_targetsize-24.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.067</Modified>
+      <Modified>2026-03-01T21:53:57.694</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconLogo.altform-lightunplated_targetsize-256.png">
       <PackagePath>appiconLogo.altform-lightunplated_targetsize-256.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.065</Modified>
+      <Modified>2026-03-01T21:53:57.693</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconLogo.altform-lightunplated_targetsize-32.png">
       <PackagePath>appiconLogo.altform-lightunplated_targetsize-32.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.066</Modified>
+      <Modified>2026-03-01T21:53:57.694</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconLogo.altform-lightunplated_targetsize-48.png">
       <PackagePath>appiconLogo.altform-lightunplated_targetsize-48.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.066</Modified>
+      <Modified>2026-03-01T21:53:57.694</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconLogo.altform-unplated_targetsize-16.png">
       <PackagePath>appiconLogo.altform-unplated_targetsize-16.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.069</Modified>
+      <Modified>2026-03-01T21:53:57.695</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconLogo.altform-unplated_targetsize-24.png">
       <PackagePath>appiconLogo.altform-unplated_targetsize-24.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.069</Modified>
+      <Modified>2026-03-01T21:53:57.695</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconLogo.altform-unplated_targetsize-256.png">
       <PackagePath>appiconLogo.altform-unplated_targetsize-256.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.068</Modified>
+      <Modified>2026-03-01T21:53:57.694</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconLogo.altform-unplated_targetsize-32.png">
       <PackagePath>appiconLogo.altform-unplated_targetsize-32.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.068</Modified>
+      <Modified>2026-03-01T21:53:57.695</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconLogo.altform-unplated_targetsize-48.png">
       <PackagePath>appiconLogo.altform-unplated_targetsize-48.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.068</Modified>
+      <Modified>2026-03-01T21:53:57.695</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconLogo.scale-100.png">
       <PackagePath>appiconLogo.scale-100.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.071</Modified>
+      <Modified>2026-03-01T21:53:57.697</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconLogo.scale-125.png">
       <PackagePath>appiconLogo.scale-125.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.071</Modified>
+      <Modified>2026-03-01T21:53:57.697</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconLogo.scale-150.png">
       <PackagePath>appiconLogo.scale-150.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.071</Modified>
+      <Modified>2026-03-01T21:53:57.697</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconLogo.scale-200.png">
       <PackagePath>appiconLogo.scale-200.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.071</Modified>
+      <Modified>2026-03-01T21:53:57.697</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconLogo.scale-400.png">
       <PackagePath>appiconLogo.scale-400.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.070</Modified>
+      <Modified>2026-03-01T21:53:57.696</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconLogo.targetsize-16.png">
       <PackagePath>appiconLogo.targetsize-16.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.070</Modified>
+      <Modified>2026-03-01T21:53:57.696</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconLogo.targetsize-24.png">
       <PackagePath>appiconLogo.targetsize-24.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.070</Modified>
+      <Modified>2026-03-01T21:53:57.696</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconLogo.targetsize-256.png">
       <PackagePath>appiconLogo.targetsize-256.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.069</Modified>
+      <Modified>2026-03-01T21:53:57.695</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconLogo.targetsize-32.png">
       <PackagePath>appiconLogo.targetsize-32.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.070</Modified>
+      <Modified>2026-03-01T21:53:57.696</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconLogo.targetsize-48.png">
       <PackagePath>appiconLogo.targetsize-48.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.069</Modified>
+      <Modified>2026-03-01T21:53:57.696</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconMediumTile.scale-100.png">
       <PackagePath>appiconMediumTile.scale-100.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.062</Modified>
+      <Modified>2026-03-01T21:53:57.691</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconMediumTile.scale-125.png">
       <PackagePath>appiconMediumTile.scale-125.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.062</Modified>
+      <Modified>2026-03-01T21:53:57.691</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconMediumTile.scale-150.png">
       <PackagePath>appiconMediumTile.scale-150.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.062</Modified>
+      <Modified>2026-03-01T21:53:57.690</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconMediumTile.scale-200.png">
       <PackagePath>appiconMediumTile.scale-200.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.061</Modified>
+      <Modified>2026-03-01T21:53:57.690</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconMediumTile.scale-400.png">
       <PackagePath>appiconMediumTile.scale-400.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.061</Modified>
+      <Modified>2026-03-01T21:53:57.690</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconSmallTile.scale-100.png">
       <PackagePath>appiconSmallTile.scale-100.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.063</Modified>
+      <Modified>2026-03-01T21:53:57.692</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconSmallTile.scale-125.png">
       <PackagePath>appiconSmallTile.scale-125.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.063</Modified>
+      <Modified>2026-03-01T21:53:57.692</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconSmallTile.scale-150.png">
       <PackagePath>appiconSmallTile.scale-150.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.063</Modified>
+      <Modified>2026-03-01T21:53:57.692</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconSmallTile.scale-200.png">
       <PackagePath>appiconSmallTile.scale-200.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.063</Modified>
+      <Modified>2026-03-01T21:53:57.691</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconSmallTile.scale-400.png">
       <PackagePath>appiconSmallTile.scale-400.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.062</Modified>
+      <Modified>2026-03-01T21:53:57.691</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconStoreLogo.scale-100.png">
       <PackagePath>appiconStoreLogo.scale-100.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.065</Modified>
+      <Modified>2026-03-01T21:53:57.693</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconStoreLogo.scale-125.png">
       <PackagePath>appiconStoreLogo.scale-125.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.064</Modified>
+      <Modified>2026-03-01T21:53:57.693</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconStoreLogo.scale-150.png">
       <PackagePath>appiconStoreLogo.scale-150.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.064</Modified>
+      <Modified>2026-03-01T21:53:57.693</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconStoreLogo.scale-200.png">
       <PackagePath>appiconStoreLogo.scale-200.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.064</Modified>
+      <Modified>2026-03-01T21:53:57.692</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconStoreLogo.scale-400.png">
       <PackagePath>appiconStoreLogo.scale-400.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.064</Modified>
+      <Modified>2026-03-01T21:53:57.692</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconWideTile.scale-100.png">
       <PackagePath>appiconWideTile.scale-100.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.061</Modified>
+      <Modified>2026-03-01T21:53:57.690</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconWideTile.scale-125.png">
       <PackagePath>appiconWideTile.scale-125.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.061</Modified>
+      <Modified>2026-03-01T21:53:57.689</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconWideTile.scale-150.png">
       <PackagePath>appiconWideTile.scale-150.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.060</Modified>
+      <Modified>2026-03-01T21:53:57.689</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconWideTile.scale-200.png">
       <PackagePath>appiconWideTile.scale-200.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.060</Modified>
+      <Modified>2026-03-01T21:53:57.689</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\appiconWideTile.scale-400.png">
       <PackagePath>appiconWideTile.scale-400.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.060</Modified>
+      <Modified>2026-03-01T21:53:57.689</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\dotnet_bot.scale-100.png">
       <PackagePath>dotnet_bot.scale-100.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.059</Modified>
+      <Modified>2026-03-01T21:53:57.687</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\dotnet_bot.scale-125.png">
       <PackagePath>dotnet_bot.scale-125.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.059</Modified>
+      <Modified>2026-03-01T21:53:57.687</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\dotnet_bot.scale-150.png">
       <PackagePath>dotnet_bot.scale-150.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.058</Modified>
+      <Modified>2026-03-01T21:53:57.687</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\dotnet_bot.scale-200.png">
       <PackagePath>dotnet_bot.scale-200.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.058</Modified>
+      <Modified>2026-03-01T21:53:57.686</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\obj\Debug\net9.0-windows10.0.19041.0\win10-x64\resizetizer\r\dotnet_bot.scale-400.png">
       <PackagePath>dotnet_bot.scale-400.png</PackagePath>
-      <Modified>2026-03-01T21:48:49.058</Modified>
+      <Modified>2026-03-01T21:53:57.686</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\19139\.nuget\packages\microsoft.windows.sdk.net.ref\10.0.19041.57\lib\net8.0\Microsoft.Windows.SDK.NET.dll">
       <PackagePath>Microsoft.Windows.SDK.NET.dll</PackagePath>
@@ -378,9 +378,9 @@
       <PackagePath>Microsoft.Extensions.Configuration.Abstractions.dll</PackagePath>
       <Modified>2025-08-19T22:11:44.000</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\19139\.nuget\packages\microsoft.extensions.configuration.binder\9.0.0\lib\net9.0\Microsoft.Extensions.Configuration.Binder.dll">
+    <AppxPackagedFile Include="C:\Users\19139\.nuget\packages\microsoft.extensions.configuration.binder\8.0.0\lib\net8.0\Microsoft.Extensions.Configuration.Binder.dll">
       <PackagePath>Microsoft.Extensions.Configuration.Binder.dll</PackagePath>
-      <Modified>2024-10-29T02:38:24.000</Modified>
+      <Modified>2023-10-31T14:59:26.000</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\19139\.nuget\packages\microsoft.extensions.configuration.fileextensions\9.0.0\lib\net9.0\Microsoft.Extensions.Configuration.FileExtensions.dll">
       <PackagePath>Microsoft.Extensions.Configuration.FileExtensions.dll</PackagePath>
@@ -402,13 +402,13 @@
       <PackagePath>Microsoft.Extensions.DependencyModel.dll</PackagePath>
       <Modified>2024-10-29T02:38:08.000</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\19139\.nuget\packages\microsoft.extensions.diagnostics\9.0.0\lib\net9.0\Microsoft.Extensions.Diagnostics.dll">
+    <AppxPackagedFile Include="C:\Users\19139\.nuget\packages\microsoft.extensions.diagnostics\8.0.0\lib\net8.0\Microsoft.Extensions.Diagnostics.dll">
       <PackagePath>Microsoft.Extensions.Diagnostics.dll</PackagePath>
-      <Modified>2024-10-29T02:38:46.000</Modified>
+      <Modified>2023-10-31T14:59:42.000</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\19139\.nuget\packages\microsoft.extensions.diagnostics.abstractions\9.0.0\lib\net9.0\Microsoft.Extensions.Diagnostics.Abstractions.dll">
+    <AppxPackagedFile Include="C:\Users\19139\.nuget\packages\microsoft.extensions.diagnostics.abstractions\8.0.0\lib\net8.0\Microsoft.Extensions.Diagnostics.Abstractions.dll">
       <PackagePath>Microsoft.Extensions.Diagnostics.Abstractions.dll</PackagePath>
-      <Modified>2024-10-29T02:38:40.000</Modified>
+      <Modified>2023-10-31T14:59:22.000</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\19139\.nuget\packages\microsoft.extensions.fileproviders.abstractions\9.0.0\lib\net9.0\Microsoft.Extensions.FileProviders.Abstractions.dll">
       <PackagePath>Microsoft.Extensions.FileProviders.Abstractions.dll</PackagePath>
@@ -422,9 +422,9 @@
       <PackagePath>Microsoft.Extensions.FileSystemGlobbing.dll</PackagePath>
       <Modified>2024-10-29T02:38:06.000</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\19139\.nuget\packages\microsoft.extensions.http\9.0.0\lib\net9.0\Microsoft.Extensions.Http.dll">
+    <AppxPackagedFile Include="C:\Users\19139\.nuget\packages\microsoft.extensions.http\8.0.0\lib\net8.0\Microsoft.Extensions.Http.dll">
       <PackagePath>Microsoft.Extensions.Http.dll</PackagePath>
-      <Modified>2024-10-29T02:38:54.000</Modified>
+      <Modified>2023-10-31T14:59:44.000</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\19139\.nuget\packages\microsoft.extensions.logging\9.0.9\lib\net9.0\Microsoft.Extensions.Logging.dll">
       <PackagePath>Microsoft.Extensions.Logging.dll</PackagePath>
@@ -442,9 +442,9 @@
       <PackagePath>Microsoft.Extensions.Options.dll</PackagePath>
       <Modified>2025-08-19T22:11:52.000</Modified>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\19139\.nuget\packages\microsoft.extensions.options.configurationextensions\9.0.0\lib\net9.0\Microsoft.Extensions.Options.ConfigurationExtensions.dll">
+    <AppxPackagedFile Include="C:\Users\19139\.nuget\packages\microsoft.extensions.options.configurationextensions\8.0.0\lib\net8.0\Microsoft.Extensions.Options.ConfigurationExtensions.dll">
       <PackagePath>Microsoft.Extensions.Options.ConfigurationExtensions.dll</PackagePath>
-      <Modified>2024-10-29T02:38:28.000</Modified>
+      <Modified>2023-10-31T14:59:38.000</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\19139\.nuget\packages\microsoft.extensions.primitives\9.0.9\lib\net9.0\Microsoft.Extensions.Primitives.dll">
       <PackagePath>Microsoft.Extensions.Primitives.dll</PackagePath>
@@ -916,15 +916,15 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Core\bin\Debug\net9.0\BarClip.Core.dll">
       <PackagePath>BarClip.Core.dll</PackagePath>
-      <Modified>2026-03-01T21:48:33.905</Modified>
+      <Modified>2026-03-08T15:54:18.172</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Data\bin\Debug\net9.0\BarClip.Data.dll">
       <PackagePath>BarClip.Data.dll</PackagePath>
-      <Modified>2026-03-01T21:48:33.115</Modified>
+      <Modified>2026-03-08T15:54:17.112</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Models\bin\Debug\net9.0\BarClip.Models.dll">
       <PackagePath>BarClip.Models.dll</PackagePath>
-      <Modified>2026-03-01T21:48:32.282</Modified>
+      <Modified>2026-03-08T15:54:16.115</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\19139\.nuget\packages\microsoft.web.webview2\1.0.3179.45\lib_manual\net8.0-windows10.0.17763.0\Microsoft.Web.WebView2.Core.Projection.dll">
       <PackagePath>Microsoft.Web.WebView2.Core.Projection.dll</PackagePath>
@@ -932,7 +932,7 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\BarClip.Main\repos\BarClip\BarClip.Maui\bin\Debug\net9.0-windows10.0.19041.0\win10-x64\BarClip.Maui.deps.json">
       <PackagePath>BarClip.Maui.deps.json</PackagePath>
-      <Modified>2026-03-01T21:48:50.996</Modified>
+      <Modified>2026-03-08T15:54:58.309</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\19139\.nuget\packages\microsoft.maui.controls.compatibility\9.0.120\lib\net9.0-windows10.0.19041\Microsoft.Maui.Controls.Compatibility.pri">
       <PackagePath>Microsoft.Maui.Controls.Compatibility.pri</PackagePath>

@@ -37,11 +37,15 @@ public partial class MainPage : ContentPage
                 return;
             }
 
-            var videos = await FilePicker.PickMultipleAsync(new PickOptions
-            {
-                FileTypes = FilePickerFileType.Videos,
-                PickerTitle = "Select videos to process"
-            });
+
+            var videos = new List<FileResult>();
+            var newVideo = await MediaPicker.PickVideoAsync();
+            videos.Add(newVideo);
+            //var videos = await FilePicker.PickMultipleAsync(new PickOptions
+            //{
+            //    FileTypes = FilePickerFileType.Videos,
+            //    PickerTitle = "Select videos to process"
+            //});
 
             if (videos == null || !videos.Any())
             {
