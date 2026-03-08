@@ -4,3 +4,6 @@
 *.cer
 *.mobileprovision
 *.certSigningRequest
+.vs/
+obj/
+bin/
