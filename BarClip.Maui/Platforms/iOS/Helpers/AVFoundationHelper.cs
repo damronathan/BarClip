@@ -130,7 +130,7 @@ public class AVFoundationHelper
     {
         var finalOutputPath = Path.Combine(sessionFolderPaths.Session, $"FullSession{sessionId}.MOV");
 
-        await Task.Run(() =>
+        await Task.Run(async () =>
         {
             var videoFiles = Directory.GetFiles(sessionFolderPaths.Processed, "*.MOV")
                                       .OrderBy(f => f)
@@ -146,14 +146,17 @@ public class AVFoundationHelper
             {
                 using var asset = AVAsset.FromUrl(NSUrl.FromFilename(videoFile));
 
+                // Ensure asset metadata is loaded
+                await asset.LoadValuesTaskAsync(new string[] { "duration", "tracks" });
+
                 var timeRange = new CMTimeRange { Start = CMTime.Zero, Duration = asset.Duration };
 
                 var assetVideoTrack = asset.TracksWithMediaType(AVMediaTypes.Video.ToString()).FirstOrDefault();
-                if (assetVideoTrack != null)
+                if (assetVideoTrack != null && videoTrack != null)
                     videoTrack.InsertTimeRange(timeRange, assetVideoTrack, currentTime, out _);
 
                 var assetAudioTrack = asset.TracksWithMediaType(AVMediaTypes.Audio.ToString()).FirstOrDefault();
-                if (assetAudioTrack != null)
+                if (assetAudioTrack != null && audioTrack != null)
                     audioTrack.InsertTimeRange(timeRange, assetAudioTrack, currentTime, out _);
 
                 currentTime = CMTime.Add(currentTime, asset.Duration);
@@ -185,10 +188,8 @@ public class AVFoundationHelper
 
         await SaveVideoToCameraRoll(NSUrl.FromFilename(finalOutputPath));
 
-
         return finalOutputPath;
     }
-
     public static async Task TrimAndLabelAsync(OriginalVideoRequest originalVideo, ProcessedVideoRequest processedVideo, string? weightText)
     {
         await Task.Run(() =>
