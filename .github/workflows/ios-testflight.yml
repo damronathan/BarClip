@@ -39,19 +39,7 @@ jobs:
           bundle-id: 'com.nathandamron.barclip.maui'
           issuer-id: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           api-key-id: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
-          api-private-key: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
-      - name: Increment version number
-        run: |
-          # Get current version
-          CURRENT_VERSION=$(grep -o '<ApplicationVersion>[0-9]*</ApplicationVersion>' BarClip.Maui/BarClip.Maui.csproj | grep -o '[0-9]*')
-          
-          # Increment it
-          NEW_VERSION=$((CURRENT_VERSION + 1))
-          
-          # Update the csproj file
-          sed -i '' "s/<ApplicationVersion>$CURRENT_VERSION<\/ApplicationVersion>/<ApplicationVersion>$NEW_VERSION<\/ApplicationVersion>/" BarClip.Maui/BarClip.Maui.csproj
-          
-          echo "Version incremented from $CURRENT_VERSION to $NEW_VERSION"
+          api-private-key: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}      
       - name: Restore dependencies
         run: dotnet restore BarClip.Maui/BarClip.Maui.csproj
       - name: Build iOS app
