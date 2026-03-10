@@ -7,3 +7,13 @@
 .vs/
 obj/
 bin/
+*.user
+*.suo
+AppPackages/
+BundleArtifacts/
+*.apprecipe
+*.appx
+*.appxbundle
+*.msix
+*.msixbundle
+appsettings.json
