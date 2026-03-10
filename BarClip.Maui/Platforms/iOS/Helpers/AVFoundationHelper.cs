@@ -51,11 +51,15 @@ public class AVFoundationHelper
 
     public static async Task ExtractAllFramesAsync(OriginalVideoRequest originalVideo, string tempFramePath)
     {
-        await Task.Run(() =>
+        await Task.Run(async () =>
         {
             Directory.CreateDirectory(tempFramePath);
 
             using var asset = AVAsset.FromUrl(NSUrl.FromFilename(originalVideo.FilePath));
+
+            // Ensure duration is loaded
+            await asset.LoadValuesTaskAsync(new string[] { "duration" });
+
             var durationSeconds = asset.Duration.Seconds;
 
             using var imageGenerator = new AVAssetImageGenerator(asset)
@@ -78,15 +82,21 @@ public class AVFoundationHelper
                 if (error != null)
                     throw new Exception($"Error extracting frame: {error.LocalizedDescription}");
 
+                if (cgImage == null)
+                    continue; // skip invalid frame instead of crashing
+
                 string filePath = Path.Combine(tempFramePath, $"frame_{frameIndex + 1}.png");
 
-                using var destination = CGImageDestination.Create(NSUrl.FromFilename(filePath), "png", 1);
+                using var destination = CGImageDestination.Create(NSUrl.FromFilename(filePath), "public.png", 1);
+
+                if (destination == null)
+                    throw new Exception("Failed to create image destination.");
+
                 destination.AddImage(cgImage);
                 destination.Close();
             }
         });
     }
-
     public async static Task<string[]> ExtractThumbnails(string originalFolderPath, string thumbnailFolderPath)
     {
         var originalFilePaths = Directory.GetFiles(originalFolderPath, "*.MOV");
