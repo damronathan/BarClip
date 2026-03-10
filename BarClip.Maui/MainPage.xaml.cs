@@ -42,11 +42,6 @@ public partial class MainPage : ContentPage
             var videos = new List<FileResult>();
             var newVideo = await MediaPicker.PickVideoAsync();
             videos.Add(newVideo);
-            //var videos = await FilePicker.PickMultipleAsync(new PickOptions
-            //{
-            //    FileTypes = FilePickerFileType.Videos,
-            //    PickerTitle = "Select videos to process"
-            //});
 
             if (videos == null || !videos.Any())
             {
@@ -99,20 +94,23 @@ public partial class MainPage : ContentPage
             }
 
             CreateBtn.Text = "Generating thumbnails...";
-            
+
             await _videoEditor.ExtractThumbnails(sessionFolderPaths.Original, sessionFolderPaths.Thumbnails);
 
             CreateBtn.Text = "Session created!";
-            await Task.Delay(2000); // Show success message briefly
+            await Task.Delay(2000);
             CreateBtn.Text = "Create Session";
         }
         catch (Exception ex)
         {
+            // Send to Sentry
+            SentrySdk.CaptureException(ex);
+
             CreateBtn.Text = $"Error: {ex.Message}";
             System.Diagnostics.Debug.WriteLine($"Processing Error: {ex}");
             System.Diagnostics.Debug.WriteLine($"Stack: {ex.StackTrace}");
 
-            await Task.Delay(3000); // Show error message
+            await Task.Delay(3000);
             CreateBtn.Text = "Create Session";
         }
     }

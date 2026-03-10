@@ -1,48 +1,38 @@
 name: iOS TestFlight Deploy
-
 on:
   push:
     branches: [ master ]
   workflow_dispatch:
-
 jobs:
   build-and-deploy:
     runs-on: macos-15
-
     steps:
       - name: Print Xcode Version
         run: |
           xcodebuild -version
           xcode-select -p
           xcrun simctl list runtimes
-
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Set Xcode version
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: '16.4'
-
       - name: Setup .NET SDK 9.0.104
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '9.0.104'
-
       - name: Create global.json
         run: |
           echo '{"sdk":{"version":"9.0.104","rollForward":"disable"}}' > global.json
-
       - name: Install MAUI workload 9.0.104
         run: |
           dotnet workload install maui --version 9.0.104
-
       - name: Import Code-Signing Certificates
         uses: Apple-Actions/import-codesign-certs@v2
         with:
           p12-file-base64: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
           p12-password: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
-
       - name: Download Apple Provisioning Profiles
         uses: Apple-Actions/download-provisioning-profiles@v3
         with:
@@ -50,10 +40,20 @@ jobs:
           issuer-id: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           api-key-id: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           api-private-key: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
-
+      - name: Increment version number
+        run: |
+          # Get current version
+          CURRENT_VERSION=$(grep -o '<ApplicationVersion>[0-9]*</ApplicationVersion>' BarClip.Maui/BarClip.Maui.csproj | grep -o '[0-9]*')
+          
+          # Increment it
+          NEW_VERSION=$((CURRENT_VERSION + 1))
+          
+          # Update the csproj file
+          sed -i '' "s/<ApplicationVersion>$CURRENT_VERSION<\/ApplicationVersion>/<ApplicationVersion>$NEW_VERSION<\/ApplicationVersion>/" BarClip.Maui/BarClip.Maui.csproj
+          
+          echo "Version incremented from $CURRENT_VERSION to $NEW_VERSION"
       - name: Restore dependencies
         run: dotnet restore BarClip.Maui/BarClip.Maui.csproj
-
       - name: Build iOS app
         run: |
           dotnet publish BarClip.Maui/BarClip.Maui.csproj \
@@ -68,7 +68,6 @@ jobs:
             /p:EnableAssemblyILStripping=false \
             /p:BuildIpa=true \
             /p:UseInterpreter=true
-
       - name: Upload to TestFlight
         uses: apple-actions/upload-testflight-build@v1
         with:
