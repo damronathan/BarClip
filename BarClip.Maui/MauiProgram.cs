@@ -18,21 +18,18 @@ public static class MauiProgram
     public static MauiApp CreateMauiApp()
     {
         var builder = MauiApp.CreateBuilder();
+        var config = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json", optional: true)
+    .Build();
         builder
 
             .UseMauiApp<App>()
             .UseSkiaSharp()
-            .UseSentry(options => {
-                // The DSN is the only required setting.
-                options.Dsn = "https://0c5952290b452cf311494a6a5a455c1d@o4511021185630208.ingest.us.sentry.io/4511021190283264";
-
-                // Use debug mode if you want to see what the SDK is doing.
-                // Debug messages are written to stdout with Console.Writeline,
-                // and are viewable in your IDE's debug console or with 'adb logcat', etc.
-                // This option is not recommended when deploying your application.
+            .UseSentry(options =>
+            {
+                options.Dsn = config["Sentry:Dsn"];
                 options.Debug = true;
-
-                // Other Sentry options can be set here.
+                options.SendDefaultPii = true;
             })
             .ConfigureFonts(fonts =>
             {
