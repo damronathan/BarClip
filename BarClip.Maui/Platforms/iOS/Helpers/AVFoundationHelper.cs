@@ -192,9 +192,12 @@ public class AVFoundationHelper
     }
     public static async Task TrimAndLabelAsync(OriginalVideoRequest originalVideo, ProcessedVideoRequest processedVideo, string? weightText)
     {
-        await Task.Run(() =>
+        await Task.Run(async () =>
         {
             using var asset = AVAsset.FromUrl(NSUrl.FromFilename(originalVideo.FilePath));
+
+            // Ensure metadata is loaded before accessing tracks
+            await asset.LoadValuesTaskAsync(new string[] { "duration", "tracks" });
 
             // Get source video track for consistency
             var sourceVideoTrack = asset.TracksWithMediaType(AVMediaTypes.Video.ToString()).FirstOrDefault();
@@ -214,9 +217,9 @@ public class AVFoundationHelper
             // Insert trimmed video and audio
             var assetAudioTrack = asset.TracksWithMediaType(AVMediaTypes.Audio.ToString()).FirstOrDefault();
 
-            compositionVideoTrack.InsertTimeRange(timeRange, sourceVideoTrack, CMTime.Zero, out _);
+            compositionVideoTrack?.InsertTimeRange(timeRange, sourceVideoTrack, CMTime.Zero, out _);
 
-            if (assetAudioTrack != null)
+            if (assetAudioTrack != null && compositionAudioTrack != null)
                 compositionAudioTrack.InsertTimeRange(timeRange, assetAudioTrack, CMTime.Zero, out _);
 
             // Set consistent frame rate for all videos
@@ -224,7 +227,7 @@ public class AVFoundationHelper
 
             // Create video composition for consistent settings and text overlay
             var videoComposition = AVMutableVideoComposition.Create();
-            videoComposition.FrameDuration = new CMTime(1, 60); // 60 fps - consistent across all videos
+            videoComposition.FrameDuration = new CMTime(1, 60);
             videoComposition.RenderSize = sourceVideoTrack.NaturalSize;
 
             var instruction = AVMutableVideoCompositionInstruction.Create();
@@ -257,12 +260,10 @@ public class AVFoundationHelper
                     ForegroundColor = UIColor.White.CGColor,
                     Frame = new CGRect(
                         0,
-                        350, // y position from bottom (matching FFmpeg's y=h-text_h-350)
+                        350,
                         videoSize.Width,
                         200
                     ),
-                    // Note: CATextLayer doesn't support thick borders like FFmpeg's borderw=16
-                    // This creates a thin black border
                     BorderColor = UIColor.Black.CGColor,
                     BorderWidth = 2
                 };
@@ -273,7 +274,7 @@ public class AVFoundationHelper
                 videoComposition.AnimationTool = AVVideoCompositionCoreAnimationTool.FromLayer(videoLayer, parentLayer);
             }
 
-            // Export with consistent encoding settings
+            // Export
             if (File.Exists(processedVideo.FilePath))
                 File.Delete(processedVideo.FilePath);
 
@@ -282,7 +283,7 @@ public class AVFoundationHelper
                 OutputUrl = NSUrl.FromFilename(processedVideo.FilePath),
                 OutputFileType = AVFileTypes.QuickTimeMovie.ToString(),
                 VideoComposition = videoComposition,
-                ShouldOptimizeForNetworkUse = true // Fast start
+                ShouldOptimizeForNetworkUse = true
             };
 
             var waitHandle = new ManualResetEventSlim(false);
@@ -322,4 +323,5 @@ public class AVFoundationHelper
 
         await tcs.Task;
     }
+
 }
