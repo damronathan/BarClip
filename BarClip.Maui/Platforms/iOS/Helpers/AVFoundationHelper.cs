@@ -36,7 +36,14 @@ public class AVFoundationHelper
             if (error != null)
                 throw new Exception($"Error extracting thumbnail: {error.LocalizedDescription}");
 
-            using var destination = CGImageDestination.Create(NSUrl.FromFilename(thumbnailPath), "png", 1);
+            if (cgImage == null)
+                throw new Exception("Thumbnail generation returned null image.");
+
+            using var destination = CGImageDestination.Create(NSUrl.FromFilename(thumbnailPath), "public.png", 1);
+
+            if (destination == null)
+                throw new Exception("Failed to create image destination.");
+
             destination.AddImage(cgImage);
             destination.Close();
         });
@@ -90,6 +97,10 @@ public class AVFoundationHelper
             string thumbnailPath = Path.Combine(thumbnailFolderPath, fileName + ".png");
 
             using var asset = AVAsset.FromUrl(NSUrl.FromFilename(originalFilePath));
+
+            // Ensure duration is loaded
+            await asset.LoadValuesTaskAsync(new string[] { "duration" });
+
             var thumbnailTime = asset.Duration.Seconds / 2;
 
             try
