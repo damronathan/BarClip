@@ -152,6 +152,12 @@ public class AVFoundationHelper
                 var timeRange = new CMTimeRange { Start = CMTime.Zero, Duration = asset.Duration };
 
                 var assetVideoTrack = asset.TracksWithMediaType(AVMediaTypes.Video.ToString()).FirstOrDefault();
+
+                if (assetVideoTrack == null)
+                {
+                    await Task.Delay(100);
+                    assetVideoTrack = asset.TracksWithMediaType(AVMediaTypes.Video.ToString()).FirstOrDefault();
+                }
                 if (assetVideoTrack != null && videoTrack != null)
                     videoTrack.InsertTimeRange(timeRange, assetVideoTrack, currentTime, out _);
 
@@ -190,14 +196,14 @@ public class AVFoundationHelper
 
         return finalOutputPath;
     }
+
     public static async Task TrimAndLabelAsync(OriginalVideoRequest originalVideo, ProcessedVideoRequest processedVideo, string? weightText)
     {
         await Task.Run(async () =>
         {
             using var asset = AVAsset.FromUrl(NSUrl.FromFilename(originalVideo.FilePath));
 
-            // Ensure metadata is loaded before accessing tracks
-            await asset.LoadValuesTaskAsync(new string[] { "duration", "tracks" });
+            await asset.LoadValuesTaskAsync(new[] { "tracks" });
 
             // Get source video track for consistency
             var sourceVideoTrack = asset.TracksWithMediaType(AVMediaTypes.Video.ToString()).FirstOrDefault();
@@ -301,6 +307,7 @@ public class AVFoundationHelper
                 throw new Exception($"Error processing video: {exportError.LocalizedDescription}");
         });
     }
+
     public static async Task SaveVideoToCameraRoll(NSUrl videoUrl)
     {
         var status = await PHPhotoLibrary.RequestAuthorizationAsync(PHAccessLevel.AddOnly);
