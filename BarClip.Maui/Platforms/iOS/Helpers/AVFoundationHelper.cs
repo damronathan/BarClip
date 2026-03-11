@@ -151,17 +151,17 @@ public class AVFoundationHelper
 
                 var timeRange = new CMTimeRange { Start = CMTime.Zero, Duration = asset.Duration };
 
-                var assetVideoTrack = asset.TracksWithMediaType(AVMediaTypes.Video.ToString()).FirstOrDefault();
+                var assetVideoTrack = asset.Tracks.FirstOrDefault(t => t.MediaType == AVMediaTypes.Video.ToString());
 
                 if (assetVideoTrack == null)
                 {
                     await Task.Delay(100);
-                    assetVideoTrack = asset.TracksWithMediaType(AVMediaTypes.Video.ToString()).FirstOrDefault();
+                    assetVideoTrack = asset.Tracks.FirstOrDefault(t => t.MediaType == AVMediaTypes.Video.ToString());
                 }
                 if (assetVideoTrack != null && videoTrack != null)
                     videoTrack.InsertTimeRange(timeRange, assetVideoTrack, currentTime, out _);
 
-                var assetAudioTrack = asset.TracksWithMediaType(AVMediaTypes.Audio.ToString()).FirstOrDefault();
+                var assetAudioTrack = asset.Tracks.FirstOrDefault(t => t.MediaType == AVMediaTypes.Audio.ToString());
                 if (assetAudioTrack != null && audioTrack != null)
                     audioTrack.InsertTimeRange(timeRange, assetAudioTrack, currentTime, out _);
 
