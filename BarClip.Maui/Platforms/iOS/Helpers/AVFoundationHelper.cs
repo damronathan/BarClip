@@ -5,6 +5,7 @@ using CoreGraphics;
 using CoreMedia;
 using Foundation;
 using ImageIO;
+using MediaPlayer;
 using Photos;
 using UIKit;
 using static BarClip.Core.Helpers.FileHelper;
@@ -203,28 +204,18 @@ public class AVFoundationHelper
         {
             using var asset = AVAsset.FromUrl(NSUrl.FromFilename(originalVideo.FilePath));
 
-            // Load tracks property
-            NSError error;
+            // Load tracks
             await asset.LoadValuesTaskAsync(new[] { "tracks" });
 
-            // Check load status
-            var loadStatus = asset.StatusOfValue("tracks", out error);
-            if (loadStatus != AVKeyValueStatus.Loaded)
-            {
-                throw new Exception($"Failed to load tracks. Status: {loadStatus}, Error: {error?.LocalizedDescription}");
-            }
+            // Use GetTracks method with enum (newer .NET iOS API)
+            var videoTracks = asset.GetTracks(AVMediaTypes.Video);
+            var audioTracks = asset.GetTracks(AVMediaTypes.Audio);
 
-            // NOW get the tracks
-            var allTracks = asset.Tracks;
-            Console.WriteLine($"Total tracks: {allTracks?.Length ?? 0}");
-
-            var sourceVideoTrack = allTracks?
-                .FirstOrDefault(t => t.MediaType == AVMediaTypes.Video.ToString());
+            var sourceVideoTrack = videoTracks?.FirstOrDefault();
+            var audioTrack = audioTracks?.FirstOrDefault();
 
             if (sourceVideoTrack == null)
-            {
-                throw new Exception($"No video track found. Total tracks: {allTracks?.Length ?? 0}");
-            }
+                throw new Exception($"No video track found. Total tracks: {asset.Tracks?.Length ?? 0}");
 
             // Create composition for trimming
             using var composition = new AVMutableComposition();
