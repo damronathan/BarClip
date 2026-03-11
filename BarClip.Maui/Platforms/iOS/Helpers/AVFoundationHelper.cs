@@ -168,6 +168,7 @@ public class AVFoundationHelper
             using var exportSession = new AVAssetExportSession(composition, AVAssetExportSessionPreset.HighestQuality)
             {
                 OutputUrl = NSUrl.FromFilename(finalOutputPath),
+                OutputFileType = "com.apple.quicktime-movie",
             };
 
             await exportSession.ExportTaskAsync();
@@ -276,6 +277,7 @@ public class AVFoundationHelper
             using var exportSession = new AVAssetExportSession(composition, AVAssetExportSessionPreset.HighestQuality)
             {
                 OutputUrl = NSUrl.FromFilename(processedVideo.FilePath),
+                OutputFileType = "com.apple.quicktime-movie",
                 VideoComposition = videoComposition,
                 ShouldOptimizeForNetworkUse = true
             };
