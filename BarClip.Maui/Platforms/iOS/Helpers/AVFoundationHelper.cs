@@ -203,14 +203,28 @@ public class AVFoundationHelper
         {
             using var asset = AVAsset.FromUrl(NSUrl.FromFilename(originalVideo.FilePath));
 
+            // Load tracks property
+            NSError error;
             await asset.LoadValuesTaskAsync(new[] { "tracks" });
 
-            // Get source video track for consistency
-            var sourceVideoTrack = asset.Tracks
-    .FirstOrDefault(t => t.MediaType == AVMediaTypes.Video.ToString());
+            // Check load status
+            var loadStatus = asset.StatusOfValue("tracks", out error);
+            if (loadStatus != AVKeyValueStatus.Loaded)
+            {
+                throw new Exception($"Failed to load tracks. Status: {loadStatus}, Error: {error?.LocalizedDescription}");
+            }
+
+            // NOW get the tracks
+            var allTracks = asset.Tracks;
+            Console.WriteLine($"Total tracks: {allTracks?.Length ?? 0}");
+
+            var sourceVideoTrack = allTracks?
+                .FirstOrDefault(t => t.MediaType == AVMediaTypes.Video.ToString());
 
             if (sourceVideoTrack == null)
-                throw new Exception("No video track found");
+            {
+                throw new Exception($"No video track found. Total tracks: {allTracks?.Length ?? 0}");
+            }
 
             // Create composition for trimming
             using var composition = new AVMutableComposition();

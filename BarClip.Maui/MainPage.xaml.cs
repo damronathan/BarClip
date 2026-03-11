@@ -15,7 +15,6 @@ public partial class MainPage : ContentPage
     public MainPage(UserRepository userRepository, SessionService sessionService, IServiceProvider serviceProvider, IVideoEditor videoEditor)
     {
         InitializeComponent();
-        SentrySdk.CaptureMessage("Hello Sentry");
         _userRepository = userRepository;
         _sessionService = sessionService;
         _serviceProvider = serviceProvider;
