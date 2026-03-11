@@ -206,7 +206,9 @@ public class AVFoundationHelper
             await asset.LoadValuesTaskAsync(new[] { "tracks" });
 
             // Get source video track for consistency
-            var sourceVideoTrack = asset.TracksWithMediaType(AVMediaTypes.Video.ToString()).FirstOrDefault();
+            var sourceVideoTrack = asset.Tracks
+    .FirstOrDefault(t => t.MediaType == AVMediaTypes.Video.ToString());
+
             if (sourceVideoTrack == null)
                 throw new Exception("No video track found");
 
@@ -221,7 +223,8 @@ public class AVFoundationHelper
             var timeRange = new CMTimeRange { Start = startTime, Duration = duration };
 
             // Insert trimmed video and audio
-            var assetAudioTrack = asset.TracksWithMediaType(AVMediaTypes.Audio.ToString()).FirstOrDefault();
+            var assetAudioTrack = asset.Tracks
+                .FirstOrDefault(t => t.MediaType == AVMediaTypes.Audio.ToString());
 
             compositionVideoTrack?.InsertTimeRange(timeRange, sourceVideoTrack, CMTime.Zero, out _);
 
