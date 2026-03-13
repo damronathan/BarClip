@@ -186,10 +186,15 @@ public class AVFoundationHelper
         {
             using var asset = AVAsset.FromUrl(NSUrl.FromFilename(originalVideo.FilePath));
 
-            // Load tracks
-            await asset.LoadValuesTaskAsync(new[] { "tracks" });
+            try
+            {
+                await asset.LoadValuesTaskAsync(new[] { "tracks" });
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error loading video tracks", ex);
+            }
 
-            // Use GetTracks method with enum (newer .NET iOS API)
             var videoTracks = asset.GetTracks(AVMediaTypes.Video);
             var audioTracks = asset.GetTracks(AVMediaTypes.Audio);
 
@@ -199,105 +204,100 @@ public class AVFoundationHelper
             if (sourceVideoTrack == null)
                 throw new Exception($"No video track found. Total tracks: {asset.Tracks?.Length ?? 0}");
 
-            // Create composition for trimming
             using var composition = new AVMutableComposition();
-            var compositionVideoTrack = composition.AddMutableTrack(AVMediaTypes.Video.ToString(), 0);
-            var compositionAudioTrack = composition.AddMutableTrack(AVMediaTypes.Audio.ToString(), 0);
 
-            // Define trim range
-            var startTime = CMTime.FromSeconds(originalVideo.TrimStart.TotalSeconds, 600);
-            var duration = CMTime.FromSeconds(processedVideo.Duration.TotalSeconds, 600);
-            var timeRange = new CMTimeRange { Start = startTime, Duration = duration };
-
-            // Insert trimmed video and audio
-            var assetAudioTrack = asset.Tracks
-                .FirstOrDefault(t => t.MediaType == AVMediaTypes.Audio.ToString());
-
-            compositionVideoTrack?.InsertTimeRange(timeRange, sourceVideoTrack, CMTime.Zero, out _);
-
-            if (assetAudioTrack != null && compositionAudioTrack != null)
-                compositionAudioTrack.InsertTimeRange(timeRange, assetAudioTrack, CMTime.Zero, out _);
-
-            // Set consistent frame rate for all videos
-            compositionVideoTrack.PreferredTransform = sourceVideoTrack.PreferredTransform;
-
-            // Create video composition for consistent settings and text overlay
-            var videoComposition = AVMutableVideoComposition.Create();
-            videoComposition.FrameDuration = new CMTime(1, 60);
-            videoComposition.RenderSize = sourceVideoTrack.NaturalSize;
-
-            var instruction = AVMutableVideoCompositionInstruction.Create();
-            instruction.TimeRange = new CMTimeRange { Start = CMTime.Zero, Duration = duration };
-
-            var layerInstruction = AVMutableVideoCompositionLayerInstruction.FromAssetTrack(compositionVideoTrack);
-            instruction.LayerInstructions = new[] { layerInstruction };
-
-            videoComposition.Instructions = new[] { instruction };
-
-            // Add text overlay if provided
-            if (weightText is not null)
+            try
             {
-                var videoSize = sourceVideoTrack.NaturalSize;
+                var compositionVideoTrack = composition.AddMutableTrack(AVMediaTypes.Video.ToString(), 0);
+                var compositionAudioTrack = composition.AddMutableTrack(AVMediaTypes.Audio.ToString(), 0);
 
-                var parentLayer = new CALayer
+                var startTime = CMTime.FromSeconds(originalVideo.TrimStart.TotalSeconds, 600);
+                var duration = CMTime.FromSeconds(processedVideo.Duration.TotalSeconds, 600);
+                var timeRange = new CMTimeRange { Start = startTime, Duration = duration };
+
+                var assetAudioTrack = asset.Tracks
+                    .FirstOrDefault(t => t.MediaType == AVMediaTypes.Audio.ToString());
+
+                compositionVideoTrack?.InsertTimeRange(timeRange, sourceVideoTrack, CMTime.Zero, out _);
+
+                if (assetAudioTrack != null && compositionAudioTrack != null)
+                    compositionAudioTrack.InsertTimeRange(timeRange, assetAudioTrack, CMTime.Zero, out _);
+
+                compositionVideoTrack.PreferredTransform = sourceVideoTrack.PreferredTransform;
+
+                var videoComposition = AVMutableVideoComposition.Create();
+                videoComposition.FrameDuration = new CMTime(1, 60);
+                videoComposition.RenderSize = sourceVideoTrack.NaturalSize;
+
+                var instruction = AVMutableVideoCompositionInstruction.Create();
+                instruction.TimeRange = new CMTimeRange { Start = CMTime.Zero, Duration = duration };
+
+                var layerInstruction = AVMutableVideoCompositionLayerInstruction.FromAssetTrack(compositionVideoTrack);
+                instruction.LayerInstructions = new[] { layerInstruction };
+
+                videoComposition.Instructions = new[] { instruction };
+
+                if (weightText is not null)
                 {
-                    Frame = new CGRect(0, 0, videoSize.Width, videoSize.Height)
+                    var videoSize = sourceVideoTrack.NaturalSize;
+
+                    var parentLayer = new CALayer
+                    {
+                        Frame = new CGRect(0, 0, videoSize.Width, videoSize.Height)
+                    };
+
+                    var videoLayer = new CALayer
+                    {
+                        Frame = parentLayer.Frame
+                    };
+
+                    var textLayer = new CATextLayer
+                    {
+                        String = weightText,
+                        FontSize = 150,
+                        ForegroundColor = UIColor.White.CGColor,
+                        Frame = new CGRect(0, 350, videoSize.Width, 200),
+                        BorderColor = UIColor.Black.CGColor,
+                        BorderWidth = 2
+                    };
+
+                    parentLayer.AddSublayer(videoLayer);
+                    parentLayer.AddSublayer(textLayer);
+
+                    videoComposition.AnimationTool = AVVideoCompositionCoreAnimationTool.FromLayer(videoLayer, parentLayer);
+                }
+
+                if (File.Exists(processedVideo.FilePath))
+                    File.Delete(processedVideo.FilePath);
+
+                using var exportSession = new AVAssetExportSession(composition, AVAssetExportSessionPreset.HighestQuality)
+                {
+                    OutputUrl = NSUrl.FromFilename(processedVideo.FilePath),
+                    OutputFileType = "com.apple.quicktime-movie",
+                    VideoComposition = videoComposition,
+                    ShouldOptimizeForNetworkUse = true
                 };
 
-                var videoLayer = new CALayer
+                var waitHandle = new ManualResetEventSlim(false);
+                NSError exportError = null;
+
+                exportSession.ExportAsynchronously(() =>
                 {
-                    Frame = parentLayer.Frame
-                };
+                    exportError = exportSession.Error;
+                    waitHandle.Set();
+                });
 
-                var textLayer = new CATextLayer
-                {
-                    String = weightText,
-                    FontSize = 150,
-                    ForegroundColor = UIColor.White.CGColor,
-                    Frame = new CGRect(
-                        0,
-                        350,
-                        videoSize.Width,
-                        200
-                    ),
-                    BorderColor = UIColor.Black.CGColor,
-                    BorderWidth = 2
-                };
+                waitHandle.Wait();
 
-                parentLayer.AddSublayer(videoLayer);
-                parentLayer.AddSublayer(textLayer);
-
-                videoComposition.AnimationTool = AVVideoCompositionCoreAnimationTool.FromLayer(videoLayer, parentLayer);
+                if (exportError != null)
+                    throw new Exception($"Error processing video: {exportError.LocalizedDescription}");
             }
-
-            // Export
-            if (File.Exists(processedVideo.FilePath))
-                File.Delete(processedVideo.FilePath);
-
-            using var exportSession = new AVAssetExportSession(composition, AVAssetExportSessionPreset.HighestQuality)
+            catch (Exception ex) when (!ex.Message.StartsWith("Error processing video") && !ex.Message.StartsWith("No video track"))
             {
-                OutputUrl = NSUrl.FromFilename(processedVideo.FilePath),
-                OutputFileType = "com.apple.quicktime-movie",
-                VideoComposition = videoComposition,
-                ShouldOptimizeForNetworkUse = true
-            };
-
-            var waitHandle = new ManualResetEventSlim(false);
-            NSError exportError = null;
-
-            exportSession.ExportAsynchronously(() =>
-            {
-                exportError = exportSession.Error;
-                waitHandle.Set();
-            });
-
-            waitHandle.Wait();
-
-            if (exportError != null)
-                throw new Exception($"Error processing video: {exportError.LocalizedDescription}");
+                throw new Exception("Error building and exporting composition", ex);
+            }
         });
     }
-
     public static async Task SaveVideoToCameraRoll(NSUrl videoUrl)
     {
         var status = await PHPhotoLibrary.RequestAuthorizationAsync(PHAccessLevel.AddOnly);

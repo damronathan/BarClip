@@ -19,22 +19,36 @@ public class IOSVideoEditor : IVideoEditor
     }
     public async Task<ProcessedVideoRequest> ProcessVideo(SessionFolderPaths sessionFolderPaths, OriginalVideoRequest video)
     {
-        video.Frames = await ExtractAndProcessFrames(video);
+        try
+        {
+            video.Frames = await ExtractAndProcessFrames(video);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error during frame extraction: ", ex);
+        }
 
         if (video.TrimStart == TimeSpan.Zero)
         {
-            _plateAnalysisService.SetTrim(video);
-        }
+            try
+            {
+                _plateAnalysisService.SetTrim(video);
 
-        ProcessedVideoRequest processedVideo = new()
-        {
-            Id = Guid.NewGuid(),
-            FilePath = Path.Combine(sessionFolderPaths.Processed, $"{video.LiftNumber}_Trimmed.MOV"),
-            Duration = video.TrimFinish - video.TrimStart
-        };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error while setting trim: ", ex);
+            }
+        }
 
         try
         {
+            ProcessedVideoRequest processedVideo = new()
+            {
+                Id = Guid.NewGuid(),
+                FilePath = Path.Combine(sessionFolderPaths.Processed, $"{video.LiftNumber}_Trimmed.MOV"),
+                Duration = video.TrimFinish - video.TrimStart
+            };
             string? weightText = null;
             if (video.WeightKg is not null)
             {
@@ -48,9 +62,10 @@ public class IOSVideoEditor : IVideoEditor
         }
         catch (Exception ex)
         {
-            throw new Exception("Error during trimming and labeling: " + ex.Message);
+            throw new Exception("Error during video processing: ", ex);
         }
     }
+
     public async Task<List<BarClip.Models.Domain.Frame>> ExtractAndProcessFrames(OriginalVideoRequest originalVideo) // medium
     {
         string tempFramePath = Path.Combine(Path.GetTempPath(), "frames");
@@ -62,12 +77,18 @@ public class IOSVideoEditor : IVideoEditor
         }
         catch (Exception ex)
         {
-            throw new Exception($"Error extracting frames: {ex.Message}");
+            throw new Exception("Error extracting frames: ", ex);
         }
 
-        var frames = _frameService.ProcessFrames(tempFramePath, originalVideo.LifterFilter); // long
-
-        return frames;
+        try
+        {
+            var frames = _frameService.ProcessFrames(tempFramePath, originalVideo.LifterFilter);
+            return frames;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error while processing frames: ", ex);
+        }
     }
     public async Task<string> MergeVideos(SessionFolderPaths sessionFolderPaths, Guid sessionId)
     {
