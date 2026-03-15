@@ -285,14 +285,14 @@ public class AVFoundationHelper
                 var waitHandle = new ManualResetEventSlim(false);
                 NSError exportError = null;
                 AVAssetExportSessionStatus exportStatus = AVAssetExportSessionStatus.Unknown;
-                Console.WriteLine($"TrimStart: {originalVideo.TrimStart}, Duration: {processedVideo.Duration}");
-                Console.WriteLine($"Asset duration: {asset.Duration.Seconds}s");
-                Console.WriteLine($"Track count: {asset.Tracks?.Length ?? 0}");
-                Console.WriteLine($"Source video track size: {sourceVideoTrack.NaturalSize.Width}x{sourceVideoTrack.NaturalSize.Height}");
-                Console.WriteLine($"Composition video track count: {composition.Tracks?.Length ?? 0}");
-                Console.WriteLine($"RenderSize: {videoComposition.RenderSize.Width}x{videoComposition.RenderSize.Height}");
-                Console.WriteLine($"NaturalSize: {naturalSize.Width}x{naturalSize.Height}");
-                Console.WriteLine($"Transform B: {transform.B}, isPortrait: {isPortrait}");
+                SentrySdk.AddBreadcrumb($"TrimStart: {originalVideo.TrimStart}, Duration: {processedVideo.Duration}");
+                SentrySdk.AddBreadcrumb($"Asset duration: {asset.Duration.Seconds}s");
+                SentrySdk.AddBreadcrumb($"Track count: {asset.Tracks?.Length ?? 0}");
+                SentrySdk.AddBreadcrumb($"Source video track size: {sourceVideoTrack.NaturalSize.Width}x{sourceVideoTrack.NaturalSize.Height}");
+                SentrySdk.AddBreadcrumb($"Composition video track count: {composition.Tracks?.Length ?? 0}");
+                SentrySdk.AddBreadcrumb($"RenderSize: {videoComposition.RenderSize.Width}x{videoComposition.RenderSize.Height}");
+                SentrySdk.AddBreadcrumb($"NaturalSize: {naturalSize.Width}x{naturalSize.Height}");
+                SentrySdk.AddBreadcrumb($"Transform B: {transform.B}, isPortrait: {isPortrait}");
                 exportSession.ExportAsynchronously(() =>
                 {
                     exportError = exportSession.Error;
