@@ -227,8 +227,12 @@ public class AVFoundationHelper
 
                 var videoComposition = AVMutableVideoComposition.Create();
                 videoComposition.FrameDuration = new CMTime(1, 60);
-                videoComposition.RenderSize = sourceVideoTrack.NaturalSize;
-
+                var naturalSize = sourceVideoTrack.NaturalSize;
+                var transform = sourceVideoTrack.PreferredTransform;
+                var isPortrait = transform.B == 1 || transform.B == -1;
+                videoComposition.RenderSize = isPortrait
+                    ? new CGSize(naturalSize.Height, naturalSize.Width)
+                    : naturalSize;
                 var instruction = AVMutableVideoCompositionInstruction.Create();
                 instruction.TimeRange = new CMTimeRange { Start = CMTime.Zero, Duration = duration };
 
@@ -304,7 +308,7 @@ public class AVFoundationHelper
                         details.AppendLine($"User Info: {exportError.UserInfo}");
                     }
 
-                    throw new Exception($"Export failed — {details}");
+                    throw new Exception($"Export failed — {details} trim start: {originalVideo.TrimStart}, trim finish {originalVideo.TrimFinish}");
                 }
             }
             catch (Exception ex) when (!ex.Message.StartsWith("Error processing video") && !ex.Message.StartsWith("No video track"))
