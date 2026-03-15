@@ -81,16 +81,19 @@ public partial class MainPage : ContentPage
             foreach (var result in videoList)
             {
                 currentVideo++;
+                SentrySdk.AddBreadcrumb($"Processing video {currentVideo}: {result.FileName}, path: {result.FullPath}");
                 CreateBtn.Text = $"Adding video {currentVideo}/{totalVideos}...";
 
                 var video = await videoService.CreateOriginalVideo(user, session);
                 var targetVideoPath = Path.Combine(sessionFolderPaths.Original, $"{currentVideo}.MOV");
 
+                SentrySdk.AddBreadcrumb($"Copying to: {targetVideoPath}");
                 using (var sourceStream = await result.OpenReadAsync())
                 using (var destStream = File.Create(targetVideoPath))
                 {
                     await sourceStream.CopyToAsync(destStream);
                 }
+                SentrySdk.AddBreadcrumb($"Copy complete for video {currentVideo}");
             }
 
             CreateBtn.Text = "Generating thumbnails...";
