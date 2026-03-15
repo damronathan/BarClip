@@ -37,10 +37,9 @@ public partial class MainPage : ContentPage
                 return;
             }
 
+            var picker = new VideoPickerService();
 
-            var videos = new List<FileResult>();
-            var newVideo = await MediaPicker.PickVideoAsync();
-            videos.Add(newVideo);
+            var videos = await picker.PickVideosAsync();
 
             if (videos == null || !videos.Any())
             {
@@ -53,6 +52,7 @@ public partial class MainPage : ContentPage
                 .ToList();
 
             int totalVideos = videoList.Count;
+
 
             CreateBtn.Text = "Setting up session...";
 

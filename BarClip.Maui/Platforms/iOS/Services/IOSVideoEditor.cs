@@ -11,11 +11,13 @@ public class IOSVideoEditor : IVideoEditor
 {
     private readonly FrameService _frameService;
     private readonly PlateAnalysisService _plateAnalysisService;
+    private readonly VideoPickerService _videoPickerService;
 
-    public IOSVideoEditor(FrameService frameService, PlateAnalysisService plateAnalysisService)
+    public IOSVideoEditor(FrameService frameService, PlateAnalysisService plateAnalysisService, VideoPickerService videoPickerService)
     {
         _frameService = frameService;
         _plateAnalysisService = plateAnalysisService;
+        _videoPickerService = videoPickerService;
     }
     public async Task<ProcessedVideoRequest> ProcessVideo(SessionFolderPaths sessionFolderPaths, OriginalVideoRequest video)
     {
