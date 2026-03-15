@@ -11,14 +11,16 @@ public partial class MainPage : ContentPage
     private readonly SessionService _sessionService;
     private readonly IServiceProvider _serviceProvider;
     private readonly IVideoEditor _videoEditor;
+    private readonly VideoPickerService _picker;
 
-    public MainPage(UserRepository userRepository, SessionService sessionService, IServiceProvider serviceProvider, IVideoEditor videoEditor)
+    public MainPage(UserRepository userRepository, SessionService sessionService, IServiceProvider serviceProvider, IVideoEditor videoEditor, VideoPickerService picker)
     {
         InitializeComponent();
         _userRepository = userRepository;
         _sessionService = sessionService;
         _serviceProvider = serviceProvider;
         _videoEditor = videoEditor;
+        _picker = picker;
     }
 
     private async void CreateSession(object sender, EventArgs e)
@@ -37,9 +39,8 @@ public partial class MainPage : ContentPage
                 return;
             }
 
-            var picker = new VideoPickerService();
 
-            var videos = await picker.PickVideosAsync();
+            var videos = await _picker.PickVideosAsync();
 
             if (videos == null || !videos.Any())
             {

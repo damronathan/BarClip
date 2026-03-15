@@ -56,6 +56,7 @@ public static class MauiProgram
         builder.Services.AddScoped<IVideoEditor, WindowsVideoEditor>();
 #elif IOS
         builder.Services.AddScoped<IVideoEditor, IOSVideoEditor>();
+        builder.Services.AddScoped<VideoPickerService>();
 #endif
 
         // Register pages
