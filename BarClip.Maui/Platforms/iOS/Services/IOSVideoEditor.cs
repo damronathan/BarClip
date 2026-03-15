@@ -55,7 +55,8 @@ public class IOSVideoEditor : IVideoEditor
                 var lbWeight = Math.Floor((decimal)(video.WeightKg * 2.2045));
                 weightText = $"{video.WeightKg}KG/{lbWeight}LB";
             }
-            await AVFoundationHelper.TrimAndLabelAsync(video, processedVideo, weightText);
+            //await AVFoundationHelper.TrimAndLabelAsync(video, processedVideo, weightText);
+            await AVFoundationHelper.TrimAsync(video, processedVideo);
 
             return processedVideo;
 

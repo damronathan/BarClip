@@ -346,5 +346,52 @@ public class AVFoundationHelper
 
         await tcs.Task;
     }
+    public static async Task TrimAsync(OriginalVideoRequest originalVideo, ProcessedVideoRequest processedVideo)
+    {
+        await Task.Run(async () =>
+        {
+            using var asset = AVAsset.FromUrl(NSUrl.FromFilename(originalVideo.FilePath));
 
+            try
+            {
+                await asset.LoadValuesTaskAsync(new[] { "tracks", "duration" });
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error loading video asset", ex);
+            }
+
+            if (File.Exists(processedVideo.FilePath))
+                File.Delete(processedVideo.FilePath);
+
+            var startTime = CMTime.FromSeconds(originalVideo.TrimStart.TotalSeconds, 600);
+            var duration = CMTime.FromSeconds(processedVideo.Duration.TotalSeconds, 600);
+
+            using var exportSession = new AVAssetExportSession(asset, AVAssetExportSessionPreset.HighestQuality)
+            {
+                OutputUrl = NSUrl.FromFilename(processedVideo.FilePath),
+                OutputFileType = "com.apple.quicktime-movie",
+                ShouldOptimizeForNetworkUse = true,
+                TimeRange = new CMTimeRange { Start = startTime, Duration = duration }
+            };
+
+            await exportSession.ExportTaskAsync();
+
+            if (exportSession.Status != AVAssetExportSessionStatus.Completed)
+            {
+                var details = new System.Text.StringBuilder();
+                details.AppendLine($"Status: {exportSession.Status}");
+                if (exportSession.Error != null)
+                {
+                    details.AppendLine($"Description: {exportSession.Error.LocalizedDescription}");
+                    details.AppendLine($"Domain: {exportSession.Error.Domain}");
+                    details.AppendLine($"Code: {exportSession.Error.Code}");
+                    details.AppendLine($"User Info: {exportSession.Error.UserInfo}");
+                }
+                throw new Exception($"Trim failed — {details}");
+            }
+        });
+        await SaveVideoToCameraRoll(NSUrl.FromFilename(processedVideo.FilePath));
+
+    }
 }
