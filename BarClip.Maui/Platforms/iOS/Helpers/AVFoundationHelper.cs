@@ -280,17 +280,32 @@ public class AVFoundationHelper
 
                 var waitHandle = new ManualResetEventSlim(false);
                 NSError exportError = null;
+                AVAssetExportSessionStatus exportStatus = AVAssetExportSessionStatus.Unknown;
 
                 exportSession.ExportAsynchronously(() =>
                 {
                     exportError = exportSession.Error;
+                    exportStatus = exportSession.Status;
                     waitHandle.Set();
                 });
 
                 waitHandle.Wait();
 
-                if (exportError != null)
-                    throw new Exception($"Error processing video: {exportError.LocalizedDescription}");
+                if (exportStatus != AVAssetExportSessionStatus.Completed)
+                {
+                    var details = new System.Text.StringBuilder();
+                    details.AppendLine($"Status: {exportStatus}");
+
+                    if (exportError != null)
+                    {
+                        details.AppendLine($"Description: {exportError.LocalizedDescription}");
+                        details.AppendLine($"Domain: {exportError.Domain}");
+                        details.AppendLine($"Code: {exportError.Code}");
+                        details.AppendLine($"User Info: {exportError.UserInfo}");
+                    }
+
+                    throw new Exception($"Export failed — {details}");
+                }
             }
             catch (Exception ex) when (!ex.Message.StartsWith("Error processing video") && !ex.Message.StartsWith("No video track"))
             {
