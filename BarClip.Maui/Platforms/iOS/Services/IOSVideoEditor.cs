@@ -59,7 +59,6 @@ public class IOSVideoEditor : IVideoEditor
             }
             //await AVFoundationHelper.TrimAndLabelAsync(video, processedVideo, weightText);
             await AVFoundationHelper.TrimAsync(video, processedVideo);
-
             return processedVideo;
 
         }

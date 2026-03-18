@@ -167,7 +167,7 @@ public partial class SessionPage : ContentPage
                 Progress = (double)completed / totalVideos;
             }
 
-            //var finalOutputPath = await _videoEditor.MergeVideos(_sessionFolderPaths, _sessionId);
+            var finalOutputPath = await _videoEditor.MergeVideos(_sessionFolderPaths, _sessionId);
 
             await DisplayAlert("Success", "Video processed successfully!", "OK");
 
