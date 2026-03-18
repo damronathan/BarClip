@@ -130,11 +130,13 @@ public class AVFoundationHelper
     public async static Task<string> MergeVideos(SessionFolderPaths sessionFolderPaths, Guid sessionId)
     {
         var finalOutputPath = Path.Combine(sessionFolderPaths.Session, $"FullSession{sessionId}.MOV");
+
         await Task.Run(async () =>
         {
             var videoFiles = Directory.GetFiles(sessionFolderPaths.Processed, "*.MOV")
                                       .OrderBy(f => f)
                                       .ToArray();
+
             using var composition = new AVMutableComposition();
             var videoTrack = composition.AddMutableTrack(AVMediaTypes.Video.ToString(), 0);
             var audioTrack = composition.AddMutableTrack(AVMediaTypes.Audio.ToString(), 0);
@@ -144,18 +146,21 @@ public class AVFoundationHelper
             {
                 using var asset = AVAsset.FromUrl(NSUrl.FromFilename(videoFile));
 
-                // Ensure asset metadata is loaded
-                await asset.LoadValuesTaskAsync(new string[] { "duration", "tracks" });
+                try
+                {
+                    await asset.LoadValuesTaskAsync(new[] { "duration", "tracks" });
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Error loading asset: {videoFile}", ex);
+                }
 
-                var timeRange = new CMTimeRange { Start = CMTime.Zero, Duration = asset.Duration };
-
-                // Use GetTracks() method instead of string comparison
                 var assetVideoTrack = asset.GetTracks(AVMediaTypes.Video)?.FirstOrDefault();
                 var assetAudioTrack = asset.GetTracks(AVMediaTypes.Audio)?.FirstOrDefault();
+                var timeRange = new CMTimeRange { Start = CMTime.Zero, Duration = asset.Duration };
 
                 if (assetVideoTrack != null && videoTrack != null)
                     videoTrack.InsertTimeRange(timeRange, assetVideoTrack, currentTime, out _);
-
                 if (assetAudioTrack != null && audioTrack != null)
                     audioTrack.InsertTimeRange(timeRange, assetAudioTrack, currentTime, out _);
 
@@ -165,22 +170,33 @@ public class AVFoundationHelper
             if (File.Exists(finalOutputPath))
                 File.Delete(finalOutputPath);
 
-            using var exportSession = new AVAssetExportSession(composition, AVAssetExportSessionPreset.HighestQuality)
+            using var exportSession = new AVAssetExportSession(composition, AVAssetExportSessionPreset.Passthrough)
             {
                 OutputUrl = NSUrl.FromFilename(finalOutputPath),
                 OutputFileType = "com.apple.quicktime-movie",
+                ShouldOptimizeForNetworkUse = true
             };
 
             await exportSession.ExportTaskAsync();
 
-            if (exportSession.Error != null)
-                throw new Exception($"Error merging videos: {exportSession.Error.LocalizedDescription}");
+            if (exportSession.Status != AVAssetExportSessionStatus.Completed)
+            {
+                var details = new System.Text.StringBuilder();
+                details.AppendLine($"Status: {exportSession.Status}");
+                if (exportSession.Error != null)
+                {
+                    details.AppendLine($"Description: {exportSession.Error.LocalizedDescription}");
+                    details.AppendLine($"Domain: {exportSession.Error.Domain}");
+                    details.AppendLine($"Code: {exportSession.Error.Code}");
+                    details.AppendLine($"User Info: {exportSession.Error.UserInfo}");
+                }
+                throw new Exception($"Merge failed — {details}");
+            }
         });
 
         await SaveVideoToCameraRoll(NSUrl.FromFilename(finalOutputPath));
         return finalOutputPath;
     }
-
     public static async Task TrimAndLabelAsync(OriginalVideoRequest originalVideo, ProcessedVideoRequest processedVideo, string? weightText)
     {
         await Task.Run(async () =>
