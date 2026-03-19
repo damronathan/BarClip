@@ -136,9 +136,11 @@ public class AVFoundationHelper
                                   .ToArray();
 
         var composition = new AVMutableComposition();
-        var videoTrack = composition.AddMutableTrack(AVMediaTypes.Video.ToString(), 0);
         var audioTrack = composition.AddMutableTrack(AVMediaTypes.Audio.ToString(), 0);
         var currentTime = CMTime.Zero;
+        var layerInstructions = new List<AVMutableVideoCompositionLayerInstruction>();
+        var totalDuration = CMTime.Zero;
+        CGSize renderSize = CGSize.Empty;
 
         foreach (var path in videoPaths)
         {
@@ -151,40 +153,47 @@ public class AVFoundationHelper
             {
                 throw new Exception($"Error loading asset: {path}", ex);
             }
+
             var assetVideoTrack = asset.GetTracks(AVMediaTypes.Video).FirstOrDefault();
             var assetAudioTrack = asset.GetTracks(AVMediaTypes.Audio).FirstOrDefault();
+
+            if (assetVideoTrack == null)
+                throw new Exception($"No video track found in: {path}");
+
+            // Each clip gets its own track
+            var videoTrack = composition.AddMutableTrack(AVMediaTypes.Video.ToString(), 0);
             var timeRange = new CMTimeRange { Start = CMTime.Zero, Duration = asset.Duration };
 
-            if (assetVideoTrack != null)
-                videoTrack.InsertTimeRange(timeRange, assetVideoTrack, currentTime, out _);
+            videoTrack.InsertTimeRange(timeRange, assetVideoTrack, currentTime, out _);
+
             if (assetAudioTrack != null)
                 audioTrack.InsertTimeRange(timeRange, assetAudioTrack, currentTime, out _);
 
+            // Handle orientation per track
+            var transform = assetVideoTrack.PreferredTransform;
+            var naturalSize = assetVideoTrack.NaturalSize;
+            var isPortrait = transform.B == 1 || transform.B == -1;
+
+            if (renderSize == CGSize.Empty)
+                renderSize = isPortrait
+                    ? new CGSize(naturalSize.Height, naturalSize.Width)
+                    : naturalSize;
+
+            var layerInstruction = AVMutableVideoCompositionLayerInstruction.FromAssetTrack(videoTrack);
+            layerInstruction.SetTransform(transform, currentTime);
+            layerInstructions.Add(layerInstruction);
+
             currentTime = CMTime.Add(currentTime, asset.Duration);
+            totalDuration = currentTime;
         }
 
-        var firstVideoTrack = composition.GetTracks(AVMediaTypes.Video).FirstOrDefault();
-        var naturalSize = firstVideoTrack.NaturalSize;
-        var transform = firstVideoTrack.PreferredTransform;
-        var isPortrait = transform.B == 1 || transform.B == -1;
-        var renderSize = isPortrait
-            ? new CGSize(naturalSize.Height, naturalSize.Width)
-            : naturalSize;
+        var instruction = AVMutableVideoCompositionInstruction.Create();
+        instruction.TimeRange = new CMTimeRange { Start = CMTime.Zero, Duration = totalDuration };
+        instruction.LayerInstructions = layerInstructions.ToArray();
 
         var videoComposition = AVMutableVideoComposition.Create();
         videoComposition.RenderSize = renderSize;
         videoComposition.FrameDuration = new CMTime(1, 60);
-
-        var instruction = AVMutableVideoCompositionInstruction.Create();
-        instruction.TimeRange = new CMTimeRange
-        {
-            Start = CMTime.Zero,
-            Duration = composition.Duration
-        };
-
-        var layerInstruction = AVMutableVideoCompositionLayerInstruction.FromAssetTrack(firstVideoTrack);
-        layerInstruction.SetTransform(transform, CMTime.Zero);
-        instruction.LayerInstructions = new[] { layerInstruction };
         videoComposition.Instructions = new[] { instruction };
 
         if (File.Exists(finalOutputPath))
@@ -205,6 +214,7 @@ public class AVFoundationHelper
         {
             throw new Exception("Error during merge export", ex);
         }
+
         if (exportSession.Status != AVAssetExportSessionStatus.Completed)
             throw new Exception($"Merge failed: {exportSession.Error?.LocalizedDescription}, Code: {exportSession.Error?.Code}, Domain: {exportSession.Error?.Domain}, Reason: {exportSession.Error?.UserInfo}");
 
