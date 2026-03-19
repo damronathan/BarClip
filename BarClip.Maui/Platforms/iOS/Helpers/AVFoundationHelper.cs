@@ -143,8 +143,14 @@ public class AVFoundationHelper
         foreach (var path in videoPaths)
         {
             var asset = AVAsset.FromUrl(NSUrl.FromFilename(path));
-            await asset.LoadValuesTaskAsync(new[] { "tracks", "duration" });
-
+            try
+            {
+                await asset.LoadValuesTaskAsync(new[] { "tracks", "duration" });
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error loading asset: {path}", ex);
+            }
             var assetVideoTrack = asset.GetTracks(AVMediaTypes.Video).FirstOrDefault();
             var assetAudioTrack = asset.GetTracks(AVMediaTypes.Audio).FirstOrDefault();
             var timeRange = new CMTimeRange { Start = CMTime.Zero, Duration = asset.Duration };
@@ -157,19 +163,50 @@ public class AVFoundationHelper
             currentTime = CMTime.Add(currentTime, asset.Duration);
         }
 
+        var firstVideoTrack = composition.GetTracks(AVMediaTypes.Video).FirstOrDefault();
+        var naturalSize = firstVideoTrack.NaturalSize;
+        var transform = firstVideoTrack.PreferredTransform;
+        var isPortrait = transform.B == 1 || transform.B == -1;
+        var renderSize = isPortrait
+            ? new CGSize(naturalSize.Height, naturalSize.Width)
+            : naturalSize;
+
+        var videoComposition = AVMutableVideoComposition.Create();
+        videoComposition.RenderSize = renderSize;
+        videoComposition.FrameDuration = new CMTime(1, 60);
+
+        var instruction = AVMutableVideoCompositionInstruction.Create();
+        instruction.TimeRange = new CMTimeRange
+        {
+            Start = CMTime.Zero,
+            Duration = composition.Duration
+        };
+
+        var layerInstruction = AVMutableVideoCompositionLayerInstruction.FromAssetTrack(firstVideoTrack);
+        layerInstruction.SetTransform(transform, CMTime.Zero);
+        instruction.LayerInstructions = new[] { layerInstruction };
+        videoComposition.Instructions = new[] { instruction };
+
         if (File.Exists(finalOutputPath))
             File.Delete(finalOutputPath);
 
         var exportSession = new AVAssetExportSession(composition, AVAssetExportSessionPreset.HighestQuality)
         {
             OutputUrl = NSUrl.FromFilename(finalOutputPath),
-            OutputFileType = "com.apple.quicktime-movie"
+            OutputFileType = "com.apple.quicktime-movie",
+            VideoComposition = videoComposition
         };
 
-        await exportSession.ExportTaskAsync();
-
+        try
+        {
+            await exportSession.ExportTaskAsync();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error during merge export", ex);
+        }
         if (exportSession.Status != AVAssetExportSessionStatus.Completed)
-            throw new Exception($"Merge failed: {exportSession.Error?.LocalizedDescription}, Code: {exportSession.Error?.Code}");
+            throw new Exception($"Merge failed: {exportSession.Error?.LocalizedDescription}, Code: {exportSession.Error?.Code}, Domain: {exportSession.Error?.Domain}, Reason: {exportSession.Error?.UserInfo}");
 
         return finalOutputPath;
     }
