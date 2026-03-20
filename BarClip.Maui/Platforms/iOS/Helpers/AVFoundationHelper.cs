@@ -1,4 +1,5 @@
 ﻿using AVFoundation;
+using BarClip.Data.Schema;
 using BarClip.Models.Requests;
 using CoreAnimation;
 using CoreGraphics;
@@ -9,6 +10,7 @@ using MediaPlayer;
 using Photos;
 using UIKit;
 using static BarClip.Core.Helpers.FileHelper;
+using static Sentry.MeasurementUnit;
 
 
 
@@ -127,47 +129,197 @@ public class AVFoundationHelper
         return originalFilePaths;
     }
 
-   public static async Task<string> MergeVideos(string[] videoPaths, string outputPath)
-{
-    var composition = new AVMutableComposition();
-    
-    // Create one track for video and one for audio
-    var videoTrack = composition.AddMutableTrack("com.apple.quicktime-movie", 0);
-    var audioTrack = composition.AddMutableTrack("com.apple.m4a-audio", 0);
-    var currentTime = CMTime.Zero;
-
-    foreach (var path in videoPaths)
+    public static async Task<string> MergeVideos(SessionFolderPaths sessionFolderPaths, Guid sessionId)
     {
-        var asset = AVAsset.FromUrl(NSUrl.FromFilename(path));
-        await asset.LoadValuesTaskAsync(new[] { "tracks", "duration" });
+        var videoPaths = Directory.GetFiles(sessionFolderPaths.Processed, "*.MOV")
+                                  .OrderBy(f => f)
+                                  .ToArray();
 
-        var assetVideo = asset.GetTracks(AVMediaTypes.Video).FirstOrDefault();
-        var assetAudio = asset.GetTracks(AVMediaTypes.Audio).FirstOrDefault();
+        var finalOutputPath = Path.Combine(sessionFolderPaths.Session, $"FullSession{sessionId}.MOV");
 
-        var timeRange = new CMTimeRange { Start = CMTime.Zero, Duration = asset.Duration };
+        if (File.Exists(finalOutputPath))
+            File.Delete(finalOutputPath);
 
-        // Append to the end of the existing tracks
-        videoTrack.InsertTimeRange(timeRange, assetVideo, currentTime, out _);
-        if (assetAudio != null)
-            audioTrack.InsertTimeRange(timeRange, assetAudio, currentTime, out _);
+        var videoAssets = new List<AVUrlAsset>();
 
-        currentTime = CMTime.Add(currentTime, asset.Duration);
+        foreach(string path in videoPaths)
+        {
+            NSUrl nsUrl = NSUrl.FromFilename(path);
+            AVUrlAsset asset = AVUrlAsset.Create(nsUrl);
+            videoAssets.Add(asset);
+        }
+
+        var composition = new AVMutableComposition();
+
+        var compositionVideoTrack = composition.AddMutableTrack("vide", 1);
+        var compositionAudioTrack = composition.AddMutableTrack("soun", 1);
+
+        var insertTime = CMTime.Zero;
+
+        foreach (var asset in videoAssets)
+        {
+            await asset.LoadValuesTaskAsync(["tracks"]);
+            var assetVideoTrack = asset.GetTracks(AVMediaTypes.Video).FirstOrDefault();
+            var assetAudioTrack = asset.GetTracks(AVMediaTypes.Audio).FirstOrDefault();
+
+            var duration = asset.Duration;
+
+            var timeRange = new CMTimeRange
+            {
+                Start = CMTime.Zero,
+                Duration = duration
+            };
+            bool videoSuccess = compositionVideoTrack.InsertTimeRange(timeRange, assetVideoTrack, insertTime, out NSError videoError);
+            bool audioSuccess = compositionAudioTrack.InsertTimeRange(timeRange, assetAudioTrack, insertTime, out NSError audioError);
+
+            if (!videoSuccess || !audioSuccess)
+            {
+                throw new Exception("");
+            }
+
+            insertTime = CMTime.Add(insertTime, duration);
+
+        }
+
+        var exportSession = new AVAssetExportSession(composition, AVAssetExportSessionPreset.HighestQuality)
+        {
+            OutputUrl = NSUrl.FromFilename(finalOutputPath),
+            OutputFileType = "com.apple.quicktime-movie",
+            ShouldOptimizeForNetworkUse = true
+        };
+        await exportSession.ExportTaskAsync();
+
+        if (exportSession.Status != AVAssetExportSessionStatus.Completed)
+        {
+            var details = new System.Text.StringBuilder();
+            details.AppendLine($"Status: {exportSession.Status}");
+            if (exportSession.Error != null)
+            {
+                details.AppendLine($"Description: {exportSession.Error.LocalizedDescription}");
+                details.AppendLine($"Domain: {exportSession.Error.Domain}");
+                details.AppendLine($"Code: {exportSession.Error.Code}");
+                details.AppendLine($"User Info: {exportSession.Error.UserInfo}");
+            }
+            throw new Exception($"Merge failed — {details}");
+        }
+        await SaveVideoToCameraRoll(NSUrl.FromFilename(finalOutputPath));
+
+        return finalOutputPath;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //var finalOutputPath = Path.Combine(sessionFolderPaths.Session, $"FullSession{sessionId}.MOV");
+
+        //var videoPaths = Directory.GetFiles(sessionFolderPaths.Processed, "*.MOV")
+        //                          .OrderBy(f => f)
+        //                          .ToArray();   
+
+        //var composition = new AVMutableComposition();
+        //var audioTrack = composition.AddMutableTrack(AVMediaTypes.Audio.ToString(), 0);
+        //var currentTime = CMTime.Zero;
+        //var layerInstructions = new List<AVMutableVideoCompositionLayerInstruction>();
+        //var totalDuration = CMTime.Zero;
+        //CGSize renderSize = CGSize.Empty;
+
+        //foreach (var path in videoPaths)
+        //{
+        //    var asset = AVAsset.FromUrl(NSUrl.FromFilename(path));
+        //    try
+        //    {
+        //        await asset.LoadValuesTaskAsync(new[] { "tracks", "duration" });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new Exception($"Error loading asset: {path}", ex);
+        //    }
+
+        //    var assetVideoTrack = asset.GetTracks(AVMediaTypes.Video).FirstOrDefault();
+        //    var assetAudioTrack = asset.GetTracks(AVMediaTypes.Audio).FirstOrDefault();
+
+        //    if (assetVideoTrack == null)
+        //        throw new Exception($"No video track found in: {path}");
+
+        //    // Each clip gets its own track
+        //    var videoTrack = composition.AddMutableTrack(AVMediaTypes.Video.ToString(), 0);
+        //    var timeRange = new CMTimeRange { Start = CMTime.Zero, Duration = asset.Duration };
+
+        //    videoTrack.InsertTimeRange(timeRange, assetVideoTrack, currentTime, out _);
+
+        //    if (assetAudioTrack != null)
+        //        audioTrack.InsertTimeRange(timeRange, assetAudioTrack, currentTime, out _);
+
+        //    // Handle orientation per track
+        //    var transform = assetVideoTrack.PreferredTransform;
+        //    var naturalSize = assetVideoTrack.NaturalSize;
+        //    var isPortrait = transform.B == 1 || transform.B == -1;
+
+        //    if (renderSize == CGSize.Empty)
+        //        renderSize = isPortrait
+        //            ? new CGSize(naturalSize.Height, naturalSize.Width)
+        //            : naturalSize;
+
+        //    var layerInstruction = AVMutableVideoCompositionLayerInstruction.FromAssetTrack(videoTrack);
+        //    layerInstruction.SetTransform(transform, currentTime);
+        //    layerInstructions.Add(layerInstruction);
+
+        //    currentTime = CMTime.Add(currentTime, asset.Duration);
+        //    totalDuration = currentTime;
+        //}
+
+        //var instruction = AVMutableVideoCompositionInstruction.Create();
+        //instruction.TimeRange = new CMTimeRange { Start = CMTime.Zero, Duration = totalDuration };
+        //instruction.LayerInstructions = layerInstructions.ToArray();
+
+        //var videoComposition = AVMutableVideoComposition.Create();
+        //videoComposition.RenderSize = renderSize;
+        //videoComposition.FrameDuration = new CMTime(1, 60);
+        //videoComposition.Instructions = new[] { instruction };
+
+        //if (File.Exists(finalOutputPath))
+        //    File.Delete(finalOutputPath);
+
+        //var exportSession = new AVAssetExportSession(composition, AVAssetExportSessionPreset.HighestQuality)
+        //{
+        //    OutputUrl = NSUrl.FromFilename(finalOutputPath),
+        //    OutputFileType = "com.apple.quicktime-movie",
+        //    VideoComposition = videoComposition
+        //};
+
+        //try
+        //{
+        //    await exportSession.ExportTaskAsync();
+        //}
+        //catch (Exception ex)
+        //{
+        //    throw new Exception("Error during merge export", ex);
+        //}
+
+        //if (exportSession.Status != AVAssetExportSessionStatus.Completed)
+        //    throw new Exception($"Merge failed: {exportSession.Error?.LocalizedDescription}, Code: {exportSession.Error?.Code}, Domain: {exportSession.Error?.Domain}, Reason: {exportSession.Error?.UserInfo}");
+
+        //return finalOutputPath;
     }
-
-    // Set the overall orientation based on the first clip
-    videoTrack.PreferredTransform = composition.TracksWithMediaType("com.apple.quicktime-movie")[0].PreferredTransform;
-
-    if (File.Exists(outputPath)) File.Delete(outputPath);
-
-    var exportSession = new AVAssetExportSession(composition, AVAssetExportSessionPreset.HighestQuality)
-    {
-        OutputUrl = NSUrl.FromFilename(outputPath),
-        OutputFileType = "com.apple.quicktime-movie"
-    };
-
-    await exportSession.ExportTaskAsync();
-    return outputPath;
-}
 
     public static async Task TrimAndLabelAsync(OriginalVideoRequest originalVideo, ProcessedVideoRequest processedVideo, string? weightText)
     {
