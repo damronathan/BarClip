@@ -132,8 +132,8 @@ public class AVFoundationHelper
         public static async Task<string> MergeVideos(SessionFolderPaths sessionFolderPaths, Guid sessionId)
     {
         var videoPaths = Directory.GetFiles(sessionFolderPaths.Processed, "*.MOV")
-                                  .OrderBy(f => f)
-                                  .ToArray();
+                          .OrderBy(f => File.GetCreationTime(f))
+                          .ToArray();
         var finalOutputPath = Path.Combine(sessionFolderPaths.Session, $"FullSession{sessionId}.MOV");
         if (File.Exists(finalOutputPath))
             File.Delete(finalOutputPath);
