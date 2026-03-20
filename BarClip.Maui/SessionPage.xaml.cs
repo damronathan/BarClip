@@ -162,12 +162,12 @@ public partial class SessionPage : ContentPage
                     UserId = _userId,
                     LiftNumber = currentVideo
                 };
-                await _videoEditor.ProcessVideo(_sessionFolderPaths, originalVideoRequest);
+                await Task.Run(() => _videoEditor.ProcessVideo(_sessionFolderPaths, originalVideoRequest));
                 completed++;
                 Progress = (double)completed / totalVideos;
             }
 
-            var finalOutputPath = await _videoEditor.MergeVideos(_sessionFolderPaths, _sessionId);
+            var finalOutputPath = await Task.Run(() => _videoEditor.MergeVideos(_sessionFolderPaths, _sessionId));
 
             await DisplayAlert("Success", "Video processed successfully!", "OK");
 
