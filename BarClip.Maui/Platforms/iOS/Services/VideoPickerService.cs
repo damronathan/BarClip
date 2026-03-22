@@ -41,7 +41,7 @@ public class VideoPickerService
             var assets = Enumerable.Range(0, (int)fetchResult.Count)
                 .Select(i => fetchResult.ObjectAt(i) as PHAsset)
                 .Where(a => a != null)
-                .OrderBy(a => a!.CreationDate)
+                .OrderBy(a => (DateTime)a!.CreationDate)
                 .ToList();
 
             var fileResults = new List<FileResult>();
