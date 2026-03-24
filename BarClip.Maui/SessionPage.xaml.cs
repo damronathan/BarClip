@@ -93,7 +93,7 @@ public partial class SessionPage : ContentPage
         foreach (var video in OriginalVideos)
         {
             currentVideo++;
-            var lift = await _liftService.GetLiftByOriginalVideoId(video.Id, _sessionId, currentVideo);
+            var lift = await _liftService.GetLiftByOriginalVideoId(video.Id, _sessionId);
             lift.SessionId = _sessionId;
 
             var liftVideoViewModel = new VideoLiftViewModel
