@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BarClip.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260324045353_AddOriginalVideoCreationTime")]
+    [Migration("20260324045855_AddOriginalVideoCreationTime")]
     partial class AddOriginalVideoCreationTime
     {
         /// <inheritdoc />

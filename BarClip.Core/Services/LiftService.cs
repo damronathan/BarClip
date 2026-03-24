@@ -21,13 +21,12 @@ public class LiftService
         var lift = await _repo.GetLiftByIdAsync(Id);
         return lift;
     }
-    public async Task<Lift> GetLiftByOriginalVideoId(Guid originalVideoId, Guid sessionId, int order)
+    public async Task<Lift> GetLiftByOriginalVideoId(Guid originalVideoId, Guid sessionId)
     {
         var newLift = new Lift
         {
             OriginalVideoId = originalVideoId,
             SessionId = sessionId,
-            Order = order
         };
         var lift = await _repo.GetLiftByOriginalVideoIdAsync(originalVideoId);
         if (lift == null)
