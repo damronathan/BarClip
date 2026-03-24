@@ -18,6 +18,7 @@ public class Lift : BaseEntity
     public Guid? ExerciseId { get; set; }
     public Exercise? Exercise { get; set; }
     public LifterFilter LifterFilter { get; set; }
+    public int? Order { get; set; }
 
     public static void Configure(ModelBuilder modelBuilder)
     {

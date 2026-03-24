@@ -15,7 +15,7 @@ namespace BarClip.Data.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "10.0.1");
+            modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
 
             modelBuilder.Entity("BarClip.Data.Schema.Exercise", b =>
                 {
@@ -47,6 +47,9 @@ namespace BarClip.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<int>("LifterFilter")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("Order")
                         .HasColumnType("INTEGER");
 
                     b.Property<Guid>("OriginalVideoId")
@@ -88,6 +91,9 @@ namespace BarClip.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CreatedTime")
                         .HasColumnType("TEXT");
 
                     b.Property<Guid?>("CurrentProcessedVideoId")

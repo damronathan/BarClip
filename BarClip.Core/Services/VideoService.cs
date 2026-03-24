@@ -11,7 +11,7 @@ namespace BarClip.Core.Services;
 
 public interface IVideoService
 {
-    Task<OriginalVideo> CreateOriginalVideo(User user, Session session);
+    Task<OriginalVideo> CreateOriginalVideo(User user, Session session, DateTime createdTime);
     Task<List<OriginalVideo>> GetOriginalVideosForSession(Guid SessionId);
     //Task<ProcessedVideoRequest> ProcessVideo(SessionFolderPaths sessionFolderPaths, OriginalVideoRequest video);
     Task SaveVideos(SaveVideosRequest request);
@@ -53,7 +53,7 @@ public class VideoService : IVideoService
     {
         return await _repo.GetOriginalVideosForSessionAsync(SessionId);
     }
-    public async Task<OriginalVideo> CreateOriginalVideo(User user, Session session)
+    public async Task<OriginalVideo> CreateOriginalVideo(User user, Session session, DateTime createdTime)
     {
         var video = new OriginalVideo
         {
@@ -64,6 +64,7 @@ public class VideoService : IVideoService
             CurrentProcessedVideoId = Guid.Empty,
             SessionId = session.Id,
             Session = session,
+            CreatedTime = createdTime,
         };
         return await _repo.CreateOriginalVideoAsync(video);
     }

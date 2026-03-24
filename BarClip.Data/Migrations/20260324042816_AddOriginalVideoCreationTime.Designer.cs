@@ -11,14 +11,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BarClip.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251228183429_CascadeSession")]
-    partial class CascadeSession
+    [Migration("20260324042816_AddOriginalVideoCreationTime")]
+    partial class AddOriginalVideoCreationTime
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "10.0.1");
+            modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
 
             modelBuilder.Entity("BarClip.Data.Schema.Exercise", b =>
                 {
@@ -50,6 +50,9 @@ namespace BarClip.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<int>("LifterFilter")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("Order")
                         .HasColumnType("INTEGER");
 
                     b.Property<Guid>("OriginalVideoId")
@@ -91,6 +94,9 @@ namespace BarClip.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("CreatedTime")
                         .HasColumnType("TEXT");
 
                     b.Property<Guid?>("CurrentProcessedVideoId")

@@ -84,8 +84,11 @@ public partial class MainPage : ContentPage
                 SentrySdk.AddBreadcrumb($"Processing video {currentVideo}: {result.FileName}, path: {result.FullPath}");
                 CreateBtn.Text = $"Adding video {currentVideo}/{totalVideos}...";
 
-                var video = await videoService.CreateOriginalVideo(user, session);
-                var targetVideoPath = Path.Combine(sessionFolderPaths.Original, $"{currentVideo}.MOV");
+                var fileInfo = new FileInfo(result.FullPath);
+                var createdTime = fileInfo.CreationTime;
+
+                var video = await videoService.CreateOriginalVideo(user, session, createdTime);
+                var targetVideoPath = Path.Combine(sessionFolderPaths.Original, $"{video.Id}.MOV");
 
                 SentrySdk.AddBreadcrumb($"Copying to: {targetVideoPath}");
                 using (var sourceStream = await result.OpenReadAsync())

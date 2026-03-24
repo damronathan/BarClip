@@ -6,6 +6,7 @@ using BarClip.Models.Requests;
 using System.Windows.Input;
 using System.Diagnostics;
 using BarClip.Core.Interfaces;
+using AddressBookUI;
 
 namespace BarClip.Maui;
 
@@ -92,7 +93,7 @@ public partial class SessionPage : ContentPage
         foreach (var video in OriginalVideos)
         {
             currentVideo++;
-            var lift = await _liftService.GetLiftByOriginalVideoId(video.Id, _sessionId);
+            var lift = await _liftService.GetLiftByOriginalVideoId(video.Id, _sessionId, currentVideo);
             lift.SessionId = _sessionId;
 
             var liftVideoViewModel = new VideoLiftViewModel
@@ -103,7 +104,8 @@ public partial class SessionPage : ContentPage
                 VideoPath = Path.Combine(_sessionFolderPaths.Original, $"{currentVideo}.MOV"),
                 IsWhole = lift.LifterFilter == LifterFilter.Whole,
                 IsLeft = lift.LifterFilter == LifterFilter.Left,
-                IsRight = lift.LifterFilter == LifterFilter.Right
+                IsRight = lift.LifterFilter == LifterFilter.Right,
+                Order = lift.Order
             };
 
             LiftVideos.Add(liftVideoViewModel);
@@ -121,7 +123,7 @@ public partial class SessionPage : ContentPage
             OriginalVideos.Clear();
             var allVideos = await _videoService.GetOriginalVideosForSession(_sessionId);
 
-            foreach (var video in allVideos)
+            foreach (var video in allVideos.OrderBy(v => v.CreatedTime))
                 OriginalVideos.Add(video);
         }
         catch (Exception ex)
