@@ -49,8 +49,8 @@ public partial class MainPage : ContentPage
             }
 
             var videoList = videos
-                .OrderBy(v => v.FileName)
-                .ToList();
+    .OrderBy(v => new FileInfo(v.FullPath).CreationTime)
+    .ToList();
 
             int totalVideos = videoList.Count;
 

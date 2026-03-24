@@ -132,7 +132,7 @@ public class AVFoundationHelper
         public static async Task<string> MergeVideos(SessionFolderPaths sessionFolderPaths, Guid sessionId)
     {
         var videoPaths = Directory.GetFiles(sessionFolderPaths.Processed, "*.MOV")
-                          .OrderBy(f => f)
+                          .OrderBy(f => int.Parse(Path.GetFileNameWithoutExtension(f).Split('_')[0]))
                           .ToArray();
         var finalOutputPath = Path.Combine(sessionFolderPaths.Session, $"FullSession{sessionId}.MOV");
         if (File.Exists(finalOutputPath))
