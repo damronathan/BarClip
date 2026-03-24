@@ -1,7 +1,9 @@
-﻿using BarClip.Core.Interfaces;
+﻿using AVFoundation;
+using BarClip.Core.Interfaces;
 using BarClip.Core.Repositories;
 using BarClip.Core.Services;
 using BarClip.Data.Schema;
+using Foundation;
 
 namespace BarClip.Maui;
 
@@ -49,8 +51,8 @@ public partial class MainPage : ContentPage
             }
 
             var videoList = videos
-    .OrderBy(v => new FileInfo(v.FullPath).CreationTime)
-    .ToList();
+            .OrderBy(v => new FileInfo(v.FullPath).CreationTime)
+            .ToList();
 
             int totalVideos = videoList.Count;
 
@@ -90,13 +92,20 @@ public partial class MainPage : ContentPage
                 var video = await videoService.CreateOriginalVideo(user, session, createdTime);
                 var targetVideoPath = Path.Combine(sessionFolderPaths.Original, $"{video.Id}.MOV");
 
-                SentrySdk.AddBreadcrumb($"Copying to: {targetVideoPath}");
-                using (var sourceStream = await result.OpenReadAsync())
-                using (var destStream = File.Create(targetVideoPath))
+                SentrySdk.AddBreadcrumb($"Compressing to: {targetVideoPath}");
+
+                var asset = AVUrlAsset.Create(NSUrl.FromFilename(result.FullPath));
+                var exportSession = new AVAssetExportSession(asset, AVAssetExportSessionPreset.Preset1280x720)
                 {
-                    await sourceStream.CopyToAsync(destStream);
-                }
-                SentrySdk.AddBreadcrumb($"Copy complete for video {currentVideo}");
+                    OutputUrl = NSUrl.FromFilename(targetVideoPath),
+                    OutputFileType = "com.apple.quicktime-movie"
+                };
+                await exportSession.ExportTaskAsync();
+
+                if (exportSession.Status != AVAssetExportSessionStatus.Completed)
+                    throw new Exception($"Compression failed: {exportSession.Error?.LocalizedDescription}");
+
+                SentrySdk.AddBreadcrumb($"Compression complete for video {currentVideo}");
             }
 
             CreateBtn.Text = "Generating thumbnails...";
