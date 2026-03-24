@@ -49,9 +49,6 @@ namespace BarClip.Data.Migrations
                     b.Property<int>("LifterFilter")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("Order")
-                        .HasColumnType("INTEGER");
-
                     b.Property<Guid>("OriginalVideoId")
                         .HasColumnType("TEXT");
 

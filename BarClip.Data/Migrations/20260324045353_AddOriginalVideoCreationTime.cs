@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -11,19 +10,19 @@ namespace BarClip.Data.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<DateTime>(
-                name: "CreatedTime",
-                table: "OriginalVideos",
-                type: "TEXT",
-                nullable: true);
+            migrationBuilder.DropColumn(
+                name: "Order",
+                table: "Lifts");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "CreatedTime",
-                table: "OriginalVideos");
+            migrationBuilder.AddColumn<int>(
+                name: "Order",
+                table: "Lifts",
+                type: "INTEGER",
+                nullable: true);
         }
     }
 }

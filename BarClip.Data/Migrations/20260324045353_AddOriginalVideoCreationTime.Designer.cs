@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BarClip.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260324042816_AddOriginalVideoCreationTime")]
+    [Migration("20260324045353_AddOriginalVideoCreationTime")]
     partial class AddOriginalVideoCreationTime
     {
         /// <inheritdoc />
@@ -50,9 +50,6 @@ namespace BarClip.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<int>("LifterFilter")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("Order")
                         .HasColumnType("INTEGER");
 
                     b.Property<Guid>("OriginalVideoId")

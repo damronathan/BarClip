@@ -100,12 +100,12 @@ public partial class SessionPage : ContentPage
             {
                 Video = video,
                 Lift = lift,
-                ThumbnailPath = Path.Combine(_sessionFolderPaths.Thumbnails, $"{currentVideo}.png"),
-                VideoPath = Path.Combine(_sessionFolderPaths.Original, $"{currentVideo}.MOV"),
+                ThumbnailPath = Path.Combine(_sessionFolderPaths.Thumbnails, $"{video.Id}.png"),
+                VideoPath = Path.Combine(_sessionFolderPaths.Original, $"{video.Id}.MOV"),
                 IsWhole = lift.LifterFilter == LifterFilter.Whole,
                 IsLeft = lift.LifterFilter == LifterFilter.Left,
                 IsRight = lift.LifterFilter == LifterFilter.Right,
-                Order = lift.Order
+                Order = currentVideo
             };
 
             LiftVideos.Add(liftVideoViewModel);
