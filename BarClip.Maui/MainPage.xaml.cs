@@ -95,7 +95,7 @@ public partial class MainPage : ContentPage
                 SentrySdk.AddBreadcrumb($"Compressing to: {targetVideoPath}");
 
                 var asset = AVUrlAsset.Create(NSUrl.FromFilename(result.FullPath));
-                var exportSession = new AVAssetExportSession(asset, AVAssetExportSessionPreset.Preset1280x720)
+                var exportSession = new AVAssetExportSession(asset, AVAssetExportSessionPreset.MediumQuality)
                 {
                     OutputUrl = NSUrl.FromFilename(targetVideoPath),
                     OutputFileType = "com.apple.quicktime-movie"
