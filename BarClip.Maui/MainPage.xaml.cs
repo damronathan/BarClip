@@ -90,17 +90,17 @@ public partial class MainPage : ContentPage
                 var createdTime = fileInfo.CreationTime;
 
                 var video = await videoService.CreateOriginalVideo(user, session, createdTime);
-                var targetVideoPath = Path.Combine(sessionFolderPaths.Original, $"{video.Id}.MOV");
+                var originalVideoPath = Path.Combine(sessionFolderPaths.Original, $"{video.Id}.MOV");
                 var compressedVideoPath = Path.Combine(sessionFolderPaths.Compressed, $"compressed_{video.Id}.MOV");
 
                 using (var sourceStream = await result.OpenReadAsync())
-                using (var destStream = File.Create(targetVideoPath))
+                using (var destStream = File.Create(originalVideoPath))
                 {
                     await sourceStream.CopyToAsync(destStream);
                 }
                 SentrySdk.AddBreadcrumb($"Copy complete for video {currentVideo}");
 
-                SentrySdk.AddBreadcrumb($"Compressing to: {targetVideoPath}");
+                SentrySdk.AddBreadcrumb($"Compressing to: {compressedVideoPath}");
 
                 var asset = AVUrlAsset.Create(NSUrl.FromFilename(result.FullPath));
                 var exportSession = new AVAssetExportSession(asset, AVAssetExportSessionPreset.MediumQuality)

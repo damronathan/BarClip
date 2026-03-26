@@ -32,7 +32,8 @@ public class SessionService
         sessionPath,
         Path.Combine(sessionPath, "Thumbnails"),
         Path.Combine(sessionPath, "Processed"),
-        Path.Combine(sessionPath, "Original")
+        Path.Combine(sessionPath, "Original"),
+        Path.Combine(sessionPath, "Compressed")
     };
 
         foreach (var folder in folders)
