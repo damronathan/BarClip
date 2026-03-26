@@ -409,7 +409,7 @@ public class AVFoundationHelper
                 var details = new System.Text.StringBuilder();
                 details.AppendLine($"Status: {exportSession.Status}");
                 if (exportSession.Error != null)
-                {
+                {   
                     details.AppendLine($"Description: {exportSession.Error.LocalizedDescription}");
                     details.AppendLine($"Domain: {exportSession.Error.Domain}");
                     details.AppendLine($"Code: {exportSession.Error.Code}");
@@ -418,7 +418,6 @@ public class AVFoundationHelper
                 throw new Exception($"Trim failed — {details}");
             }
         });
-        await SaveVideoToCameraRoll(NSUrl.FromFilename(processedVideo.FilePath));
 
     }
 }
