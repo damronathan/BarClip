@@ -58,7 +58,7 @@ public class AVFoundationHelper
         {
             Directory.CreateDirectory(tempFramePath);
 
-            using var asset = AVAsset.FromUrl(NSUrl.FromFilename(originalVideo.FilePath));
+            using var asset = AVAsset.FromUrl(NSUrl.FromFilename(originalVideo.CompressedPath));
 
             // Ensure duration is loaded
             await asset.LoadValuesTaskAsync(new string[] { "duration" });
@@ -394,7 +394,7 @@ public class AVFoundationHelper
             var startTime = CMTime.FromSeconds(originalVideo.TrimStart.TotalSeconds, 600);
             var duration = CMTime.FromSeconds(processedVideo.Duration.TotalSeconds, 600);
 
-            using var exportSession = new AVAssetExportSession(asset, AVAssetExportSessionPreset.HighestQuality)
+            using var exportSession = new AVAssetExportSession(asset, AVAssetExportSessionPreset.Preset1280x720)
             {
                 OutputUrl = NSUrl.FromFilename(processedVideo.FilePath),
                 OutputFileType = "com.apple.quicktime-movie",

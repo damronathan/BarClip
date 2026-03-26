@@ -13,6 +13,7 @@ public class FileHelper
             Thumbnails = Path.Combine(sessionPath, "Thumbnails"),
             Original = Path.Combine(sessionPath, "Original"),
             Processed = Path.Combine(sessionPath, "Processed"),
+            Compressed = Path.Combine(sessionPath, "Compressed")
         };
     }
     public static void SortVideoAndThumbnail(
@@ -55,5 +56,6 @@ public class FileHelper
         public string Thumbnails { get; set; }
         public string Processed { get; set; }
         public string Original { get; set; }
+        public string? Compressed { get; set;  }
     }
 }

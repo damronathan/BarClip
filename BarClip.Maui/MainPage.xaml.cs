@@ -91,13 +91,21 @@ public partial class MainPage : ContentPage
 
                 var video = await videoService.CreateOriginalVideo(user, session, createdTime);
                 var targetVideoPath = Path.Combine(sessionFolderPaths.Original, $"{video.Id}.MOV");
+                var compressedVideoPath = Path.Combine(sessionFolderPaths.Compressed, $"compressed_{video.Id}.MOV");
+
+                using (var sourceStream = await result.OpenReadAsync())
+                using (var destStream = File.Create(targetVideoPath))
+                {
+                    await sourceStream.CopyToAsync(destStream);
+                }
+                SentrySdk.AddBreadcrumb($"Copy complete for video {currentVideo}");
 
                 SentrySdk.AddBreadcrumb($"Compressing to: {targetVideoPath}");
 
                 var asset = AVUrlAsset.Create(NSUrl.FromFilename(result.FullPath));
                 var exportSession = new AVAssetExportSession(asset, AVAssetExportSessionPreset.MediumQuality)
                 {
-                    OutputUrl = NSUrl.FromFilename(targetVideoPath),
+                    OutputUrl = NSUrl.FromFilename(compressedVideoPath),
                     OutputFileType = "com.apple.quicktime-movie"
                 };
                 await exportSession.ExportTaskAsync();

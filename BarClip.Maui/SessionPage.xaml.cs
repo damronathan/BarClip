@@ -102,6 +102,7 @@ public partial class SessionPage : ContentPage
                 Lift = lift,
                 ThumbnailPath = Path.Combine(_sessionFolderPaths.Thumbnails, $"{video.Id}.png"),
                 VideoPath = Path.Combine(_sessionFolderPaths.Original, $"{video.Id}.MOV"),
+                CompressedPath = Path.Combine(_sessionFolderPaths.Compressed, $"compressed_{video.Id}.MOV"),
                 IsWhole = lift.LifterFilter == LifterFilter.Whole,
                 IsLeft = lift.LifterFilter == LifterFilter.Left,
                 IsRight = lift.LifterFilter == LifterFilter.Right,
@@ -158,6 +159,7 @@ public partial class SessionPage : ContentPage
                 {
                     Id = liftVideo.Video.Id,
                     FilePath = liftVideo.VideoPath,
+                    CompressedPath = liftVideo.CompressedPath,
                     UploadedAt = DateTime.Now,
                     LifterFilter = liftVideo.Lift.LifterFilter,
                     WeightKg = liftVideo.Lift.WeightKg,

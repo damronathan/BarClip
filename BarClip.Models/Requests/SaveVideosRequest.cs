@@ -37,6 +37,8 @@ public class OriginalVideoRequest
 
     [JsonIgnore]
     public string? FilePath { get; set; } = null!;
+    [JsonIgnore]
+    public string? CompressedPath { get; set; } = null!;
 }
 
 public class ProcessedVideoRequest

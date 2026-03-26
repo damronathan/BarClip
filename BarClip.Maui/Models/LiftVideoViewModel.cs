@@ -9,6 +9,7 @@ public class VideoLiftViewModel : INotifyPropertyChanged
     public Lift Lift { get; set; }
     public string ThumbnailPath { get; set; }
     public string VideoPath { get; set; }
+    public string? CompressedPath { get; set;  }
     public int? Order { get; set; }
 
     private bool _isWhole;
