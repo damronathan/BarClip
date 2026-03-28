@@ -84,37 +84,49 @@ public partial class MainPage : ContentPage
             {
                 currentVideo++;
                 SentrySdk.AddBreadcrumb($"Processing video {currentVideo}: {result.FileName}, path: {result.FullPath}");
-                CreateBtn.Text = $"Adding video {currentVideo}/{totalVideos}...";
+                MainThread.BeginInvokeOnMainThread(() => CreateBtn.Text = $"Adding video {currentVideo}/{totalVideos}...");
 
                 var fileInfo = new FileInfo(result.FullPath);
                 var createdTime = fileInfo.CreationTime;
-
                 var video = await videoService.CreateOriginalVideo(user, session, createdTime);
+                SentrySdk.AddBreadcrumb($"Video record created: {video.Id}");
+
                 var originalVideoPath = Path.Combine(sessionFolderPaths.Original, $"{video.Id}.MOV");
                 var compressedVideoPath = Path.Combine(sessionFolderPaths.Compressed, $"compressed_{video.Id}.MOV");
 
-                using (var sourceStream = await result.OpenReadAsync())
+                using (var sourceStream = File.OpenRead(result.FullPath))
                 using (var destStream = File.Create(originalVideoPath))
                 {
                     await sourceStream.CopyToAsync(destStream);
                 }
                 SentrySdk.AddBreadcrumb($"Copy complete for video {currentVideo}");
 
-                SentrySdk.AddBreadcrumb($"Compressing to: {compressedVideoPath}");
-
-                var asset = AVUrlAsset.Create(NSUrl.FromFilename(result.FullPath));
+                var asset = AVUrlAsset.Create(NSUrl.FromFilename(originalVideoPath));
                 var exportSession = new AVAssetExportSession(asset, AVAssetExportSessionPreset.Preset640x480)
                 {
                     OutputUrl = NSUrl.FromFilename(compressedVideoPath),
                     OutputFileType = "com.apple.quicktime-movie"
                 };
-                await exportSession.ExportTaskAsync();
+                SentrySdk.AddBreadcrumb($"Export session created for video {currentVideo}, exporting to: {compressedVideoPath}");
+
+                var exportTask = exportSession.ExportTaskAsync();
+                if (await Task.WhenAny(exportTask, Task.Delay(TimeSpan.FromSeconds(60))) != exportTask)
+                {
+                    SentrySdk.CaptureMessage($"Export timed out on video {currentVideo}");
+                    throw new Exception($"Export timed out on video {currentVideo}");
+                }
+                await exportTask;
 
                 if (exportSession.Status != AVAssetExportSessionStatus.Completed)
+                {
+                    SentrySdk.CaptureMessage($"Export failed on video {currentVideo}: status={exportSession.Status}, error={exportSession.Error?.LocalizedDescription}, code={exportSession.Error?.Code}, domain={exportSession.Error?.Domain}");
                     throw new Exception($"Compression failed: {exportSession.Error?.LocalizedDescription}");
+                }
 
                 SentrySdk.AddBreadcrumb($"Compression complete for video {currentVideo}");
             }
+
+            SentrySdk.CaptureMessage($"Loop completed successfully for {totalVideos} videos");
 
             CreateBtn.Text = "Generating thumbnails...";
 
