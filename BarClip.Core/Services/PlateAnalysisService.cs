@@ -116,7 +116,7 @@ public class PlateAnalysisService
         //Return the best detection from the frame, this is the last detection
         if (referenceDetection is null)
         {
-            var lastDetection = frame.PlateDetections.OrderByDescending(pd => pd.Height).FirstOrDefault();
+            var lastDetection = frame.PlateDetections.OrderByDescending(pd => pd.Confidence).FirstOrDefault();
             if (lastDetection == null) return (referenceDetection, lastDetectionIsCurrent);
             return (lastDetection, true);
         }
@@ -136,20 +136,20 @@ public class PlateAnalysisService
         //Allows second plate to be selected if close enough y value to first plate after 5th frame
         //The y check is to prevent false movement triggers
         //sometimes first plate will be obstructed and second plate is valid to check height change.
-        //if (frame.FrameNumber > 5)
-        //{
-        //    var closestByX = frame.PlateDetections.OrderBy(pd => Math.Abs(pd.X - referenceDetection.X)).FirstOrDefault();
-        //    if (closestByX == null) return (referenceDetection, false);
+        if (frame.FrameNumber > 10)
+        {
+            var closestByX = frame.PlateDetections.OrderBy(pd => Math.Abs(pd.X - referenceDetection.X)).FirstOrDefault();
+            if (closestByX == null) return (referenceDetection, false);
 
-        //    if (Math.Abs(closestByX.Height - referenceDetection.Height) < 20)
-        //    {
-        //        return (closestByX, false);
-        //    }
-        //    else
-        //    {
-        //        return (referenceDetection, false);
-        //    }
-        //}
+            if (Math.Abs(closestByX.Height - referenceDetection.Height) < 50)
+            {
+                return (closestByX, false);
+            }
+            else
+            {
+                return (referenceDetection, false);
+            }
+        }
         return (referenceDetection, false);
     }
 }
