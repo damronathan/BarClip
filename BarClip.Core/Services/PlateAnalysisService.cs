@@ -141,7 +141,7 @@ public class PlateAnalysisService
             var closestByX = frame.PlateDetections.OrderBy(pd => Math.Abs(pd.X - referenceDetection.X)).FirstOrDefault();
             if (closestByX == null) return (referenceDetection, false);
 
-            if (Math.Abs(closestByX.Height - referenceDetection.Height) < 50)
+            if (Math.Abs(closestByX.Height - referenceDetection.Height) < 20)
             {
                 return (closestByX, false);
             }
