@@ -123,7 +123,7 @@ public class PlateAnalysisService
 
         //Filters out the second plate
         var candidateDetections = frame.PlateDetections
-        .Where(pd => Math.Abs(pd.X - referenceDetection.X) < 20)
+        .Where(pd => Math.Abs(pd.X - referenceDetection.X) < 5)
         .ToList();
 
         //Selects the current plate. Checks to make sure the second isn't close enough to make the list
@@ -141,7 +141,7 @@ public class PlateAnalysisService
             var closestByX = frame.PlateDetections.OrderBy(pd => Math.Abs(pd.X - referenceDetection.X)).FirstOrDefault();
             if (closestByX == null) return (referenceDetection, false);
 
-            if (Math.Abs(closestByX.Height - referenceDetection.Height) < 20)
+            if (Math.Abs(closestByX.Height - referenceDetection.Height) < 50)
             {
                 return (closestByX, false);
             }
