@@ -30,6 +30,7 @@ public class PlateAnalysisService
                     x++;
                 }
                 PlateDetection plateDetection = SelectBestDetection(frame, previousDetection);
+                if (plateDetection == null) continue;
 
                 if (!initialYFound)
                 {
