@@ -89,7 +89,7 @@ public class PlateAnalysisService
                         else
                         {
                             //If first 2 detections have vertical movement, return whole video.
-                            return video.VideoAnalysis.Duration;
+                            return video.Duration;
                         }
                     }
                 }
@@ -98,7 +98,7 @@ public class PlateAnalysisService
             }
         }
 
-        return video.VideoAnalysis.Duration;
+        return video.Duration;
     }
 
     public PlateDetection SelectBestDetection(Frame frame, PlateDetection referenceDetection)

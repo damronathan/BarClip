@@ -23,6 +23,7 @@ public class IOSVideoEditor : IVideoEditor
     }
     public async Task<ProcessedVideoRequest> ProcessVideo(SessionFolderPaths sessionFolderPaths, OriginalVideoRequest video)
     {
+        video.Duration = await AVFoundationHelper.GetDurationAsync(video.CompressedPath);
         try
         {
             video.Frames = await ExtractAndProcessFrames(video);
@@ -36,6 +37,7 @@ public class IOSVideoEditor : IVideoEditor
         {
             try
             {
+
                 _plateAnalysisService.SetTrim(video);
 
             }

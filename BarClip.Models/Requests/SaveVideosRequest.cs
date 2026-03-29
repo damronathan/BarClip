@@ -31,7 +31,7 @@ public class OriginalVideoRequest
     public double? WeightKg { get; set; } = 0;
 
     [JsonIgnore]
-    public IMediaAnalysis? VideoAnalysis { get; set; }
+    public TimeSpan Duration { get; set; }
     [JsonIgnore]
     public List<Frame>? Frames { get; set; } = [];
 
