@@ -116,7 +116,8 @@ public class PlateAnalysisService
         //Return the best detection from the frame, this is the last detection
         if (referenceDetection is null)
         {
-            var lastDetection = frame.PlateDetections.OrderByDescending(pd => pd.Confidence).First();
+            var lastDetection = frame.PlateDetections.OrderByDescending(pd => pd.Confidence).FirstOrDefault();
+            if (lastDetection == null) return (referenceDetection, lastDetectionIsCurrent);
             return (lastDetection, true);
         }
 
@@ -137,7 +138,8 @@ public class PlateAnalysisService
         //sometimes first plate will be obstructed and second plate is valid to check height change.
         if (frame.FrameNumber > 5)
         {
-            var closestByX = frame.PlateDetections.OrderBy(pd => Math.Abs(pd.X - referenceDetection.X)).First();
+            var closestByX = frame.PlateDetections.OrderBy(pd => Math.Abs(pd.X - referenceDetection.X)).FirstOrDefault();
+            if (closestByX == null) return (referenceDetection, false);
 
             if (Math.Abs(closestByX.Height - referenceDetection.Height) < 20)
             {
