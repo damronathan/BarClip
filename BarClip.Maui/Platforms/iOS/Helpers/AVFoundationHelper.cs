@@ -19,6 +19,29 @@ namespace BarClip.Maui.Platforms.iOS.Helpers;
 
 public class AVFoundationHelper
 {
+    public static async Task CompressVideoAsync(string inputPath, string outputPath)
+    {
+        var asset = AVUrlAsset.Create(NSUrl.FromFilename(inputPath));
+        var exportSession = new AVAssetExportSession(asset, AVAssetExportSessionPreset.Preset640x480)
+        {
+            OutputUrl = NSUrl.FromFilename(outputPath),
+            OutputFileType = "com.apple.quicktime-movie"
+        };
+
+        var exportTask = exportSession.ExportTaskAsync();
+        if (await Task.WhenAny(exportTask, Task.Delay(TimeSpan.FromSeconds(60))) != exportTask)
+        {
+            SentrySdk.CaptureMessage($"Export timed out: {inputPath}");
+            throw new Exception($"Compression timed out: {inputPath}");
+        }
+        await exportTask;
+
+        if (exportSession.Status != AVAssetExportSessionStatus.Completed)
+        {
+            SentrySdk.CaptureMessage($"Export failed. status={exportSession.Status}, error={exportSession.Error?.LocalizedDescription}, code={exportSession.Error?.Code}, domain={exportSession.Error?.Domain}");
+            throw new Exception($"Compression failed: {exportSession.Error?.LocalizedDescription}");
+        }
+    }
     public static async Task ExtractSingleFrameAsync(string originalFilePath, double thumbnailTime, string thumbnailPath)
     {
         await Task.Run(() =>
@@ -351,6 +374,7 @@ public class AVFoundationHelper
             }
         });
     }
+
     public static async Task SaveVideoToCameraRoll(NSUrl videoUrl)
     {
         var status = await PHPhotoLibrary.RequestAuthorizationAsync(PHAccessLevel.AddOnly);
