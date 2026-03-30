@@ -1,4 +1,4 @@
-﻿using BarClip.Models.Domain;
+using BarClip.Models.Domain;
 using BarClip.Models.Requests;
 using Microsoft.Identity.Client;
 
@@ -123,7 +123,7 @@ public class PlateAnalysisService
 
         //Filters out the second plate
         var candidateDetections = frame.PlateDetections
-        .Where(pd => Math.Abs(pd.X - referenceDetection.X) < 5)
+        .Where(pd => Math.Abs(pd.X - referenceDetection.X) < 20)
         .ToList();
 
         //Selects the current plate. Checks to make sure the second isn't close enough to make the list
