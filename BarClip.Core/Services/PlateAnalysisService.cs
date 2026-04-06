@@ -114,7 +114,7 @@ public class PlateAnalysisService
         // Derive trim end by scanning frame history backward
         TimeSpan trimFinish = GetTrimFinish(video, plates, trimStartFrame.Value);
 
-        TimeSpan trimStart = TimeSpan.FromSeconds(Math.Max(trimStartFrame.Value - 1, 0));
+        TimeSpan trimStart = TimeSpan.FromSeconds(Math.Max(trimStartFrame.Value - 2, 0));
         Log($"Final trim - Start: {trimStart} Finish: {trimFinish}");
 
         return (trimStart, trimFinish);
