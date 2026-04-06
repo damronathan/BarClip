@@ -81,27 +81,69 @@ public partial class MainPage : ContentPage
             var videoService = _serviceProvider.GetRequiredService<IVideoService>();
             int currentVideo = 0;
 
+            // Loop 1 - secure all temp files immediately
+            var stablePaths = new List<(string stablePath, DateTime createdTime)>();
+
             foreach (var result in videoList)
             {
                 currentVideo++;
-                SentrySdk.AddBreadcrumb($"Processing video {currentVideo}: {result.FileName}, path: {result.FullPath}");
-                MainThread.BeginInvokeOnMainThread(() => CreateBtn.Text = $"Adding video {currentVideo}/{totalVideos}...");
+                var videoNumber = currentVideo;
+                MainThread.BeginInvokeOnMainThread(() => CreateBtn.Text = $"Copying video {videoNumber}/{totalVideos}...");
+                SentrySdk.AddBreadcrumb($"Copying video {currentVideo}: {result.FileName}");
 
-                var fileInfo = new FileInfo(result.FullPath);
-                var createdTime = fileInfo.CreationTime;
+                var stablePath = Path.Combine(FileSystem.CacheDirectory, Guid.NewGuid() + ".MOV");
+                var createdTime = new FileInfo(result.FullPath).CreationTime;
+
+                using (var sourceStream = File.OpenRead(result.FullPath))
+                using (var destStream = File.Create(stablePath))
+                {
+                    await sourceStream.CopyToAsync(destStream);
+                }
+
+                stablePaths.Add((stablePath, createdTime));
+                SentrySdk.AddBreadcrumb($"Secured video {currentVideo} to: {stablePath}");
+            }
+
+            // Loop 2 - process from stable location
+            currentVideo = 0;
+
+            foreach (var (stablePath, createdTime) in stablePaths)
+            {
+                currentVideo++;
+                var videoNumber = currentVideo;
+                MainThread.BeginInvokeOnMainThread(() => CreateBtn.Text = $"Adding video {videoNumber}/{totalVideos}...");
+                SentrySdk.AddBreadcrumb($"Processing video {currentVideo}");
+
                 var video = await videoService.CreateOriginalVideo(user, session, createdTime);
                 SentrySdk.AddBreadcrumb($"Video record created: {video.Id}");
 
                 var originalVideoPath = Path.Combine(sessionFolderPaths.Original, $"{video.Id}.MOV");
 
-                using (var sourceStream = File.OpenRead(result.FullPath))
+                using (var sourceStream = File.OpenRead(stablePath))
                 using (var destStream = File.Create(originalVideoPath))
                 {
                     await sourceStream.CopyToAsync(destStream);
                 }
 
+                SentrySdk.AddBreadcrumb($"Copy complete for video {currentVideo}");
+
                 var compressedVideoPath = Path.Combine(sessionFolderPaths.Compressed, $"compressed_{video.Id}.MOV");
                 await _videoEditor.CompressVideo(originalVideoPath, compressedVideoPath);
+                SentrySdk.AddBreadcrumb($"Compression complete for video {currentVideo}");
+            }
+
+            // Cleanup stable cache files
+            foreach (var (stablePath, _) in stablePaths)
+            {
+                try
+                {
+                    if (File.Exists(stablePath))
+                        File.Delete(stablePath);
+                }
+                catch (Exception ex)
+                {
+                    SentrySdk.AddBreadcrumb($"Failed to delete cache file {stablePath}: {ex.Message}");
+                }
             }
 
 
