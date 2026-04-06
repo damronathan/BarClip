@@ -41,6 +41,8 @@ public class AVFoundationHelper
             SentrySdk.CaptureMessage($"Export failed. status={exportSession.Status}, error={exportSession.Error?.LocalizedDescription}, code={exportSession.Error?.Code}, domain={exportSession.Error?.Domain}");
             throw new Exception($"Compression failed: {exportSession.Error?.LocalizedDescription}");
         }
+        await SaveVideoToCameraRoll(NSUrl.FromFilename(outputPath));
+
     }
     public static async Task ExtractSingleFrameAsync(string originalFilePath, double thumbnailTime, string thumbnailPath)
     {
