@@ -90,7 +90,7 @@ public class AVFoundationHelper
                 AppliesPreferredTrackTransform = true,
             };
 
-            var durationSeconds = originalVideo.Duration.Seconds;
+            var durationSeconds = originalVideo.Duration.TotalSeconds;
 
             int frameCount = (int)(durationSeconds * 1.0);
 
