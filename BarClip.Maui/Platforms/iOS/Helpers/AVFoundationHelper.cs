@@ -88,8 +88,6 @@ public class AVFoundationHelper
             using var imageGenerator = new AVAssetImageGenerator(asset)
             {
                 AppliesPreferredTrackTransform = true,
-                RequestedTimeToleranceBefore = CMTime.Zero,
-                RequestedTimeToleranceAfter = CMTime.Zero
             };
 
             var durationSeconds = originalVideo.Duration.Seconds;
