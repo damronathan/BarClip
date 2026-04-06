@@ -1,155 +1,208 @@
 using BarClip.Models.Domain;
 using BarClip.Models.Requests;
-using Microsoft.Identity.Client;
 
 namespace BarClip.Core.Services;
+
+public class PlateIdentity
+{
+    public int Id { get; set; }
+    public float BaselineY { get; set; }
+    public float BaselineHeight { get; set; }
+    public float CurrentY { get; set; }
+    public float CurrentX { get; set; }
+    public float CurrentHeight { get; set; }
+    public int LastSeenFrame { get; set; }
+    public bool HasMoved { get; set; }
+}
+
 public class PlateAnalysisService
 {
+    private const float HeightMatchThresholdPercent = 0.20f; // 20% of baseline height
+    private const int NoDetectionFrameLimit = 5;
+
+    public void Log(string message) =>
+        System.Diagnostics.Debug.WriteLine($"[PlateAnalysis] {message}");
+
     public void SetTrim(OriginalVideoRequest video)
     {
-        int frameNumber = GetStartFrame(video);
-        video.TrimStart = TimeSpan.FromSeconds(frameNumber - .5);
-        video.TrimFinish = GetTrimFinish(frameNumber, video);
+        var (trimStart, trimFinish) = AnalyzeVideo(video);
+        video.TrimStart = trimStart;
+        video.TrimFinish = trimFinish;
     }
 
-
-    public int GetStartFrame(OriginalVideoRequest video)
+    public (TimeSpan TrimStart, TimeSpan TrimFinish) AnalyzeVideo(OriginalVideoRequest video)
     {
-        float yValue = 0f;
-        bool initialYFound = false;
-        int frameNumber = 0;
-        PlateDetection previousDetection = null;
+        var plates = new List<PlateIdentity>();
+        int? trimStartFrame = null;
+        int lastFrameWithDetection = -1;
 
-        foreach (Frame frame in video.Frames)
+        Log($"Analyzing video with {video.Frames.Count} frames.");
+
+        // Single forward pass
+        foreach (var frame in video.Frames)
         {
-            if (frame.PlateDetections.Count > 0)
+            if (frame.PlateDetections == null || frame.PlateDetections.Count == 0)
+                continue;
+
+            lastFrameWithDetection = frame.FrameNumber;
+            Log($"Frame {frame.FrameNumber}: {frame.PlateDetections.Count} detection(s)");
+
+            foreach (var detection in frame.PlateDetections)
             {
-                int x = 1;
-                foreach (var detection in frame.PlateDetections)
+                var matchedPlate = FindMatchingPlate(plates, detection);
+
+                if (matchedPlate == null)
                 {
-                    x++;
-                }
-                PlateDetection plateDetection = SelectBestDetection(frame, previousDetection);
-                if (plateDetection == null) continue;
-
-                if (!initialYFound)
-                {
-                    yValue = plateDetection.Y;
-                    initialYFound = true;
-                }
-
-                if (initialYFound && Math.Abs(plateDetection.Y - yValue) > plateDetection.Height / 2)
-                {
-                    frameNumber = frame.FrameNumber;
-                    break;
-                }
-
-                previousDetection = plateDetection;
-            }
-        }
-
-        return Math.Max(frameNumber - 1, 1);
-    }
-
-    public TimeSpan GetTrimFinish(int trim, OriginalVideoRequest video)
-    {
-        PlateDetection? previousDetection = null;
-        bool lastDetectionIsCurrent = false;
-
-
-        //Loop starting from the end of the video
-        for (int i = video.Frames.Count - 1; i >= trim; i--)
-        {
-            Frame frame = video.Frames[i];
-
-            if (frame.PlateDetections.Count > 0)
-            {
-
-                (PlateDetection currentDetection, lastDetectionIsCurrent) = SelectBestDetection(frame, previousDetection, lastDetectionIsCurrent);
-
-                //Only null if no detection found yet
-                if (currentDetection is null)
-                {
-                    continue;
-                }
-
-
-                if (previousDetection is not null)
-                {
-
-                    //If plate has moved up or down
-                    if (Math.Abs(currentDetection.Y - previousDetection.Y) > currentDetection.Height / 2)
+                    // New plate identity
+                    var newPlate = new PlateIdentity
                     {
-                        if (lastDetectionIsCurrent is false)
+                        Id = plates.Count + 1,
+                        BaselineY = detection.Y,
+                        BaselineHeight = detection.Height,
+                        CurrentY = detection.Y,
+                        CurrentX = detection.X,
+                        CurrentHeight = detection.Height,
+                        LastSeenFrame = frame.FrameNumber,
+                        HasMoved = false
+                    };
+                    plates.Add(newPlate);
+                    Log($"New plate identity {newPlate.Id} initialized at Y:{detection.Y:F1} Height:{detection.Height:F1}");
+                }
+                else
+                {
+                    float yDelta = Math.Abs(detection.Y - matchedPlate.BaselineY);
+                    float movementThreshold = matchedPlate.BaselineHeight / 2f;
+
+                    Log($"Plate {matchedPlate.Id} - Y:{detection.Y:F1} Delta:{yDelta:F1} Threshold:{movementThreshold:F1}");
+
+                    if (yDelta > movementThreshold && !matchedPlate.HasMoved)
+                    {
+                        matchedPlate.HasMoved = true;
+                        Log($"Plate {matchedPlate.Id} movement detected at frame {frame.FrameNumber}");
+
+                        if (trimStartFrame == null)
                         {
-                            double endFrame = frame.FrameNumber + 1.5;
-                            return TimeSpan.FromSeconds(endFrame);
-                            //If this is past the second detection, create the trim point
-                        }
-                        else
-                        {
-                            //If first 2 detections have vertical movement, return whole video.
-                            return video.Duration;
+                            trimStartFrame = frame.FrameNumber;
+                            Log($"Trim start set at frame {trimStartFrame}");
                         }
                     }
+
+                    matchedPlate.CurrentY = detection.Y;
+                    matchedPlate.CurrentX = detection.X;
+                    matchedPlate.CurrentHeight = detection.Height;
+                    matchedPlate.LastSeenFrame = frame.FrameNumber;
                 }
-
-                previousDetection = currentDetection;
             }
         }
 
-        return video.Duration;
+        // Check if last 5 frames had no detections
+        int lastFrame = video.Frames.Count - 1;
+        bool missingEndDetections = (lastFrame - lastFrameWithDetection) >= NoDetectionFrameLimit;
+
+        if (trimStartFrame == null)
+        {
+            Log("No movement detected. Returning full video.");
+            return (TimeSpan.Zero, video.Duration);
+        }
+
+        if (missingEndDetections)
+        {
+            Log($"No detections in last {NoDetectionFrameLimit} frames. Returning full video duration for trim end.");
+            return (TimeSpan.FromSeconds(Math.Max(trimStartFrame.Value - 1, 0)), video.Duration);
+        }
+
+        // Derive trim end by scanning frame history backward
+        TimeSpan trimFinish = GetTrimFinish(video, plates, trimStartFrame.Value);
+
+        TimeSpan trimStart = TimeSpan.FromSeconds(Math.Max(trimStartFrame.Value - 1, 0));
+        Log($"Final trim - Start: {trimStart} Finish: {trimFinish}");
+
+        return (trimStart, trimFinish);
     }
 
-    public PlateDetection SelectBestDetection(Frame frame, PlateDetection referenceDetection)
+    private TimeSpan GetTrimFinish(OriginalVideoRequest video, List<PlateIdentity> plates, int trimStartFrame)
     {
-        var (detection, _) = SelectBestDetection(frame, referenceDetection, false);
-        return detection;
+        // Establish resting Y from last frame with detections
+        var lastFrameWithDetections = video.Frames
+            .LastOrDefault(f => f.PlateDetections != null && f.PlateDetections.Count > 0);
+
+        if (lastFrameWithDetections == null)
+        {
+            Log("No detections found for resting position. Returning full duration.");
+            return video.Duration;
+        }
+
+        // Match last frame detections to plate identities to set resting Y
+        var restingY = new Dictionary<int, float>();
+        foreach (var detection in lastFrameWithDetections.PlateDetections)
+        {
+            var matchedPlate = FindMatchingPlate(plates, detection);
+            if (matchedPlate != null && !restingY.ContainsKey(matchedPlate.Id))
+            {
+                restingY[matchedPlate.Id] = detection.Y;
+                Log($"Plate {matchedPlate.Id} resting Y set to {detection.Y:F1} from frame {lastFrameWithDetections.FrameNumber}");
+            }
+        }
+
+        // Scan backward to find last frame where any plate deviated from resting Y
+        int lastMovementFrame = trimStartFrame;
+
+        for (int i = video.Frames.Count - 1; i >= trimStartFrame; i--)
+        {
+            var frame = video.Frames[i];
+
+            if (frame.PlateDetections == null || frame.PlateDetections.Count == 0)
+                continue;
+
+            bool movementFound = false;
+
+            foreach (var detection in frame.PlateDetections)
+            {
+                var matchedPlate = FindMatchingPlate(plates, detection);
+                if (matchedPlate == null || !restingY.ContainsKey(matchedPlate.Id))
+                    continue;
+
+                float yDelta = Math.Abs(detection.Y - restingY[matchedPlate.Id]);
+                float movementThreshold = matchedPlate.BaselineHeight / 2f;
+
+                Log($"Frame {frame.FrameNumber} - Plate {matchedPlate.Id} Y:{detection.Y:F1} RestingY:{restingY[matchedPlate.Id]:F1} Delta:{yDelta:F1} Threshold:{movementThreshold:F1}");
+
+                if (yDelta > movementThreshold)
+                {
+                    lastMovementFrame = frame.FrameNumber;
+                    movementFound = true;
+                    Log($"Plate {matchedPlate.Id} still displaced at frame {frame.FrameNumber}");
+                    break;
+                }
+            }
+
+            if (movementFound)
+                break;
+        }
+
+        double endFrame = lastMovementFrame + 1.5;
+        Log($"Trim end found at frame {lastMovementFrame}, setting finish to {endFrame}");
+        return TimeSpan.FromSeconds(endFrame);
     }
-    public static (PlateDetection, bool) SelectBestDetection(Frame frame, PlateDetection referenceDetection, bool lastDetectionIsCurrent)
+    private PlateIdentity? FindMatchingPlate(List<PlateIdentity> plates, PlateDetection detection)
     {
-        //If no detections in frame, return null or reference detection
-        if (frame.PlateDetections is null)
-        return (referenceDetection, lastDetectionIsCurrent);
+        if (!plates.Any()) return null;
 
-        //If it is the first frame, or no detections yet, reference detection will be null
-        //Return the best detection from the frame, this is the last detection
-        if (referenceDetection is null)
+        PlateIdentity? bestMatch = null;
+        float bestHeightDelta = float.MaxValue;
+
+        foreach (var plate in plates)
         {
-            var lastDetection = frame.PlateDetections.OrderByDescending(pd => pd.Confidence).FirstOrDefault();
-            if (lastDetection == null) return (referenceDetection, lastDetectionIsCurrent);
-            return (lastDetection, true);
-        }
+            float heightDelta = Math.Abs(detection.Height - plate.BaselineHeight);
+            float threshold = plate.BaselineHeight * HeightMatchThresholdPercent;
 
-        //Filters out the second plate
-        var candidateDetections = frame.PlateDetections
-        .Where(pd => Math.Abs(pd.X - referenceDetection.X) < 50)
-        .ToList();
-
-        //Selects the current plate. Checks to make sure the second isn't close enough to make the list
-        if (candidateDetections.Any())
-        {
-            var currentDetection = candidateDetections.OrderBy(pd => Math.Abs(pd.X - referenceDetection.X)).First();
-            return (currentDetection, false);
-        }
-
-        //Allows second plate to be selected if close enough y value to first plate after 5th frame
-        //The y check is to prevent false movement triggers
-        //sometimes first plate will be obstructed and second plate is valid to check height change.
-        if (frame.FrameNumber > 10)
-        {
-            var closestByX = frame.PlateDetections.OrderBy(pd => Math.Abs(pd.X - referenceDetection.X)).FirstOrDefault();
-            if (closestByX == null) return (referenceDetection, false);
-
-            if (Math.Abs(closestByX.Height - referenceDetection.Height) < 20)
+            if (heightDelta <= threshold && heightDelta < bestHeightDelta)
             {
-                return (closestByX, false);
-            }
-            else
-            {
-                return (referenceDetection, false);
+                bestHeightDelta = heightDelta;
+                bestMatch = plate;
             }
         }
-        return (referenceDetection, false);
+
+        return bestMatch;
     }
 }
