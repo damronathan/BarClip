@@ -13,7 +13,7 @@ public class OnnxHelper
     }
     public static List<PlateDetection> RunInference(NamedOnnxValue input, InferenceSession session)
     {
-        const float ConfidenceThreshold = 0.8f;
+        const float ConfidenceThreshold = 0.5f;
 
         var plateDetections = new List<PlateDetection>();
         var filteredDetections = new List<(int index, float confidence, float xValue)>();
