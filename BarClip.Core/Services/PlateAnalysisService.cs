@@ -17,7 +17,7 @@ public class PlateIdentity
 
 public class PlateAnalysisService
 {
-    private const float HeightMatchThresholdPercent = 0.15f;
+    private const float HeightMatchThresholdPercent = 0.20f;
     private const int NoDetectionFrameLimit = 5;
 
     public void Log(string message) =>
