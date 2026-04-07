@@ -17,7 +17,7 @@ public class PlateIdentity
 
 public class PlateAnalysisService
 {
-    private const float HeightMatchThresholdPercent = 0.15f; // 20% of baseline height
+    private const float HeightMatchThresholdPercent = 0.15f;
     private const int NoDetectionFrameLimit = 5;
 
     public void Log(string message) =>
@@ -35,10 +35,10 @@ public class PlateAnalysisService
         var plates = new List<PlateIdentity>();
         int? trimStartFrame = null;
         int lastFrameWithDetection = -1;
+        const int LockInFrame = 15;
 
         Log($"Analyzing video with {video.Frames.Count} frames.");
 
-        // Single forward pass
         foreach (var frame in video.Frames)
         {
             if (frame.PlateDetections == null || frame.PlateDetections.Count == 0)
@@ -47,56 +47,65 @@ public class PlateAnalysisService
             lastFrameWithDetection = frame.FrameNumber;
             Log($"Frame {frame.FrameNumber}: {frame.PlateDetections.Count} detection(s)");
 
-            foreach (var detection in frame.PlateDetections)
+            if (frame.FrameNumber <= LockInFrame)
             {
-                var matchedPlate = FindMatchingPlate(plates, detection);
-
-                if (matchedPlate == null)
+                // Identity establishment phase - match by height or create new
+                foreach (var detection in frame.PlateDetections.OrderByDescending(d => d.Height))
                 {
-                    // New plate identity
-                    var newPlate = new PlateIdentity
+                    var matchedPlate = FindMatchingPlate(plates, detection);
+
+                    if (matchedPlate == null)
                     {
-                        Id = plates.Count + 1,
-                        BaselineY = detection.Y,
-                        BaselineHeight = detection.Height,
-                        CurrentY = detection.Y,
-                        CurrentX = detection.X,
-                        CurrentHeight = detection.Height,
-                        LastSeenFrame = frame.FrameNumber,
-                        HasMoved = false
-                    };
-                    plates.Add(newPlate);
-                    Log($"New plate identity {newPlate.Id} initialized at Y:{detection.Y:F1} Height:{detection.Height:F1}");
-                }
-                else
-                {
-                    float yDelta = Math.Abs(detection.Y - matchedPlate.BaselineY);
-                    float movementThreshold = matchedPlate.BaselineHeight / 2f;
-
-                    Log($"Plate {matchedPlate.Id} - Y:{detection.Y:F1} Delta:{yDelta:F1} Threshold:{movementThreshold:F1}");
-
-                    if (yDelta > movementThreshold && !matchedPlate.HasMoved)
-                    {
-                        matchedPlate.HasMoved = true;
-                        Log($"Plate {matchedPlate.Id} movement detected at frame {frame.FrameNumber}");
-
-                        if (trimStartFrame == null)
+                        var newPlate = new PlateIdentity
                         {
-                            trimStartFrame = frame.FrameNumber;
-                            Log($"Trim start set at frame {trimStartFrame}");
-                        }
-                    }
+                            Id = plates.Count + 1,
+                            BaselineY = detection.Y,
+                            BaselineHeight = detection.Height,
+                            CurrentY = detection.Y,
+                            CurrentX = detection.X,
+                            CurrentHeight = detection.Height,
+                            LastSeenFrame = frame.FrameNumber,
+                            HasMoved = false
+                        };
+                        plates.Add(newPlate);
 
-                    matchedPlate.CurrentY = detection.Y;
-                    matchedPlate.CurrentX = detection.X;
-                    matchedPlate.CurrentHeight = detection.Height;
-                    matchedPlate.LastSeenFrame = frame.FrameNumber;
+                        // Re-rank plates by baseline height descending
+                        plates = plates.OrderByDescending(p => p.BaselineHeight).ToList();
+                        for (int i = 0; i < plates.Count; i++)
+                            plates[i].Id = i + 1;
+
+                        Log($"New plate identity {newPlate.Id} initialized at Y:{detection.Y:F1} Height:{detection.Height:F1}");
+                    }
+                    else
+                    {
+                        UpdatePlate(matchedPlate, detection, frame.FrameNumber);
+                        CheckMovement(matchedPlate, detection, frame.FrameNumber, ref trimStartFrame);
+                    }
+                }
+            }
+            else
+            {
+                // Ranking phase - assign detections to identities by closest height
+                var sortedDetections = frame.PlateDetections.OrderByDescending(d => d.Height).ToList();
+                var assignedPlates = new HashSet<int>();
+
+                foreach (var detection in sortedDetections)
+                {
+                    var matchedPlate = plates
+                        .Where(p => !assignedPlates.Contains(p.Id))
+                        .OrderBy(p => Math.Abs(detection.Height - p.CurrentHeight))
+                        .FirstOrDefault();
+
+                    if (matchedPlate == null) continue;
+
+                    assignedPlates.Add(matchedPlate.Id);
+                    UpdatePlate(matchedPlate, detection, frame.FrameNumber);
+                    CheckMovement(matchedPlate, detection, frame.FrameNumber, ref trimStartFrame);
                 }
             }
         }
 
-        // Check if last 5 frames had no detections
-        int lastFrame = video.Frames.Count - 1;
+        int lastFrame = video.Frames.Last().FrameNumber;
         bool missingEndDetections = (lastFrame - lastFrameWithDetection) >= NoDetectionFrameLimit;
 
         if (trimStartFrame == null)
@@ -107,19 +116,16 @@ public class PlateAnalysisService
 
         if (missingEndDetections)
         {
-            Log($"No detections in last {NoDetectionFrameLimit} frames. Returning full video duration for trim end.");
+            Log($"No detections in last {NoDetectionFrameLimit} frames. Returning full duration for trim end.");
             return (TimeSpan.FromSeconds(Math.Max(trimStartFrame.Value - 1, 0)), video.Duration);
         }
 
-        // Derive trim end by scanning frame history backward
         TimeSpan trimFinish = GetTrimFinish(video, plates, trimStartFrame.Value);
-
         TimeSpan trimStart = TimeSpan.FromSeconds(Math.Max(trimStartFrame.Value - 2, 0));
         Log($"Final trim - Start: {trimStart} Finish: {trimFinish}");
 
         return (trimStart, trimFinish);
     }
-
     private TimeSpan GetTrimFinish(OriginalVideoRequest video, List<PlateIdentity> plates, int trimStartFrame)
     {
         // Establish resting Y from last frame with detections
@@ -204,5 +210,31 @@ public class PlateAnalysisService
         }
 
         return bestMatch;
+    }
+    private void UpdatePlate(PlateIdentity plate, PlateDetection detection, int frameNumber)
+    {
+        plate.CurrentY = detection.Y;
+        plate.CurrentX = detection.X;
+        plate.CurrentHeight = detection.Height;
+        plate.LastSeenFrame = frameNumber;
+        Log($"Plate {plate.Id} - Y:{detection.Y:F1} Delta:{Math.Abs(detection.Y - plate.BaselineY):F1} Threshold:{plate.BaselineHeight / 2f:F1}");
+    }
+
+    private void CheckMovement(PlateIdentity plate, PlateDetection detection, int frameNumber, ref int? trimStartFrame)
+    {
+        float yDelta = Math.Abs(detection.Y - plate.BaselineY);
+        float movementThreshold = plate.BaselineHeight / 2f;
+
+        if (yDelta > movementThreshold && !plate.HasMoved)
+        {
+            plate.HasMoved = true;
+            Log($"Plate {plate.Id} movement detected at frame {frameNumber}");
+
+            if (trimStartFrame == null)
+            {
+                trimStartFrame = frameNumber;
+                Log($"Trim start set at frame {trimStartFrame}");
+            }
+        }
     }
 }
