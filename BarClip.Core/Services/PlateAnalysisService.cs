@@ -127,69 +127,75 @@ public class PlateAnalysisService
         return (trimStart, trimFinish);
     }
     private TimeSpan GetTrimFinish(OriginalVideoRequest video, List<PlateIdentity> plates, int trimStartFrame)
+{
+    // Establish resting Y from last frame with detections using ranking
+    var lastFrameWithDetections = video.Frames
+        .LastOrDefault(f => f.PlateDetections != null && f.PlateDetections.Count > 0);
+
+    if (lastFrameWithDetections == null)
     {
-        // Establish resting Y from last frame with detections
-        var lastFrameWithDetections = video.Frames
-            .LastOrDefault(f => f.PlateDetections != null && f.PlateDetections.Count > 0);
+        Log("No detections found for resting position. Returning full duration.");
+        return video.Duration;
+    }
 
-        if (lastFrameWithDetections == null)
+    // Match last frame detections to plate identities by rank (biggest = plate 1)
+    var restingY = new Dictionary<int, float>();
+    var sortedLastDetections = lastFrameWithDetections.PlateDetections
+        .OrderByDescending(d => d.Height)
+        .ToList();
+
+    for (int i = 0; i < sortedLastDetections.Count && i < plates.Count; i++)
+    {
+        restingY[plates[i].Id] = sortedLastDetections[i].Y;
+        Log($"Plate {plates[i].Id} resting Y set to {sortedLastDetections[i].Y:F1} from frame {lastFrameWithDetections.FrameNumber}");
+    }
+
+    // Scan backward to find last frame where any plate deviated from resting Y
+    int lastMovementFrame = trimStartFrame;
+
+    for (int i = video.Frames.Count - 1; i >= trimStartFrame; i--)
+    {
+        var frame = video.Frames[i];
+
+        if (frame.PlateDetections == null || frame.PlateDetections.Count == 0)
+            continue;
+
+        bool movementFound = false;
+
+        var sortedDetections = frame.PlateDetections
+            .OrderByDescending(d => d.Height)
+            .ToList();
+
+        for (int j = 0; j < sortedDetections.Count && j < plates.Count; j++)
         {
-            Log("No detections found for resting position. Returning full duration.");
-            return video.Duration;
-        }
+            var detection = sortedDetections[j];
+            var plate = plates[j];
 
-        // Match last frame detections to plate identities to set resting Y
-        var restingY = new Dictionary<int, float>();
-        foreach (var detection in lastFrameWithDetections.PlateDetections)
-        {
-            var matchedPlate = FindMatchingPlate(plates, detection);
-            if (matchedPlate != null && !restingY.ContainsKey(matchedPlate.Id))
-            {
-                restingY[matchedPlate.Id] = detection.Y;
-                Log($"Plate {matchedPlate.Id} resting Y set to {detection.Y:F1} from frame {lastFrameWithDetections.FrameNumber}");
-            }
-        }
-
-        // Scan backward to find last frame where any plate deviated from resting Y
-        int lastMovementFrame = trimStartFrame;
-
-        for (int i = video.Frames.Count - 1; i >= trimStartFrame; i--)
-        {
-            var frame = video.Frames[i];
-
-            if (frame.PlateDetections == null || frame.PlateDetections.Count == 0)
+            if (!restingY.ContainsKey(plate.Id))
                 continue;
 
-            bool movementFound = false;
+            float yDelta = Math.Abs(detection.Y - restingY[plate.Id]);
+            float movementThreshold = plate.BaselineHeight / 2f;
 
-            foreach (var detection in frame.PlateDetections)
+            Log($"Frame {frame.FrameNumber} - Plate {plate.Id} Y:{detection.Y:F1} RestingY:{restingY[plate.Id]:F1} Delta:{yDelta:F1} Threshold:{movementThreshold:F1}");
+
+            if (yDelta > movementThreshold)
             {
-                var matchedPlate = FindMatchingPlate(plates, detection);
-                if (matchedPlate == null || !restingY.ContainsKey(matchedPlate.Id))
-                    continue;
-
-                float yDelta = Math.Abs(detection.Y - restingY[matchedPlate.Id]);
-                float movementThreshold = matchedPlate.BaselineHeight / 2f;
-
-                Log($"Frame {frame.FrameNumber} - Plate {matchedPlate.Id} Y:{detection.Y:F1} RestingY:{restingY[matchedPlate.Id]:F1} Delta:{yDelta:F1} Threshold:{movementThreshold:F1}");
-
-                if (yDelta > movementThreshold)
-                {
-                    lastMovementFrame = frame.FrameNumber;
-                    movementFound = true;
-                    Log($"Plate {matchedPlate.Id} still displaced at frame {frame.FrameNumber}");
-                    break;
-                }
-            }
-
-            if (movementFound)
+                lastMovementFrame = frame.FrameNumber;
+                movementFound = true;
+                Log($"Plate {plate.Id} still displaced at frame {frame.FrameNumber}");
                 break;
+            }
         }
 
-        double endFrame = lastMovementFrame + 1.5;
-        Log($"Trim end found at frame {lastMovementFrame}, setting finish to {endFrame}");
-        return TimeSpan.FromSeconds(endFrame);
+        if (movementFound)
+            break;
     }
+
+    double endFrame = lastMovementFrame + 1.5;
+    Log($"Trim end found at frame {lastMovementFrame}, setting finish to {endFrame}");
+    return TimeSpan.FromSeconds(endFrame);
+}
     private PlateIdentity? FindMatchingPlate(List<PlateIdentity> plates, PlateDetection detection)
     {
         if (!plates.Any()) return null;
