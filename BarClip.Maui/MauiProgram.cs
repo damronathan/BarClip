@@ -31,6 +31,8 @@ public static class MauiProgram
             args.SetObserved();
         };
         var builder = MauiApp.CreateBuilder();
+        var stream = FileSystem.OpenAppPackageFileAsync("appsettings.json").GetAwaiter().GetResult();
+        builder.Configuration.AddJsonStream(stream);
         //    var config = new ConfigurationBuilder()
         //.AddJsonFile("appsettings.json", optional: true)
         //.Build();
@@ -51,6 +53,22 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 
+        
+
+        // Setup SQLite connection string and model path
+        var dbPath = Path.Combine(FileSystem.AppDataDirectory, "barclip.db");
+        var modelPath = Path.Combine(FileSystem.AppDataDirectory, "PlateDetector.onnx");
+
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["ConnectionStrings:DefaultConnection"] = $"Data Source={dbPath}",
+                ["OnnxModelOptions:Path"] = modelPath
+            })
+            .Build();
+
+        builder.Configuration.AddConfiguration(configuration);
+        builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
         try
         {
             var authConfig = builder.Configuration.GetSection("AzureAd");
@@ -70,20 +88,6 @@ public static class MauiProgram
             SentrySdk.CaptureException(ex);
             throw;
         }
-
-        // Setup SQLite connection string and model path
-        var dbPath = Path.Combine(FileSystem.AppDataDirectory, "barclip.db");
-        var modelPath = Path.Combine(FileSystem.AppDataDirectory, "PlateDetector.onnx");
-
-        var configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                ["ConnectionStrings:DefaultConnection"] = $"Data Source={dbPath}",
-                ["OnnxModelOptions:Path"] = modelPath
-            })
-            .Build();
-
-        builder.Configuration.AddConfiguration(configuration);
         builder.Services.RegisterMauiServices(builder.Configuration);
 #if WINDOWS
         builder.Services.AddScoped<IVideoEditor, WindowsVideoEditor>();
