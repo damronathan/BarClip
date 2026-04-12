@@ -18,6 +18,11 @@ public static class MauiProgram
 {
     public static MauiApp CreateMauiApp()
     {
+        SentrySdk.Init(options =>
+        {
+            options.Dsn = "https://0c5952290b452cf311494a6a5a455c1d@o4511021185630208.ingest.us.sentry.io/4511021190283264";
+            options.Debug = true;
+        });
         AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
         {
             SentrySdk.CaptureException(args.ExceptionObject as Exception);
