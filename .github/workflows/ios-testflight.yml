@@ -28,6 +28,11 @@ jobs:
       - name: Install MAUI workload 9.0.104
         run: |
           dotnet workload install maui --version 9.0.104
+      - name: Set app settings
+        run: |
+          sed -i '' 's/your-maui-client-id/${{ secrets.AZURE_AD_CLIENT_ID }}/g' BarClip.Maui/appsettings.json
+          sed -i '' 's/your-tenant-id/${{ secrets.AZURE_AD_TENANT_ID }}/g' BarClip.Maui/appsettings.json
+          sed -i '' 's/your-api-client-id/${{ secrets.AZURE_AD_API_CLIENT_ID }}/g' BarClip.Maui/appsettings.json
       - name: Import Code-Signing Certificates
         uses: Apple-Actions/import-codesign-certs@v2
         with:
