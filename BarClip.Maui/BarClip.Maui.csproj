@@ -17,7 +17,7 @@
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>4.0</ApplicationDisplayVersion>
-		<ApplicationVersion>86</ApplicationVersion>
+		<ApplicationVersion>87</ApplicationVersion>
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">12.2</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">13.1</SupportedOSPlatformVersion>
@@ -42,6 +42,8 @@
 
 		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+
+		<MauiAsset Include="appsettings.json" />
 	</ItemGroup>
 
 	<ItemGroup>
