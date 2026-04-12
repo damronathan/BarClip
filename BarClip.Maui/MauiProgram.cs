@@ -39,17 +39,25 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 
-        var authConfig = builder.Configuration.GetSection("AzureAd");
+        try
+        {
+            var authConfig = builder.Configuration.GetSection("AzureAd");
 
-        var pca = PublicClientApplicationBuilder
-            .Create(authConfig["ClientId"])
-            .WithAuthority($"https://login.microsoftonline.com/{authConfig["TenantId"]}")
-            .WithRedirectUri($"msal{authConfig["ClientId"]}://auth")
-            .WithIosKeychainSecurityGroup("com.nathandamron.barclip")
-            .Build();
+            var pca = PublicClientApplicationBuilder
+                .Create(authConfig["ClientId"])
+                .WithAuthority($"https://login.microsoftonline.com/{authConfig["TenantId"]}")
+                .WithRedirectUri($"msal{authConfig["ClientId"]}://auth")
+                .WithIosKeychainSecurityGroup("com.nathandamron.barclip")
+                .Build();
 
-        builder.Services.AddSingleton<IPublicClientApplication>(pca);
-        builder.Services.AddSingleton<AuthService>();
+            builder.Services.AddSingleton<IPublicClientApplication>(pca);
+            builder.Services.AddSingleton<AuthService>();
+        }
+        catch (Exception ex)
+        {
+            SentrySdk.CaptureException(ex);
+            throw;
+        }
 
         // Setup SQLite connection string and model path
         var dbPath = Path.Combine(FileSystem.AppDataDirectory, "barclip.db");
