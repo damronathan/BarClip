@@ -28,11 +28,23 @@ jobs:
       - name: Install MAUI workload 9.0.104
         run: |
           dotnet workload install maui --version 9.0.104
-      - name: Set app settings
+      - name: Create app settings
         run: |
-          sed -i '' 's/your-maui-client-id/${{ secrets.AZURE_AD_CLIENT_ID }}/g' BarClip.Maui/appsettings.json
-          sed -i '' 's/your-tenant-id/${{ secrets.AZURE_AD_TENANT_ID }}/g' BarClip.Maui/appsettings.json
-          sed -i '' 's/your-api-client-id/${{ secrets.AZURE_AD_API_CLIENT_ID }}/g' BarClip.Maui/appsettings.json
+          cat > BarClip.Maui/appsettings.json << EOF
+          {
+            "OnnxModelOptions": {
+              "Path": "PlateDetector.onnx"
+            },
+            "Sentry": {
+              "Dsn": "${{ secrets.SENTRY_DSN }}"
+            },
+            "AzureAd": {
+              "ClientId": "${{ secrets.AZURE_AD_CLIENT_ID }}",
+              "TenantId": "${{ secrets.AZURE_AD_TENANT_ID }}",
+              "ApiClientId": "${{ secrets.AZURE_AD_API_CLIENT_ID }}"
+            }
+          }
+          EOF
       - name: Import Code-Signing Certificates
         uses: Apple-Actions/import-codesign-certs@v2
         with:
@@ -44,7 +56,7 @@ jobs:
           bundle-id: 'com.nathandamron.barclip.maui'
           issuer-id: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           api-key-id: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
-          api-private-key: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}      
+          api-private-key: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
       - name: Restore dependencies
         run: dotnet restore BarClip.Maui/BarClip.Maui.csproj
       - name: Build iOS app
