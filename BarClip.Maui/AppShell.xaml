@@ -7,13 +7,6 @@
     Shell.FlyoutBehavior="Disabled"
     Title="BarClip.Maui">
 
-    <Shell.ToolbarItems>
-        <ToolbarItem
-            x:Name="AuthToolbarItem"
-            Text="Sign In"
-            Clicked="OnAuthButtonClicked" />
-    </Shell.ToolbarItems>
-
     <ShellContent
         Title="Home"
         ContentTemplate="{DataTemplate local:MainPage}"
@@ -21,5 +14,6 @@
     <ShellContent
         Title="SessionLibrary"
         ContentTemplate="{DataTemplate local:SessionLibrary}"
-        Route="SessionLibrary" />
+        Route="SessionLibrary"        />
+
 </Shell>

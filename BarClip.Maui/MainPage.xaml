@@ -2,22 +2,24 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="BarClip.Maui.MainPage">
-
+    <ContentPage.ToolbarItems>
+        <ToolbarItem
+            x:Name="AuthToolbarItem"
+            Text="Sign In"
+            Clicked="OnAuthButtonClicked" />
+    </ContentPage.ToolbarItems>
     <ScrollView>
         <VerticalStackLayout
             Padding="30,0"
             Spacing="25"
-            VerticalOptions="Center"
-            >
+            VerticalOptions="Center">
             <Label
                 Text="BarClip"
                 HeightRequest="100"
                 FontSize="70"
                 SemanticProperties.Description="Bar Clip Logo"
                 HorizontalOptions="Center"
-                FontAttributes="Bold"
-                />
-
+                FontAttributes="Bold" />
             <Button
                 x:Name="CreateBtn"
                 Text="Create Session" 
@@ -26,8 +28,7 @@
                 HorizontalOptions="Fill"
                 BorderColor="White"
                 FontAttributes="Bold"
-                FontSize="40"
-                />
+                FontSize="40" />
             <Button
                 x:Name="SessionBtn"
                 Text="Session Library" 
@@ -36,11 +37,7 @@
                 HorizontalOptions="Fill"
                 BorderColor="White"
                 FontAttributes="Bold"
-                FontSize="40"
-                />
-            
-            
+                FontSize="40" />
         </VerticalStackLayout>
     </ScrollView>
-
 </ContentPage>

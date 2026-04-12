@@ -14,8 +14,9 @@ public partial class MainPage : ContentPage
     private readonly IServiceProvider _serviceProvider;
     private readonly IVideoEditor _videoEditor;
     private readonly VideoPickerService _picker;
+    private readonly AuthService _authService;
 
-    public MainPage(UserRepository userRepository, SessionService sessionService, IServiceProvider serviceProvider, IVideoEditor videoEditor, VideoPickerService picker)
+    public MainPage(UserRepository userRepository, SessionService sessionService, IServiceProvider serviceProvider, IVideoEditor videoEditor, VideoPickerService picker, AuthService authService)
     {
         InitializeComponent();
         _userRepository = userRepository;
@@ -23,13 +24,27 @@ public partial class MainPage : ContentPage
         _serviceProvider = serviceProvider;
         _videoEditor = videoEditor;
         _picker = picker;
+        _authService = authService;
+    }
+
+    private async void OnAuthButtonClicked(object sender, EventArgs e)
+    {
+        if (await _authService.IsSignedInAsync())
+        {
+            await _authService.SignOutAsync();
+            AuthToolbarItem.Text = "Sign In";
+        }
+        else
+        {
+            await _authService.GetTokenAsync();
+            AuthToolbarItem.Text = "Sign Out";
+        }
     }
 
     private async void CreateSession(object sender, EventArgs e)
     {
         try
         {
-            //picking
             string title = await DisplayPromptAsync(
                 "New Session",
                 "Enter a title for this session:",
@@ -42,7 +57,6 @@ public partial class MainPage : ContentPage
                 return;
             }
 
-
             var videos = await _picker.PickVideosAsync();
 
             if (videos == null || !videos.Any())
@@ -52,15 +66,13 @@ public partial class MainPage : ContentPage
             }
 
             var videoList = videos
-            .OrderBy(v => new FileInfo(v.FullPath).CreationTime)
-            .ToList();
+                .OrderBy(v => new FileInfo(v.FullPath).CreationTime)
+                .ToList();
 
             int totalVideos = videoList.Count;
 
-
             CreateBtn.Text = "Setting up session...";
 
-            // 2. Get/create user
             var user = await _userRepository.GetByNameIdentifierAsync("test-user-123");
             if (user == null)
             {
@@ -68,20 +80,16 @@ public partial class MainPage : ContentPage
                 await _userRepository.CreateAsync(user);
             }
 
-            // 3. Create session with folders
             var basePath = FileSystem.AppDataDirectory;
             var session = await _sessionService.CreateSessionWithFolders(user, basePath, title);
             var sessionFolderPath = Path.Combine(basePath, session.Id.ToString());
 
-            // Get the folder paths helper would create
             var fileHelper = _serviceProvider.GetRequiredService<BarClip.Core.Helpers.FileHelper>();
             var sessionFolderPaths = BarClip.Core.Helpers.FileHelper.CreateSessionFolders(basePath, session.Id);
 
-            // 4. Create video record and copy file
             var videoService = _serviceProvider.GetRequiredService<IVideoService>();
             int currentVideo = 0;
 
-            // Loop 1 - secure all temp files immediately
             var stablePaths = new List<(string stablePath, DateTime createdTime)>();
 
             foreach (var result in videoList)
@@ -104,7 +112,6 @@ public partial class MainPage : ContentPage
                 SentrySdk.AddBreadcrumb($"Secured video {currentVideo} to: {stablePath}");
             }
 
-            // Loop 2 - process from stable location
             currentVideo = 0;
 
             foreach (var (stablePath, createdTime) in stablePaths)
@@ -132,7 +139,6 @@ public partial class MainPage : ContentPage
                 SentrySdk.AddBreadcrumb($"Compression complete for video {currentVideo}");
             }
 
-            // Cleanup stable cache files
             foreach (var (stablePath, _) in stablePaths)
             {
                 try
@@ -146,9 +152,7 @@ public partial class MainPage : ContentPage
                 }
             }
 
-
             CreateBtn.Text = "Generating thumbnails...";
-
             await _videoEditor.ExtractThumbnails(sessionFolderPaths.Original, sessionFolderPaths.Thumbnails);
 
             CreateBtn.Text = "Session created!";
@@ -157,13 +161,10 @@ public partial class MainPage : ContentPage
         }
         catch (Exception ex)
         {
-            // Send to Sentry
             SentrySdk.CaptureException(ex);
-
             CreateBtn.Text = $"Error: {ex.Message}";
             System.Diagnostics.Debug.WriteLine($"Processing Error: {ex}");
             System.Diagnostics.Debug.WriteLine($"Stack: {ex.StackTrace}");
-
             await Task.Delay(3000);
             CreateBtn.Text = "Create Session";
         }
