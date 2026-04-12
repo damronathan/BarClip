@@ -18,6 +18,18 @@ public static class MauiProgram
 {
     public static MauiApp CreateMauiApp()
     {
+        AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
+        {
+            SentrySdk.CaptureException(args.ExceptionObject as Exception);
+            SentrySdk.Flush(TimeSpan.FromSeconds(3));
+        };
+
+        TaskScheduler.UnobservedTaskException += (sender, args) =>
+        {
+            SentrySdk.CaptureException(args.Exception);
+            SentrySdk.Flush(TimeSpan.FromSeconds(3));
+            args.SetObserved();
+        };
         var builder = MauiApp.CreateBuilder();
     //    var config = new ConfigurationBuilder()
     //.AddJsonFile("appsettings.json", optional: true)
