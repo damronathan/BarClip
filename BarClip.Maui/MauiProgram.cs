@@ -80,7 +80,7 @@ public static class MauiProgram
 
             var pca = PublicClientApplicationBuilder
                 .Create(authConfig["ClientId"])
-                .WithAuthority($"https://login.microsoftonline.com/{authConfig["TenantId"]}")
+                .WithAuthority($"https://barclip.ciamlogin.com/{authConfig["TenantId"]}")
                 .WithRedirectUri($"msal{authConfig["ClientId"]}://auth")
                 .WithIosKeychainSecurityGroup("com.nathandamron.barclip")
                 .Build();
