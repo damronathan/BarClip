@@ -5,6 +5,7 @@ using BarClip.Data;
 using Microsoft.EntityFrameworkCore;
 using SkiaSharp.Views.Maui.Controls.Hosting;
 using BarClip.Core.Interfaces;
+using Microsoft.Identity.Client;
 #if IOS
 using BarClip.Maui.Platforms.iOS.Services;
 #elif WINDOWS
@@ -37,6 +38,18 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
+
+        var authConfig = builder.Configuration.GetSection("AzureAd");
+
+        var pca = PublicClientApplicationBuilder
+            .Create(authConfig["ClientId"])
+            .WithAuthority($"https://login.microsoftonline.com/{authConfig["TenantId"]}")
+            .WithRedirectUri($"msal{authConfig["ClientId"]}://auth")
+            .WithIosKeychainSecurityGroup("com.nathandamron.barclip")
+            .Build();
+
+        builder.Services.AddSingleton<IPublicClientApplication>(pca);
+        builder.Services.AddSingleton<AuthService>();
 
         // Setup SQLite connection string and model path
         var dbPath = Path.Combine(FileSystem.AppDataDirectory, "barclip.db");
