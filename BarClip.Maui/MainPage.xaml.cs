@@ -176,7 +176,7 @@ public partial class MainPage : ContentPage
             var token = await _authService.GetTokenAsync();
             var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-            var response = await client.GetAsync("http://192.168.1.136:5273/api/video/test");
+            var response = await client.GetAsync("https://localhost:7000/api/video/test");
             var content = await response.Content.ReadAsStringAsync();
             await DisplayAlert("API Response", content, "OK");
         }
