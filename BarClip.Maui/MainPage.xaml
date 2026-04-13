@@ -38,6 +38,14 @@
                 BorderColor="White"
                 FontAttributes="Bold"
                 FontSize="40" />
+            <Button
+                x:Name="TestApiBtn"
+                Text="Test API"
+                Clicked="OnTestApiClicked"
+                HorizontalOptions="Fill"
+                BorderColor="White"
+                FontAttributes="Bold"
+                FontSize="40" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

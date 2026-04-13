@@ -169,6 +169,22 @@ public partial class MainPage : ContentPage
             CreateBtn.Text = "Create Session";
         }
     }
+    private async void OnTestApiClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            var token = await _authService.GetTokenAsync();
+            var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            var response = await client.GetAsync("https://192.168.1.136:7000/api/video/test");
+            var content = await response.Content.ReadAsStringAsync();
+            await DisplayAlert("API Response", content, "OK");
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Error", ex.Message, "OK");
+        }
+    }
 
     private async void NavigateToSessionLibrary(object sender, EventArgs e)
     {
