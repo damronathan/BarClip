@@ -1,9 +1,7 @@
-﻿using AVFoundation;
-using BarClip.Core.Interfaces;
+﻿using BarClip.Core.Interfaces;
 using BarClip.Core.Repositories;
 using BarClip.Core.Services;
 using BarClip.Data.Schema;
-using Foundation;
 
 namespace BarClip.Maui;
 

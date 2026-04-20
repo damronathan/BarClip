@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:d="http://schemas.microsoft.com/dotnet/2021/maui/design"
              x:Class="BarClip.Maui.MainPage">
     <ContentPage.ToolbarItems>
         <ToolbarItem
@@ -48,4 +48,16 @@
                 FontSize="40" />
         </VerticalStackLayout>
     </ScrollView>
+    <d:TabBar>
+        <Tab Title="Library" Icon="media-library.png">
+            <ShellContent ContentTemplate="{DataTemplate views:MediaLibrary}"/>
+        </Tab>
+        <Tab Title="Upload" Icon="create-session.png">
+            <ShellContent ContentTemplate="{DataTemplate views:UploadPage}"/>
+        </Tab>
+        <Tab Title="SessionLibrary" Icon="session-library.png">
+            <ShellContent ContentTemplate="{DataTemplate views:SessionLibrary}"/>
+        </Tab>
+        
+    </d:TabBar>
 </ContentPage>
