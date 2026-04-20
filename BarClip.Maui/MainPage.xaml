@@ -49,13 +49,13 @@
         </VerticalStackLayout>
     </ScrollView>
     <d:TabBar>
-        <Tab Title="Library" Icon="media-library.png">
+        <Tab Title="Library" Icon="media_library.png">
             <ShellContent ContentTemplate="{DataTemplate views:MediaLibrary}"/>
         </Tab>
-        <Tab Title="Upload" Icon="create-session.png">
+        <Tab Title="Upload" Icon="create_session.png">
             <ShellContent ContentTemplate="{DataTemplate views:UploadPage}"/>
         </Tab>
-        <Tab Title="SessionLibrary" Icon="session-library.png">
+        <Tab Title="SessionLibrary" Icon="session_library.png">
             <ShellContent ContentTemplate="{DataTemplate views:SessionLibrary}"/>
         </Tab>
         
