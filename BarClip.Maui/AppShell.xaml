@@ -9,14 +9,14 @@
     Title="BarClip">
 
     <TabBar>
-        <Tab Title="Library" Icon="medialibrary.png">
-            <ShellContent ContentTemplate="{DataTemplate local:MainPage}"/>
+        <Tab Title="Home" Icon="media_library.png">
+            <ShellContent ContentTemplate="{DataTemplate views:HomePage}"/>
         </Tab>
-        <Tab Title="Create" Icon="createsession.png">
-            <ShellContent ContentTemplate="{DataTemplate local:MainPage}"/>
+        <Tab Title="Create" Icon="create_session.png">
+            <ShellContent ContentTemplate="{DataTemplate views:SessionLibraryPage}"/>
         </Tab>
-        <Tab Title="Sessions" Icon="sessionlibrary.png">
-            <ShellContent ContentTemplate="{DataTemplate local:SessionLibrary}"/>
+        <Tab Title="Sessions" Icon="session_library.png">
+            <ShellContent ContentTemplate="{DataTemplate views:VideoLibraryPage}"/>
         </Tab>
     </TabBar>
 
