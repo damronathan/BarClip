@@ -11,7 +11,7 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(nameof(SessionLibrary), typeof(SessionLibrary));
         Routing.RegisterRoute(nameof(SessionPage), typeof(SessionPage));
         Routing.RegisterRoute(nameof(Camera), typeof(Camera));
-        Routing.RegisterRoute(nameof(VideoLibrary), typeof(VideoLibrary));
+        Routing.RegisterRoute(nameof(VideoLibrary), typeof(VideoLibrary));      
         Routing.RegisterRoute(nameof(VideoPlayer), typeof(VideoPlayer));
 
     }
