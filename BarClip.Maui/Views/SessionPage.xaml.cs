@@ -8,7 +8,7 @@ using System.Diagnostics;
 using BarClip.Core.Interfaces;
 using AddressBookUI;
 
-namespace BarClip.Maui;
+namespace BarClip.Maui.Views;
 
 [QueryProperty(nameof(SessionIdString), "SessionId")]
 public partial class SessionPage : ContentPage

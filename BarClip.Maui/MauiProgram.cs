@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using SkiaSharp.Views.Maui.Controls.Hosting;
 using BarClip.Core.Interfaces;
 using Microsoft.Identity.Client;
+using BarClip.Maui.Views;
 #if IOS
 using BarClip.Maui.Platforms.iOS.Services;
 #elif WINDOWS
@@ -105,6 +106,9 @@ public static class MauiProgram
         builder.Services.AddSingleton<MainPage>();
         builder.Services.AddTransient<SessionLibrary>();
         builder.Services.AddTransient<SessionPage>();
+        builder.Services.AddTransient<Camera>();
+        builder.Services.AddTransient<VideoLibrary>();
+        builder.Services.AddTransient<VideoPlayer>();
         builder.Services.AddSingleton<AppShell>();
 
 #if DEBUG

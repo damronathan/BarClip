@@ -13,7 +13,7 @@
             <ShellContent ContentTemplate="{DataTemplate views:VideoLibrary}"/>
         </Tab>
         <Tab Title="Create" Icon="create_session.png">
-            <ShellContent ContentTemplate="{DataTemplate views:SessionLibrary}"/>
+            <ShellContent ContentTemplate="{DataTemplate local:SessionLibrary}"/>
         </Tab>
         <Tab Title="Sessions" Icon="session_library.png">
             <ShellContent ContentTemplate="{DataTemplate views:Camera}"/>

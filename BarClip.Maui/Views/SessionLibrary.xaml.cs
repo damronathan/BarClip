@@ -2,9 +2,9 @@ using BarClip.Core.Services;
 using System.Collections.ObjectModel;
 using BarClip.Data.Schema;
 
-namespace BarClip.Maui;
+namespace BarClip.Maui.Views;
 
-public partial class SessionLibrary : ContentPage
+public partial class SessionLibrary : ContentPages
 {
     private readonly SessionService _sessionService;
     public ObservableCollection<Session> Sessions { get; } = new();

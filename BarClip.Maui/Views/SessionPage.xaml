@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:converters="clr-namespace:BarClip.Maui.Converters"
              xmlns:skia="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
-             x:Class="BarClip.Maui.SessionPage"
+             x:Class="BarClip.Maui.Views.SessionPage"
              Title="Session">
 
     <ContentPage.Resources>
