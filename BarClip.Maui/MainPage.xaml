@@ -48,16 +48,4 @@
                 FontSize="40" />
         </VerticalStackLayout>
     </ScrollView>
-    <d:TabBar>
-        <Tab Title="Library" Icon="media_library.png">
-            <ShellContent ContentTemplate="{DataTemplate views:SessionLibrary}"/>
-        </Tab>
-        <Tab Title="Upload" Icon="create_session.png">
-            <ShellContent ContentTemplate="{DataTemplate views:SessionLibrary}"/>
-        </Tab>
-        <Tab Title="SessionLibrary" Icon="session_library.png">
-            <ShellContent ContentTemplate="{DataTemplate views:SessionLibrary}"/>
-        </Tab>
-        
-    </d:TabBar>
 </ContentPage>

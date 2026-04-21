@@ -4,16 +4,20 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:BarClip.Maui"
+    xmlns:views="clr-namespace:BarClip.Maui.Views"
     Shell.FlyoutBehavior="Disabled"
-    Title="BarClip.Maui">
+    Title="BarClip">
 
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
-    <ShellContent
-        Title="SessionLibrary"
-        ContentTemplate="{DataTemplate local:SessionLibrary}"
-        Route="SessionLibrary"        />
+    <TabBar>
+        <Tab Title="Library" Icon="media_library.png">
+            <ShellContent ContentTemplate="{DataTemplate local:MainPage}"/>
+        </Tab>
+        <Tab Title="Create" Icon="create_session.png">
+            <ShellContent ContentTemplate="{DataTemplate local:MainPage}"/>
+        </Tab>
+        <Tab Title="Sessions" Icon="session_library.png">
+            <ShellContent ContentTemplate="{DataTemplate local:SessionLibrary}"/>
+        </Tab>
+    </TabBar>
 
 </Shell>
