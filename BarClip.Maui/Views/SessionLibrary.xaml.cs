@@ -8,8 +8,6 @@ public partial class SessionLibrary : ContentPage
 {
     private readonly SessionService _sessionService;
     public ObservableCollection<Session> Sessions { get; } = new();
-
-
     public SessionLibrary(SessionService sessionService)
     {
         InitializeComponent();
