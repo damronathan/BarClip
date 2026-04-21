@@ -4,7 +4,7 @@ using BarClip.Data.Schema;
 
 namespace BarClip.Maui.Views;
 
-public partial class SessionLibrary : ContentPages
+public partial class SessionLibrary : ContentPage
 {
     private readonly SessionService _sessionService;
     public ObservableCollection<Session> Sessions { get; } = new();
