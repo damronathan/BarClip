@@ -3,7 +3,6 @@ using BarClip.Core.Interfaces;
 using BarClip.Core.Repositories;
 using BarClip.Core.Services;
 using BarClip.Data.Schema;
-using BarClip.Maui.Views;
 using Foundation;
 
 namespace BarClip.Maui;
