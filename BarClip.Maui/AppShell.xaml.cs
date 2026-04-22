@@ -1,4 +1,6 @@
-﻿namespace BarClip.Maui;
+﻿using BarClip.Maui.Views;
+
+namespace BarClip.Maui;
 
 public partial class AppShell : Shell
 {

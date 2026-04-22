@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using SkiaSharp.Views.Maui.Controls.Hosting;
 using BarClip.Core.Interfaces;
 using Microsoft.Identity.Client;
+using BarClip.Maui.Views;
 #if IOS
 using BarClip.Maui.Platforms.iOS.Services;
 #elif WINDOWS
