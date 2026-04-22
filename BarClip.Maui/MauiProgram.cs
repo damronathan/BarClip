@@ -105,6 +105,9 @@ public static class MauiProgram
         builder.Services.AddSingleton<MainPage>();
         builder.Services.AddTransient<SessionLibrary>();
         builder.Services.AddTransient<SessionPage>();
+        builder.Services.AddTransient<VideoLibrary>();
+        builder.Services.AddTransient<VideoPlayerView>();
+        builder.Services.AddTransient<CameraView>();
         builder.Services.AddSingleton<AppShell>();
 
 #if DEBUG

@@ -15,5 +15,18 @@
         Title="SessionLibrary"
         ContentTemplate="{DataTemplate local:SessionLibrary}"
         Route="SessionLibrary"        />
+    <ShellContent
+        Title="VideoLibrary"
+        ContentTemplate="{DataTemplate local:VideoLibrary}"
+        Route="VideoLibrary"        />
+    <ShellContent
+        Title="VideoPlayerView"
+        ContentTemplate="{DataTemplate local:VideoPlayerView}"
+        Route="VideoPlayerView"        />
+    <ShellContent
+        Title="CameraView"
+        ContentTemplate="{DataTemplate local:CameraView}"
+        Route="CameraView"        />
+    
 
 </Shell>

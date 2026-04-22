@@ -39,6 +39,33 @@
                 FontAttributes="Bold"
                 FontSize="40" />
             <Button
+                x:Name="VideoLibraryBtn"
+                Text="Video Library" 
+                SemanticProperties.Hint="Directs user to video library"
+                Clicked="NavigateToVideoLibrary"
+                HorizontalOptions="Fill"
+                BorderColor="White"
+                FontAttributes="Bold"
+                FontSize="40" />
+            <Button
+                x:Name="VideoPlayerBtn"
+                Text="Video Player" 
+                SemanticProperties.Hint="Directs user to video player"
+                Clicked="NavigateToVideoPlayer"
+                HorizontalOptions="Fill"
+                BorderColor="White"
+                FontAttributes="Bold"
+                FontSize="40" />
+            <Button
+                x:Name="CameraBtn"
+                Text="Camera View" 
+                SemanticProperties.Hint="Directs user to camera view"
+                Clicked="NavigateToCameraView"
+                HorizontalOptions="Fill"
+                BorderColor="White"
+                FontAttributes="Bold"
+                FontSize="40" />
+            <Button
                 x:Name="TestApiBtn"
                 Text="Test API"
                 Clicked="OnTestApiClicked"
