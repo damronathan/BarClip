@@ -15,13 +15,18 @@ public partial class MainPage : ContentPage
     private readonly IVideoEditor _videoEditor;
     private readonly VideoPickerService _picker;
     private readonly AuthService _authService;
+    private readonly ApiClientService _apiClientService;
 
-    public MainPage(UserRepository userRepository, SessionService sessionService, IServiceProvider serviceProvider, IVideoEditor videoEditor, VideoPickerService picker, AuthService authService)
+    public MainPage(UserRepository userRepository, SessionService sessionService, IServiceProvider serviceProvider, IVideoEditor videoEditor, VideoPickerService picker, AuthService authService, ApiClientService apiClientService)
     {
         InitializeComponent();
         _userRepository = userRepository;
         _sessionService = sessionService;
         _serviceProvider = serviceProvider;
+        _videoEditor = videoEditor;
+        _picker = picker;
+        _authService = authService;
+        _apiClientService = apiClientService;
         _videoEditor = videoEditor;
         _picker = picker;
         _authService = authService;
@@ -172,12 +177,8 @@ public partial class MainPage : ContentPage
     {
         try
         {
-            var token = await _authService.GetTokenAsync();
-            var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-            var response = await client.GetAsync("https://barclip-api-h2ckf3fmg5azhweq.centralus-01.azurewebsites.net/api/video/test");
-            var content = await response.Content.ReadAsStringAsync();
-            await DisplayAlert("API Response", content, "OK");
+            var response = await _apiClientService.TestAsync();
+            await DisplayAlert("API Response", response, "OK");
         }
         catch (Exception ex)
         {

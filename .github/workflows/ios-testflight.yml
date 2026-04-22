@@ -42,7 +42,8 @@ jobs:
               "ClientId": "${{ secrets.AZURE_AD_CLIENT_ID }}",
               "TenantId": "${{ secrets.AZURE_AD_TENANT_ID }}",
               "ApiClientId": "${{ secrets.AZURE_AD_API_CLIENT_ID }}"
-            }
+            },
+            "ApiUrl": "${{ secrets.API_URL }}"
           }
           EOF
       - name: Import Code-Signing Certificates
