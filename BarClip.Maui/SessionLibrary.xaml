@@ -1,6 +1,6 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="BarClip.Maui.Views.SessionLibrary"
+             x:Class="BarClip.Maui.SessionLibrary"
              Title="Sessions">
 
     <CollectionView ItemsSource="{Binding Sessions}" Margin="10">
@@ -17,7 +17,7 @@
                                FontAttributes="Bold"
                                TextColor="#FFF"
                                HorizontalOptions="Center"/>
-                        
+
                     </VerticalStackLayout>
                 </Frame>
             </DataTemplate>

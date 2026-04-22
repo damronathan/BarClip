@@ -1,10 +1,12 @@
-﻿using BarClip.Core.Interfaces;
+﻿using AVFoundation;
+using BarClip.Core.Interfaces;
 using BarClip.Core.Repositories;
 using BarClip.Core.Services;
 using BarClip.Data.Schema;
-using BarClip.Maui;
+using BarClip.Maui.Views;
+using Foundation;
 
-namespace BarClip.Maui.Views;
+namespace BarClip.Maui;
 
 public partial class MainPage : ContentPage
 {
@@ -188,17 +190,5 @@ public partial class MainPage : ContentPage
     private async void NavigateToSessionLibrary(object sender, EventArgs e)
     {
         await Shell.Current.GoToAsync(nameof(SessionLibrary));
-    }
-    private async void NavigateToVideoLibrary(object sender, EventArgs e)
-    {
-        await Shell.Current.GoToAsync(nameof(VideoLibrary));
-    }
-    private async void NavigateToVideoPlayer(object sender, EventArgs e)
-    {
-        await Shell.Current.GoToAsync(nameof(VideoPlayerView));
-    }
-    private async void NavigateToCameraView(object sender, EventArgs e)
-    {
-        await Shell.Current.GoToAsync(nameof(CameraView));
     }
 }

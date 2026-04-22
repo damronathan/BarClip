@@ -20,7 +20,7 @@
     <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
   </PropertyGroup>
   <ItemGroup>
-    <MauiXaml Update="Views\SessionPage.xaml">
+    <MauiXaml Update="SessionPage.xaml">
       <SubType>Designer</SubType>
     </MauiXaml>
   </ItemGroup>
