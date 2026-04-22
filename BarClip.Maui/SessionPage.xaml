@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:converters="clr-namespace:BarClip.Maui.Converters"
              xmlns:skia="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
-             x:Class="BarClip.Maui.Views.SessionPage"
+             x:Class="BarClip.Maui.SessionPage"
              Title="Session">
 
     <ContentPage.Resources>
@@ -109,7 +109,7 @@
                         CornerRadius="12"
                         HorizontalOptions="Fill"
                         Margin="0,10,0,20"/>
-                
+
 
             </VerticalStackLayout>
         </ScrollView>

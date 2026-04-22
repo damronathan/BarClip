@@ -1,10 +1,11 @@
-﻿using BarClip.Core.Interfaces;
+﻿using AVFoundation;
+using BarClip.Core.Interfaces;
 using BarClip.Core.Repositories;
 using BarClip.Core.Services;
 using BarClip.Data.Schema;
-using BarClip.Maui;
+using Foundation;
 
-namespace BarClip.Maui.Views;
+namespace BarClip.Maui;
 
 public partial class MainPage : ContentPage
 {
