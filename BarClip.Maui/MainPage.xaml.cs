@@ -191,4 +191,16 @@ public partial class MainPage : ContentPage
     {
         await Shell.Current.GoToAsync(nameof(SessionLibrary));
     }
+    private async void NavigateToVideoLibrary(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync(nameof(VideoLibrary));
+    }
+    private async void NavigateToVideoPlayer(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync(nameof(VideoPlayerView));
+    }
+    private async void NavigateToCameraView(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync(nameof(CameraView));
+    }
 }
