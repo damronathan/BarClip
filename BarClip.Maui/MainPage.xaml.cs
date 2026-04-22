@@ -40,7 +40,6 @@ public partial class MainPage : ContentPage
             AuthToolbarItem.Text = "Sign Out";
         }
     }
-
     private async void CreateSession(object sender, EventArgs e)
     {
         try
