@@ -147,6 +147,10 @@ public partial class SessionPage : ContentPage
 
     private async Task OnUploadSessionAsync()
     {
+        IsProcessing = true; // show overlay
+        Progress = 0;
+
+
         var finalOutputPath = Path.Combine(_sessionFolderPaths.Session, $"FullSession{_sessionId}.MOV");
         var request = new SasUrlRequest()
         {
@@ -155,6 +159,7 @@ public partial class SessionPage : ContentPage
             Extension = ".mov"
         };
         var sasUrlResponse = await _client.GetUploadSasUrlAsync(request);
+        Progress = 50;
         var uploadVideoRequest = new UploadVideoRequest()
         {
             Content = File.OpenRead(finalOutputPath),
@@ -168,6 +173,9 @@ public partial class SessionPage : ContentPage
             IsFull = true
         };
         await _videoService.UploadVideo(uploadVideoRequest);
+        Progress = 100;
+        await DisplayAlert("Success", "Video uploaded successfully!", "OK");
+
 
     }
     private async Task OnProcessSessionAsync()
