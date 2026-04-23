@@ -47,7 +47,6 @@ public static class CoreServiceRegistry
         RegisterServices(services);
 
         RegisterExternalServices(services);
-        services.AddSingleton<IApiClientService, ApiClientService>();
 
 
         return services;
