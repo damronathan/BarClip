@@ -39,7 +39,7 @@ public class ApiClientService
     {
         var token = await _authService.GetTokenAsync();
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-        var response = await _httpClient.GetAsync(_url + "/api/video/test");
+        var response = await _httpClient.GetAsync(_url + "/video/test");
         return await response.Content.ReadAsStringAsync();
     }
 }
