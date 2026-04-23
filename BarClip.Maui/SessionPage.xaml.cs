@@ -1,12 +1,13 @@
+using AddressBookUI;
+using BarClip.Core.Helpers;
+using BarClip.Core.Interfaces;
 using BarClip.Core.Services;
 using BarClip.Data.Schema;
-using System.Collections.ObjectModel;
-using BarClip.Core.Helpers;
 using BarClip.Models.Requests;
-using System.Windows.Input;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
-using BarClip.Core.Interfaces;
-using AddressBookUI;
+using System.Windows.Input;
+using static BarClip.Core.Helpers.FileHelper;
 
 namespace BarClip.Maui;
 
@@ -22,6 +23,7 @@ public partial class SessionPage : ContentPage
     private bool _hasLoaded = false;
     private readonly Guid _userId = Guid.Parse("1D1ACF20-C5D5-4B2C-9FED-121F291966E1");
     private double _progress;
+    private readonly ApiClientService _client;
 
     private string _sessionIdString;
     public string SessionIdString
@@ -61,16 +63,19 @@ public partial class SessionPage : ContentPage
     public ICommand SubmitSessionCommand { get; }
     public ICommand ProcessSessionCommand { get; }
     public ICommand DeleteSessionCommand { get; }
+    public ICommand UploadSessionCommand { get; }
 
-    public SessionPage(IVideoService videoService, LiftService liftService, IVideoEditor videoEditor, SessionService sessionService)
+    public SessionPage(IVideoService videoService, LiftService liftService, IVideoEditor videoEditor, SessionService sessionService, ApiClientService client)
     {
         InitializeComponent();
         _videoService = videoService;
         _liftService = liftService;
         _videoEditor = videoEditor;
+        _client = client;
         SubmitSessionCommand = new Command(async () => await OnSubmitSessionAsync());
         ProcessSessionCommand = new Command(async () => await OnProcessSessionAsync());
         DeleteSessionCommand = new Command(async () => await OnDeleteSessionAsync());
+        UploadSessionCommand = new Command(async () => await OnUploadSessionAsync());
         BindingContext = this;
         _sessionService = sessionService;
     }
@@ -138,6 +143,32 @@ public partial class SessionPage : ContentPage
         {
             await _liftService.UpdateLift(liftVideo.Lift);
         }
+    }
+
+    private async Task OnUploadSessionAsync()
+    {
+        var finalOutputPath = Path.Combine(_sessionFolderPaths.Session, $"FullSession{_sessionId}.MOV");
+        var request = new SasUrlRequest()
+        {
+            Id = _sessionId,
+            ContainerName = "videos",
+            Extension = ".mov"
+        };
+        var sasUrlResponse = await _client.GetUploadSasUrlAsync(request);
+        var uploadVideoRequest = new UploadVideoRequest()
+        {
+            Content = File.OpenRead(finalOutputPath),
+            ContentType = "video/quicktime",
+            UserId = sasUrlResponse.UserId,
+            SasUrl = sasUrlResponse.UploadSasUrl,
+            VideoId = _sessionId,
+            SessionId = _sessionId,
+            CreatedAt = DateTime.UtcNow,
+            OrderNumber = 1,
+            IsFull = true
+        };
+        await _videoService.UploadVideo(uploadVideoRequest);
+
     }
     private async Task OnProcessSessionAsync()
     {

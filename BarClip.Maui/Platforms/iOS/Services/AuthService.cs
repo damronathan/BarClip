@@ -42,4 +42,10 @@ public class AuthService
         var accounts = await _pca.GetAccountsAsync();
         return accounts.Any();
     }
+    public async Task<string> GetUserIdAsync()
+    {
+        var accounts = await _pca.GetAccountsAsync();
+        var account = accounts.FirstOrDefault();
+        return account?.HomeAccountId?.Identifier ?? string.Empty;
+    }
 }

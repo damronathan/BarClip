@@ -100,6 +100,15 @@
                         CornerRadius="12"
                         HorizontalOptions="Fill"
                         Margin="0,10,0,20"/>
+                <Button Text="Upload Session"
+                        Command="{Binding UploadSessionCommand}"
+                        BackgroundColor="{DynamicResource Primary}"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        HeightRequest="55"
+                        CornerRadius="12"
+                        HorizontalOptions="Fill"
+                        Margin="0,10,0,20"/>
                 <Button Text="Delete Session"
                         Command="{Binding DeleteSessionCommand}"
                         BackgroundColor="{DynamicResource Primary}"

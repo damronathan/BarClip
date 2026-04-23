@@ -1,5 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using BarClip.Models.Requests;
+using Microsoft.Extensions.Configuration;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 
@@ -41,5 +43,26 @@ public class ApiClientService
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         var response = await _httpClient.GetAsync(_url + "/video/test");
         return await response.Content.ReadAsStringAsync();
+    }
+    public async Task<UploadSasUrlResponse> GetUploadSasUrlAsync(SasUrlRequest request)
+    {
+        var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+        query["Id"] = request.Id.ToString();
+        query["ContainerName"] = request.ContainerName;
+        query["Extension"] = request.Extension;
+
+        var url = $"{_url}/video/upload-sas-url?{query}";
+
+        var token = await _authService.GetTokenAsync();
+
+        var httpRequest = new HttpRequestMessage(HttpMethod.Get, url);
+        httpRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        var response = await _httpClient.SendAsync(httpRequest);
+
+        response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<UploadSasUrlResponse>()
+               ?? throw new Exception("Failed to deserialize response");
     }
 }

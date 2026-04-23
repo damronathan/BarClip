@@ -17,11 +17,12 @@ public interface IVideoService
     Task SaveVideos(SaveVideosRequest request);
     //Task<SaveVideosRequest> TrimVideoFromStorage(string messageText);
     Task UpdateVideos(OriginalVideo original, ProcessedVideo processed);
+    Task UploadVideo(UploadVideoRequest request);
 }
 
 public class VideoService : IVideoService
 {
-    private readonly StorageService? _storageService;
+    private readonly StorageService _storageService;
     private readonly TrimService _trimService;
     private readonly FrameService _frameService;
     private readonly PlateAnalysisService _plateAnalysisService;
@@ -40,6 +41,15 @@ public class VideoService : IVideoService
     {
         await _repo.SaveVideosAsync(request);
     }
+
+    public async Task UploadVideo(UploadVideoRequest request)
+    {
+        if (_storageService != null)
+        {
+            await _storageService.UploadAsync(request);
+        }
+    }
+
 
     public async Task UpdateVideos(OriginalVideo original, ProcessedVideo processed)
     {
