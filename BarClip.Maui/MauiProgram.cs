@@ -87,6 +87,7 @@ public static class MauiProgram
 
             builder.Services.AddSingleton<IPublicClientApplication>(pca);
             builder.Services.AddSingleton<AuthService>();
+            builder.Services.AddSingleton<ApiClientService>();
         }
         catch (Exception ex)
         {
