@@ -48,7 +48,10 @@ public partial class VideoLibrary : ContentPage
     {
         if (sender is Grid grid && grid.BindingContext is VideoResponse video)
         {
-            await Shell.Current.GoToAsync($"VideoPlayer?VideoId={video.Id}");
+            if (!string.IsNullOrEmpty(video.VideoSasUrl))
+                await Launcher.OpenAsync(new Uri(video.VideoSasUrl));
+            else
+                await DisplayAlert("Error", "Video URL not available", "OK");
         }
     }
 }
