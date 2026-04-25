@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using SkiaSharp.Views.Maui.Controls.Hosting;
 using BarClip.Core.Interfaces;
 using Microsoft.Identity.Client;
+using CommunityToolkit.Maui;
+
 #if IOS
 using BarClip.Maui.Platforms.iOS.Services;
 #elif WINDOWS
@@ -45,6 +47,7 @@ public static class MauiProgram
         builder
 
             .UseMauiApp<App>()
+            .UseMauiCommunityToolkitMediaElement()
             .UseSkiaSharp()
             .UseSentry(options =>
             {

@@ -1,9 +1,22 @@
 namespace BarClip.Maui;
 
+[QueryProperty(nameof(VideoUrl), "VideoUrl")]
 public partial class VideoPlayerView : ContentPage
 {
-	public VideoPlayerView()
-	{
-		InitializeComponent();
-	}
+    private string _videoUrl;
+    public string VideoUrl
+    {
+        get => _videoUrl;
+        set
+        {
+            _videoUrl = Uri.UnescapeDataString(value);
+            OnPropertyChanged();
+        }
+    }
+
+    public VideoPlayerView()
+    {
+        InitializeComponent();
+        BindingContext = this;
+    }
 }
