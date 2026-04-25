@@ -1,4 +1,5 @@
 ﻿using BarClip.Models.Requests;
+using BarClip.Models.Responses;
 using Microsoft.Extensions.Configuration;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -64,5 +65,25 @@ public class ApiClientService
 
         return await response.Content.ReadFromJsonAsync<UploadSasUrlResponse>()
                ?? throw new Exception("Failed to deserialize response");
+    }
+    public async Task<ICollection<VideoResponse>> GetVideosAsync(GetVideosRequest request)
+    {
+        var token = await _authService.GetTokenAsync();
+        var httpRequest = new HttpRequestMessage(HttpMethod.Get, BuildGetVideosUrl(request));
+        httpRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        var response = await _httpClient.SendAsync(httpRequest);
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<ICollection<VideoResponse>>()
+               ?? throw new Exception("Failed to deserialize response");
+    }
+
+    private string BuildGetVideosUrl(GetVideosRequest request)
+    {
+        var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
+        if (request.SessionId.HasValue)
+            query["SessionId"] = request.SessionId.Value.ToString();
+        if (request.UserId.HasValue)
+            query["UserId"] = request.UserId.Value.ToString();
+        return $"{_url}/video?{query}";
     }
 }

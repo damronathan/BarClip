@@ -8,5 +8,9 @@ namespace BarClip.Models.Responses;
 
 public class VideoResponse
 {
-    public string? SasUrl { get; set; }
+    public Guid Id { get; set; }
+    public int OrderNumber { get; set; }
+    public bool IsFull { get; set; }
+    public string? VideoSasUrl { get; set; }
+    public string? ThumbnailSasUrl { get; set; }
 }

@@ -15,8 +15,6 @@ public class StorageService
 
     public async Task UploadAsync(UploadVideoRequest request)
     {
-        await request.Content.CopyToAsync(Stream.Null);
-        request.Content.Position = 0;
         using var streamContent = new StreamContent(request.Content);
         streamContent.Headers.ContentType = new MediaTypeHeaderValue(request.ContentType);
 
