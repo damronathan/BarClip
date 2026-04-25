@@ -180,8 +180,7 @@ public partial class SessionPage : ContentPage
             IsFull = true
         };
         await _videoService.UploadVideo(uploadVideoRequest);
-        var thumbnailPaths = await _videoEditor.ExtractThumbnails(_sessionFolderPaths.Session, _sessionFolderPaths.Thumbnails);
-        var thumbnailPath = thumbnailPaths.FirstOrDefault();
+        var thumbnailPath = await _videoEditor.ExtractThumbnail(_sessionFolderPaths.Session, _sessionFolderPaths.Thumbnails);
         if (thumbnailPath == null)
             throw new Exception("No thumbnail found");
         var uploadThumbnailRequest = new UploadVideoRequest()

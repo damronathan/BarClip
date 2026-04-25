@@ -148,6 +148,34 @@ public class AVFoundationHelper
 
         return originalFilePaths;
     }
+    public async static Task<string> ExtractThumbnail(string folderPath, string thumbnailFolderPath)
+    {
+        var filePaths = Directory.GetFiles(folderPath, "*.MOV");
+        var filePath = filePaths.FirstOrDefault();
+        var fileName = Path.GetFileNameWithoutExtension(filePath);
+
+        string thumbnailPath = Path.Combine(thumbnailFolderPath, fileName + ".png");
+
+        using var asset = AVAsset.FromUrl(NSUrl.FromFilename(filePath));
+
+        // Ensure duration is loaded
+        await asset.LoadValuesTaskAsync(new string[] { "duration" });
+
+        var thumbnailTime = asset.Duration.Seconds / 2;
+
+        try
+        {
+            await AVFoundationHelper.ExtractSingleFrameAsync(filePath, thumbnailTime, thumbnailPath);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Error extracting thumbnail from {filePath}: {ex.Message}");
+        }
+
+        return thumbnailPath;
+    }
+
+    
 
         public static async Task<string> MergeVideos(SessionFolderPaths sessionFolderPaths, Guid sessionId)
     {

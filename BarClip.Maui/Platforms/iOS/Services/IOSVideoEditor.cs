@@ -103,6 +103,10 @@ public class IOSVideoEditor : IVideoEditor
     {
         return await AVFoundationHelper.ExtractThumbnails(originalFolderPath, thumbnailFolderPath);
     }
+    public async Task<string> ExtractThumbnail(string folderPath, string thumbnailFolderPath)
+    {
+        return await AVFoundationHelper.ExtractThumbnail(folderPath, thumbnailFolderPath);
+    }
     public async Task CompressVideo(string inputPath, string outputPath)
     {
         await AVFoundationHelper.CompressVideoAsync(inputPath, outputPath);

@@ -11,4 +11,5 @@ public interface IVideoEditor
     Task<string[]> ExtractThumbnails(string originalFolderPath, string thumbnailFolderPath);
     Task<ProcessedVideoRequest> ProcessVideo(SessionFolderPaths sessionFolderPaths, OriginalVideoRequest video);
     Task CompressVideo(string inputPath, string outputPath);
+    Task<string> ExtractThumbnail(string folderPath, string thumbnailFolderPath);
 }
