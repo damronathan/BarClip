@@ -6,9 +6,10 @@
              Title="Video Player">
 
     <toolkit:MediaElement Source="{Binding VideoUrl}"
-                          ShouldAutoPlay="True"
-                          ShouldShowPlaybackControls="True"
-                          HorizontalOptions="Fill"
-                          VerticalOptions="Fill"/>
+                      ShouldAutoPlay="True"
+                      ShouldShowPlaybackControls="True"
+                      HorizontalOptions="Fill"
+                      VerticalOptions="Fill"
+                      MediaFailed="OnMediaFailed"/>
 
 </ContentPage>

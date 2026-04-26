@@ -90,7 +90,10 @@ public static class MauiProgram
 
             builder.Services.AddSingleton<IPublicClientApplication>(pca);
             builder.Services.AddSingleton<AuthService>();
-            builder.Services.AddHttpClient();
+            builder.Services.AddHttpClient<ApiClientService>(client =>
+            {
+                client.Timeout = TimeSpan.FromSeconds(120);
+            }); 
             builder.Services.AddSingleton<ApiClientService>();
         }
         catch (Exception ex)

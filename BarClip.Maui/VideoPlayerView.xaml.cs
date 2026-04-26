@@ -1,3 +1,5 @@
+using CommunityToolkit.Maui.Core.Primitives;
+
 namespace BarClip.Maui;
 
 [QueryProperty(nameof(VideoUrl), "VideoUrl")]
@@ -18,5 +20,9 @@ public partial class VideoPlayerView : ContentPage
     {
         InitializeComponent();
         BindingContext = this;
+    }
+    private void OnMediaFailed(object sender, MediaFailedEventArgs e)
+    {
+        System.Diagnostics.Debug.WriteLine($"Media failed: {e.ErrorMessage}");
     }
 }
