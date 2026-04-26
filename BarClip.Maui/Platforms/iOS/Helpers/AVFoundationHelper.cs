@@ -254,28 +254,7 @@ public class AVFoundationHelper
         await SaveVideoToCameraRoll(NSUrl.FromFilename(finalOutputPath));
         return finalOutputPath;
     }
-    public static async Task SaveVideoToCameraRoll(NSUrl videoUrl)
-    {
-        var status = await PHPhotoLibrary.RequestAuthorizationAsync(PHAccessLevel.AddOnly);
 
-        if (status != PHAuthorizationStatus.Authorized)
-            throw new Exception("Photo library access denied");
-
-        var tcs = new TaskCompletionSource<bool>();
-
-        PHPhotoLibrary.SharedPhotoLibrary.PerformChanges(() =>
-        {
-            PHAssetChangeRequest.FromVideo(videoUrl);
-        }, (success, error) =>
-        {
-            if (error != null)
-                tcs.SetException(new Exception(error.LocalizedDescription));
-            else
-                tcs.SetResult(success);
-        });
-
-        await tcs.Task;
-    }
     public static async Task TrimAsync(OriginalVideoRequest originalVideo, ProcessedVideoRequest processedVideo)
     {
         await Task.Run(async () =>
@@ -323,10 +302,34 @@ public class AVFoundationHelper
         });
 
     }
+
     public static async Task<TimeSpan> GetDurationAsync(string filePath)
     {
         using var asset = AVAsset.FromUrl(NSUrl.FromFilename(filePath));
         await asset.LoadValuesTaskAsync(new string[] { "duration" });
         return TimeSpan.FromSeconds(asset.Duration.Seconds);
     }
+    public static async Task SaveVideoToCameraRoll(NSUrl videoUrl)
+    {
+        var status = await PHPhotoLibrary.RequestAuthorizationAsync(PHAccessLevel.AddOnly);
+
+        if (status != PHAuthorizationStatus.Authorized)
+            throw new Exception("Photo library access denied");
+
+        var tcs = new TaskCompletionSource<bool>();
+
+        PHPhotoLibrary.SharedPhotoLibrary.PerformChanges(() =>
+        {
+            PHAssetChangeRequest.FromVideo(videoUrl);
+        }, (success, error) =>
+        {
+            if (error != null)
+                tcs.SetException(new Exception(error.LocalizedDescription));
+            else
+                tcs.SetResult(success);
+        });
+
+        await tcs.Task;
+    }
+
 }

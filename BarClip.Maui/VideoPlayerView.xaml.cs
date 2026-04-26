@@ -19,6 +19,7 @@ public partial class VideoPlayerView : ContentPage
     public VideoPlayerView()
     {
         InitializeComponent();
+        _videoUrl = "https://www.w3schools.com/html/mov_bbb.mp4";
         BindingContext = this;
     }
     private void OnMediaFailed(object sender, MediaFailedEventArgs e)
