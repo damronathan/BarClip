@@ -76,6 +76,10 @@ public class ApiClientService
         return await response.Content.ReadFromJsonAsync<ICollection<VideoResponse>>()
                ?? throw new Exception("Failed to deserialize response");
     }
+    public async Task WakeUpAsync()
+    {
+        await _httpClient.GetAsync(_url + "/user");
+    }
 
     private string BuildGetVideosUrl(GetVideosRequest request)
     {
@@ -86,4 +90,5 @@ public class ApiClientService
             query["UserId"] = request.UserId.Value.ToString();
         return $"{_url}/video?{query}";
     }
+
 }
