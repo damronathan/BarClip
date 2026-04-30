@@ -57,7 +57,6 @@ public static class CoreServiceRegistry
         services.AddScoped<UserRepository>();
         services.AddScoped<SessionRepository>();
         services.AddScoped<LiftRepository>();
-        services.AddScoped<ExerciseRepository>();
     }
 
     private static void RegisterServices(IServiceCollection services)
