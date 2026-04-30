@@ -15,8 +15,6 @@ public class Lift : BaseEntity
     public OriginalVideo? OriginalVideo { get; set; }
     public Guid? ProcessedVideoId { get; set; }
     public ProcessedVideo? ProcessedVideo { get; set; }
-    public Guid? ExerciseId { get; set; }
-    public Exercise? Exercise { get; set; }
     public LifterFilter LifterFilter { get; set; }
 
     public static void Configure(ModelBuilder modelBuilder)
@@ -41,10 +39,6 @@ public class Lift : BaseEntity
                   .HasForeignKey(l => l.ProcessedVideoId)
                   .OnDelete(DeleteBehavior.Restrict);
 
-            entity.HasOne(l => l.Exercise)
-                  .WithMany(e => e.Lifts)
-                  .HasForeignKey(l => l.ExerciseId)
-                  .OnDelete(DeleteBehavior.Restrict);
         });
     }
 }

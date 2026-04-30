@@ -30,16 +30,6 @@ public class LiftRepository
         return lift;
     }
 
-    public async Task<Exercise?> GetExerciseByNameAsync(string exerciseName)
-    {
-        return await _context.Exercises
-            .FirstOrDefaultAsync(e => e.ExerciseName == exerciseName);
-    }
-    public async Task AddExerciseAsync(Exercise exercise)
-    {
-        await _context.Exercises.AddAsync(exercise);
-        await _context.SaveChangesAsync();
-    }
     public async Task UpdateLiftAsync(Lift lift)
     {
         _context.Lifts.Update(lift);

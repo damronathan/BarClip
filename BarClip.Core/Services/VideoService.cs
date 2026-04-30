@@ -13,9 +13,7 @@ public interface IVideoService
 {
     Task<OriginalVideo> CreateOriginalVideo(User user, Session session, DateTime createdTime);
     Task<List<OriginalVideo>> GetOriginalVideosForSession(Guid SessionId);
-    //Task<ProcessedVideoRequest> ProcessVideo(SessionFolderPaths sessionFolderPaths, OriginalVideoRequest video);
-    Task SaveVideos(SaveVideosRequest request);
-    //Task<SaveVideosRequest> TrimVideoFromStorage(string messageText);
+
     Task UpdateVideos(OriginalVideo original, ProcessedVideo processed);
     Task UploadVideo(UploadVideoRequest request);
 }
@@ -36,10 +34,6 @@ public class VideoService : IVideoService
         _plateAnalysisService = plateAnalysisService;
         _repo = repo;
 
-    }
-    public async Task SaveVideos(SaveVideosRequest request)
-    {
-        await _repo.SaveVideosAsync(request);
     }
 
     public async Task UploadVideo(UploadVideoRequest request)

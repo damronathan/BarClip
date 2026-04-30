@@ -6,24 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BarClip.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class AddOriginalVideoCreationTime : Migration
+    public partial class RemoveExercise : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Exercises",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    ExerciseName = table.Column<string>(type: "TEXT", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Exercises", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
@@ -129,19 +116,12 @@ namespace BarClip.Data.Migrations
                     Successful = table.Column<bool>(type: "INTEGER", nullable: false),
                     OriginalVideoId = table.Column<Guid>(type: "TEXT", nullable: false),
                     ProcessedVideoId = table.Column<Guid>(type: "TEXT", nullable: true),
-                    ExerciseId = table.Column<Guid>(type: "TEXT", nullable: true),
                     LifterFilter = table.Column<int>(type: "INTEGER", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Lifts", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Lifts_Exercises_ExerciseId",
-                        column: x => x.ExerciseId,
-                        principalTable: "Exercises",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Lifts_OriginalVideos_OriginalVideoId",
                         column: x => x.OriginalVideoId,
@@ -161,11 +141,6 @@ namespace BarClip.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Lifts_ExerciseId",
-                table: "Lifts",
-                column: "ExerciseId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Lifts_OriginalVideoId",
@@ -214,9 +189,6 @@ namespace BarClip.Data.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Lifts");
-
-            migrationBuilder.DropTable(
-                name: "Exercises");
 
             migrationBuilder.DropTable(
                 name: "ProcessedVideos");

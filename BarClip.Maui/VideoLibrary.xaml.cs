@@ -49,7 +49,7 @@ public partial class VideoLibrary : ContentPage
         if (sender is Grid grid && grid.BindingContext is VideoResponse video)
         {
             if (!string.IsNullOrEmpty(video.VideoSasUrl))
-                await Shell.Current.GoToAsync($"VideoPlayerView?VideoUrl={video.VideoSasUrl}");
+                await Shell.Current.GoToAsync($"VideoPlayerView?VideoUrl={Uri.EscapeDataString(video.VideoSasUrl)}");
             else
                 await DisplayAlert("Error", "Video URL not available", "OK");
         }

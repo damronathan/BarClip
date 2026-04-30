@@ -17,23 +17,6 @@ namespace BarClip.Data.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.0");
 
-            modelBuilder.Entity("BarClip.Data.Schema.Exercise", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ExerciseName")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Exercises");
-                });
-
             modelBuilder.Entity("BarClip.Data.Schema.Lift", b =>
                 {
                     b.Property<Guid>("Id")
@@ -41,9 +24,6 @@ namespace BarClip.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid?>("ExerciseId")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("LifterFilter")
@@ -68,8 +48,6 @@ namespace BarClip.Data.Migrations
                         .HasColumnType("REAL");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ExerciseId");
 
                     b.HasIndex("OriginalVideoId")
                         .IsUnique();
@@ -198,11 +176,6 @@ namespace BarClip.Data.Migrations
 
             modelBuilder.Entity("BarClip.Data.Schema.Lift", b =>
                 {
-                    b.HasOne("BarClip.Data.Schema.Exercise", "Exercise")
-                        .WithMany("Lifts")
-                        .HasForeignKey("ExerciseId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("BarClip.Data.Schema.OriginalVideo", "OriginalVideo")
                         .WithOne("Lift")
                         .HasForeignKey("BarClip.Data.Schema.Lift", "OriginalVideoId")
@@ -219,8 +192,6 @@ namespace BarClip.Data.Migrations
                         .HasForeignKey("SessionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Exercise");
 
                     b.Navigation("OriginalVideo");
 
@@ -276,11 +247,6 @@ namespace BarClip.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("BarClip.Data.Schema.Exercise", b =>
-                {
-                    b.Navigation("Lifts");
                 });
 
             modelBuilder.Entity("BarClip.Data.Schema.OriginalVideo", b =>
