@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 jobs:
   build-and-deploy:
-    runs-on: runs-on: macos-latest
+    runs-on: macos-latest
     steps:
       - name: Print Xcode Version
         run: |
