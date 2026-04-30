@@ -4,13 +4,13 @@ using BarClip.Data.Schema;
 
 namespace BarClip.Maui;
 
-public partial class SessionLibrary : ContentPage
+public partial class SessionLibraryPage : ContentPage
 {
     private readonly SessionService _sessionService;
     public ObservableCollection<Session> Sessions { get; } = new();
 
 
-    public SessionLibrary(SessionService sessionService)
+    public SessionLibraryPage(SessionService sessionService)
     {
         InitializeComponent();
         _sessionService = sessionService;

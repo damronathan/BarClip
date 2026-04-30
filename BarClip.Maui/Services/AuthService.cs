@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Identity.Client;
 
-public class AuthService
+public class AuthService : IAuthService
 {
     private readonly IPublicClientApplication _pca;
     private readonly string[] _scopes;

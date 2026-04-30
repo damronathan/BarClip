@@ -9,10 +9,10 @@ using System.Text.Json;
 public class ApiClientService
 {
     private readonly HttpClient _httpClient;
-    private readonly AuthService _authService;
+    private readonly IAuthService _authService;
     private readonly string _url;
 
-    public ApiClientService(HttpClient httpClient, AuthService authService, IConfiguration configuration)
+    public ApiClientService(HttpClient httpClient, IAuthService authService, IConfiguration configuration)
     {
         _httpClient = httpClient;
         _authService = authService;

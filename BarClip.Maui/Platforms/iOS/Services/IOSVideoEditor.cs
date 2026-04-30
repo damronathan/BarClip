@@ -1,10 +1,7 @@
-﻿using AVFoundation;
-using BarClip.Core.Interfaces;
+﻿using BarClip.Core.Interfaces;
 using BarClip.Core.Services;
 using BarClip.Maui.Platforms.iOS.Helpers;
 using BarClip.Models.Requests;
-using FFMpegCore.Helpers;
-using Foundation;
 using static BarClip.Core.Helpers.FileHelper;
 
 namespace BarClip.Maui.Platforms.iOS.Services;

@@ -12,21 +12,21 @@
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage" />
     <ShellContent
-        Title="SessionLibrary"
-        ContentTemplate="{DataTemplate local:SessionLibrary}"
-        Route="SessionLibrary"        />
+        Title="SessionLibraryPage"
+        ContentTemplate="{DataTemplate local:SessionLibraryPage}"
+        Route="SessionLibraryPage"        />
     <ShellContent
-        Title="VideoLibrary"
-        ContentTemplate="{DataTemplate local:VideoLibrary}"
-        Route="VideoLibrary"        />
+        Title="VideoLibraryPage"
+        ContentTemplate="{DataTemplate local:VideoLibraryPage}"
+        Route="VideoLibraryPage"        />
     <ShellContent
-        Title="VideoPlayerView"
-        ContentTemplate="{DataTemplate local:VideoPlayerView}"
-        Route="VideoPlayerView"        />
+        Title="VideoPlayerPage"
+        ContentTemplate="{DataTemplate local:VideoPlayerPage}"
+        Route="VideoPlayerPage"        />
     <ShellContent
-        Title="CameraView"
-        ContentTemplate="{DataTemplate local:CameraView}"
-        Route="CameraView"        />
+        Title="CameraPage"
+        ContentTemplate="{DataTemplate local:CameraPage}"
+        Route="CameraPage"        />
     
 
 </Shell>

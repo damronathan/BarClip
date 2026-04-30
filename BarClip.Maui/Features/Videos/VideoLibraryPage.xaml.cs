@@ -5,17 +5,15 @@ using System.Collections.ObjectModel;
 
 namespace BarClip.Maui;
 
-public partial class VideoLibrary : ContentPage
+public partial class VideoLibraryPage : ContentPage
 {
     private readonly ApiClientService _client;
-    private readonly AuthService _authService;
     public ObservableCollection<VideoResponse> Videos { get; } = new();
 
-    public VideoLibrary(ApiClientService client, AuthService authService)
+    public VideoLibraryPage(ApiClientService client)
     {
         InitializeComponent();
         _client = client;
-        _authService = authService;
         BindingContext = this;
     }
 
@@ -49,7 +47,7 @@ public partial class VideoLibrary : ContentPage
         if (sender is Grid grid && grid.BindingContext is VideoResponse video)
         {
             if (!string.IsNullOrEmpty(video.VideoSasUrl))
-                await Shell.Current.GoToAsync($"VideoPlayerView?VideoUrl={Uri.EscapeDataString(video.VideoSasUrl)}");
+                await Shell.Current.GoToAsync($"VideoPlayerPage?VideoUrl={Uri.EscapeDataString(video.VideoSasUrl)}");
             else
                 await DisplayAlert("Error", "Video URL not available", "OK");
         }

@@ -14,10 +14,10 @@ public partial class MainPage : ContentPage
     private readonly IServiceProvider _serviceProvider;
     private readonly IVideoEditor _videoEditor;
     private readonly VideoPickerService _picker;
-    private readonly AuthService _authService;
+    private readonly IAuthService _authService;
     private readonly ApiClientService _apiClientService;
 
-    public MainPage(UserRepository userRepository, SessionService sessionService, IServiceProvider serviceProvider, IVideoEditor videoEditor, VideoPickerService picker, AuthService authService, ApiClientService apiClientService)
+    public MainPage(UserRepository userRepository, SessionService sessionService, IServiceProvider serviceProvider, IVideoEditor videoEditor, VideoPickerService picker, IAuthService authService, ApiClientService apiClientService)
     {
         InitializeComponent();
         _userRepository = userRepository;
@@ -186,20 +186,20 @@ public partial class MainPage : ContentPage
         }
     }
 
-    private async void NavigateToSessionLibrary(object sender, EventArgs e)
+    private async void NavigateToSessionLibraryPage(object sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync(nameof(SessionLibrary));
+        await Shell.Current.GoToAsync(nameof(SessionLibraryPage));
     }
-    private async void NavigateToVideoLibrary(object sender, EventArgs e)
+    private async void NavigateToVideoLibraryPage(object sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync(nameof(VideoLibrary));
+        await Shell.Current.GoToAsync(nameof(VideoLibraryPage));
     }
     private async void NavigateToVideoPlayer(object sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync(nameof(VideoPlayerView));
+        await Shell.Current.GoToAsync(nameof(VideoPlayerPage));
     }
-    private async void NavigateToCameraView(object sender, EventArgs e)
+    private async void NavigateToCameraPage(object sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync(nameof(CameraView));
+        await Shell.Current.GoToAsync(nameof(CameraPage));
     }
 }

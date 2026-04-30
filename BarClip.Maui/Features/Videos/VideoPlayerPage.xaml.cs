@@ -7,7 +7,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace BarClip.Maui;
 
 [QueryProperty(nameof(VideoUrl), "VideoUrl")]
-public partial class VideoPlayerView : ContentPage
+public partial class VideoPlayerPage : ContentPage
 {
     private string _videoUrl;
     public string VideoUrl
@@ -20,7 +20,7 @@ public partial class VideoPlayerView : ContentPage
         }
     }
 
-    public VideoPlayerView()
+    public VideoPlayerPage()
     {
         InitializeComponent();
         BindingContext = this;

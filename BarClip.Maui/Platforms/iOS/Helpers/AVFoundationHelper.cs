@@ -1,16 +1,12 @@
 ﻿using AVFoundation;
-using BarClip.Data.Schema;
 using BarClip.Models.Requests;
-using CoreAnimation;
 using CoreGraphics;
 using CoreMedia;
 using Foundation;
 using ImageIO;
-using MediaPlayer;
 using Photos;
 using UIKit;
 using static BarClip.Core.Helpers.FileHelper;
-using static Sentry.MeasurementUnit;
 
 
 

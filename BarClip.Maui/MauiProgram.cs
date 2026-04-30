@@ -89,7 +89,7 @@ public static class MauiProgram
                 .Build();
 
             builder.Services.AddSingleton<IPublicClientApplication>(pca);
-            builder.Services.AddSingleton<AuthService>();
+            builder.Services.AddSingleton<IAuthService, AuthService>();
             builder.Services.AddHttpClient<ApiClientService>(client =>
             {
                 client.Timeout = TimeSpan.FromSeconds(120);
@@ -111,11 +111,11 @@ public static class MauiProgram
 
         // Register pages
         builder.Services.AddSingleton<MainPage>();
-        builder.Services.AddTransient<SessionLibrary>();
+        builder.Services.AddTransient<SessionLibraryPage>();
         builder.Services.AddTransient<SessionPage>();
-        builder.Services.AddTransient<VideoLibrary>();
-        builder.Services.AddTransient<VideoPlayerView>();
-        builder.Services.AddTransient<CameraView>();
+        builder.Services.AddTransient<VideoLibraryPage>();
+        builder.Services.AddTransient<VideoPlayerPage>();
+        builder.Services.AddTransient<CameraPage>();
         builder.Services.AddSingleton<AppShell>();
 
 #if DEBUG
