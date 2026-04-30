@@ -7,26 +7,22 @@ jobs:
   build-and-deploy:
     runs-on: macos-latest
     steps:
-      - name: Print Xcode Version
-        run: |
-          xcodebuild -version
-          xcode-select -p
-          xcrun simctl list runtimes
       - name: Checkout code
         uses: actions/checkout@v4
+
       - name: Set Xcode version
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: 'latest'
+
       - name: Setup .NET SDK 9.0.104
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '9.0.104'
-      - name: Create global.json
-        run: |
-          echo '{"sdk":{"version":"9.0.104","rollForward":"disable"}}' > global.json
-      - name: Restore workloads
-  	run: dotnet workload restore
+
+      - name: Install MAUI Workload
+        run: dotnet workload install ios
+
       - name: Create app settings
         run: |
           cat > BarClip.Maui/appsettings.json << EOF
@@ -45,11 +41,13 @@ jobs:
             "ApiUrl": "${{ secrets.API_URL }}"
           }
           EOF
+
       - name: Import Code-Signing Certificates
         uses: Apple-Actions/import-codesign-certs@v2
         with:
           p12-file-base64: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
           p12-password: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+
       - name: Download Apple Provisioning Profiles
         uses: Apple-Actions/download-provisioning-profiles@v3
         with:
@@ -57,8 +55,10 @@ jobs:
           issuer-id: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           api-key-id: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           api-private-key: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
+
       - name: Restore dependencies
         run: dotnet restore BarClip.Maui/BarClip.Maui.csproj
+
       - name: Build iOS app
         run: |
           dotnet publish BarClip.Maui/BarClip.Maui.csproj \
@@ -70,9 +70,9 @@ jobs:
             /p:PlatformTarget=arm64 \
             /p:CodesignKey="Apple Distribution: Nathan Damron (7DT4H73JRQ)" \
             /p:CodesignProvision="86a5e3ef-51f1-438d-829b-4a323807bf21" \
-            /p:EnableAssemblyILStripping=false \
             /p:BuildIpa=true \
             /p:UseInterpreter=true
+
       - name: Upload to TestFlight
         uses: apple-actions/upload-testflight-build@v1
         with:
