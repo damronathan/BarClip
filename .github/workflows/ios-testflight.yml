@@ -25,9 +25,8 @@ jobs:
       - name: Create global.json
         run: |
           echo '{"sdk":{"version":"9.0.104","rollForward":"disable"}}' > global.json
-      - name: Install MAUI workload 9.0.104
-        run: |
-          dotnet workload install maui --version 9.0.104
+      - name: Restore workloads
+  	run: dotnet workload restore
       - name: Create app settings
         run: |
           cat > BarClip.Maui/appsettings.json << EOF
