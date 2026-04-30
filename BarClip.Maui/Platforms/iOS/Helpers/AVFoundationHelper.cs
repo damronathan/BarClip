@@ -8,9 +8,6 @@ using Photos;
 using UIKit;
 using static BarClip.Core.Helpers.FileHelper;
 
-
-
-
 namespace BarClip.Maui.Platforms.iOS.Helpers;
 
 public class AVFoundationHelper

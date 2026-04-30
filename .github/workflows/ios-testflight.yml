@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 jobs:
   build-and-deploy:
-    runs-on: macos-15
+    runs-on: runs-on: macos-latest
     steps:
       - name: Print Xcode Version
         run: |
@@ -17,7 +17,7 @@ jobs:
       - name: Set Xcode version
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: '16.4'
+          xcode-version: 'latest'
       - name: Setup .NET SDK 9.0.104
         uses: actions/setup-dotnet@v4
         with:
