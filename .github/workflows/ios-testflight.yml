@@ -1,28 +1,68 @@
-name: iOS TestFlight Deploy
+name: iOS TestFlight Deploy (.NET 10)
+
 on:
   push:
     branches: [ master ]
   workflow_dispatch:
+
 jobs:
   build-and-deploy:
     runs-on: macos-latest
+
     steps:
+      # ---------------------------
+      # Checkout
+      # ---------------------------
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # ---------------------------
+      # Setup .NET 10
+      # ---------------------------
+      - name: Setup .NET SDK 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Verify .NET version
+        run: dotnet --version
+
+      # ---------------------------
+      # Select Xcode (26+ required for iOS 26 SDK)
+      # ---------------------------
       - name: Set Xcode version
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: 'latest'
 
-      - name: Setup .NET SDK 9.0.104
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '9.0.104'
+      - name: Verify Xcode
+        run: |
+          xcodebuild -version
+          xcode-select -p
 
-      - name: Install MAUI Workload
-        run: dotnet workload install ios
+      # ---------------------------
+      # Install MAUI workloads (.NET 10 requires full set)
+      # ---------------------------
+      - name: Install MAUI workloads
+        run: |
+          dotnet workload install maui
+          dotnet workload install maui-ios
+          dotnet workload install maui-android
+          dotnet workload install maui-maccatalyst
+          dotnet workload install maui-tizen
 
+      - name: Verify workloads
+        run: dotnet workload list
+
+      # ---------------------------
+      # Restore dependencies
+      # ---------------------------
+      - name: Restore dependencies
+        run: dotnet restore BarClip.Maui/BarClip.Maui.csproj
+
+      # ---------------------------
+      # App settings (secrets injected)
+      # ---------------------------
       - name: Create app settings
         run: |
           cat > BarClip.Maui/appsettings.json << EOF
@@ -42,13 +82,16 @@ jobs:
           }
           EOF
 
+      # ---------------------------
+      # Apple signing
+      # ---------------------------
       - name: Import Code-Signing Certificates
         uses: Apple-Actions/import-codesign-certs@v2
         with:
           p12-file-base64: ${{ secrets.APPLE_CERTIFICATE_BASE64 }}
           p12-password: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
 
-      - name: Download Apple Provisioning Profiles
+      - name: Download Provisioning Profiles
         uses: Apple-Actions/download-provisioning-profiles@v3
         with:
           bundle-id: 'com.nathandamron.barclip.maui'
@@ -56,13 +99,13 @@ jobs:
           api-key-id: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           api-private-key: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
 
-      - name: Restore dependencies
-        run: dotnet restore BarClip.Maui/BarClip.Maui.csproj
-
+      # ---------------------------
+      # Build iOS App
+      # ---------------------------
       - name: Build iOS app
         run: |
           dotnet publish BarClip.Maui/BarClip.Maui.csproj \
-            -f net9.0-ios \
+            -f net10.0-ios \
             -c Release \
             -r ios-arm64 \
             /p:ArchiveOnBuild=true \
@@ -70,13 +113,17 @@ jobs:
             /p:PlatformTarget=arm64 \
             /p:CodesignKey="Apple Distribution: Nathan Damron (7DT4H73JRQ)" \
             /p:CodesignProvision="86a5e3ef-51f1-438d-829b-4a323807bf21" \
+            /p:EnableAssemblyILStripping=false \
             /p:BuildIpa=true \
             /p:UseInterpreter=true
 
+      # ---------------------------
+      # Upload to TestFlight
+      # ---------------------------
       - name: Upload to TestFlight
         uses: apple-actions/upload-testflight-build@v1
         with:
-          app-path: 'BarClip.Maui/bin/Release/net9.0-ios/ios-arm64/publish/BarClip.Maui.ipa'
+          app-path: 'BarClip.Maui/bin/Release/net10.0-ios/ios-arm64/publish/BarClip.Maui.ipa'
           issuer-id: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
           api-key-id: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           api-private-key: ${{ secrets.APP_STORE_CONNECT_API_KEY_CONTENT }}
