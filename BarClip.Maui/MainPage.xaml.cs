@@ -72,11 +72,9 @@ public partial class MainPage : ContentPage
                 return;
             }
 
-            var videoList = videos
-                .OrderBy(v => new FileInfo(v.FullPath).CreationTime)
-                .ToList();
+            
 
-            int totalVideos = videoList.Count;
+            int totalVideos = videos.Count;
 
             CreateBtn.Text = "Setting up session...";
 
@@ -97,7 +95,7 @@ public partial class MainPage : ContentPage
 
             var stablePaths = new List<(string stablePath, DateTime createdTime)>();
 
-            foreach (var result in videoList)
+            foreach (var result in videos)
             {
                 currentVideo++;
                 var videoNumber = currentVideo;
