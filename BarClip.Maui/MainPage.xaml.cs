@@ -61,7 +61,8 @@ public partial class MainPage : ContentPage
                 return;
             }
 
-            var videos = await _picker.PickVideosAsync();
+            //var videos = await _picker.PickVideosAsync();
+            var videos = await MediaPicker.PickVideosAsync();
 
             if (videos == null || !videos.Any())
             {
