@@ -1,9 +1,7 @@
-﻿using AVFoundation;
-using BarClip.Core.Interfaces;
+﻿using BarClip.Core.Interfaces;
 using BarClip.Core.Repositories;
 using BarClip.Core.Services;
 using BarClip.Data.Schema;
-using Foundation;
 
 namespace BarClip.Maui;
 
@@ -11,25 +9,23 @@ public partial class MainPage : ContentPage
 {
     private readonly UserRepository _userRepository;
     private readonly SessionService _sessionService;
-    private readonly IServiceProvider _serviceProvider;
     private readonly IVideoEditor _videoEditor;
     private readonly VideoPickerService _picker;
     private readonly IAuthService _authService;
     private readonly ApiClientService _apiClientService;
+    private readonly IVideoService _videoService;
 
-    public MainPage(UserRepository userRepository, SessionService sessionService, IServiceProvider serviceProvider, IVideoEditor videoEditor, VideoPickerService picker, IAuthService authService, ApiClientService apiClientService)
+    public MainPage(UserRepository userRepository, SessionService sessionService, IVideoEditor videoEditor, VideoPickerService picker, IAuthService authService, ApiClientService apiClientService, IVideoService videoService)
     {
         InitializeComponent();
         _userRepository = userRepository;
         _sessionService = sessionService;
-        _serviceProvider = serviceProvider;
         _videoEditor = videoEditor;
-        _picker = picker;
+        _videoService = videoService;
         _authService = authService;
         _apiClientService = apiClientService;
         _videoEditor = videoEditor;
         _picker = picker;
-        _authService = authService;
     }
 
     private async void OnAuthButtonClicked(object sender, EventArgs e)
@@ -89,10 +85,8 @@ public partial class MainPage : ContentPage
             var session = await _sessionService.CreateSessionWithFolders(user, basePath, title);
             var sessionFolderPath = Path.Combine(basePath, session.Id.ToString());
 
-            var fileHelper = _serviceProvider.GetRequiredService<BarClip.Core.Helpers.FileHelper>();
             var sessionFolderPaths = BarClip.Core.Helpers.FileHelper.CreateSessionFolders(basePath, session.Id);
 
-            var videoService = _serviceProvider.GetRequiredService<IVideoService>();
             int currentVideo = 0;
 
             var stablePaths = new List<(string stablePath, DateTime createdTime)>();
@@ -100,22 +94,22 @@ public partial class MainPage : ContentPage
             foreach (var result in videoList)
             {
                 currentVideo++;
-                var videoNumber = currentVideo;
-                MainThread.BeginInvokeOnMainThread(() => CreateBtn.Text = $"Copying video {videoNumber}/{totalVideos}...");
-                SentrySdk.AddBreadcrumb($"Copying video {currentVideo}: {result.FileName}");
+                MainThread.BeginInvokeOnMainThread(() => CreateBtn.Text = $"Copying video {currentVideo}/{totalVideos}...");
 
-                var stablePath = Path.Combine(FileSystem.CacheDirectory, Guid.NewGuid() + ".MOV");
-                var createdTime = new FileInfo(result.FullPath).CreationTime;
+                var stablePath = Path.Combine(FileSystem.CacheDirectory, Guid.NewGuid() + ".mov");
 
-                using (var sourceStream = File.OpenRead(result.FullPath))
+                // Use OpenReadAsync instead of File.OpenRead(result.FullPath)
+                using (var sourceStream = await result.OpenReadAsync())
                 using (var destStream = File.Create(stablePath))
                 {
                     await sourceStream.CopyToAsync(destStream);
                 }
 
-                stablePaths.Add((stablePath, createdTime));
-                SentrySdk.AddBreadcrumb($"Secured video {currentVideo} to: {stablePath}");
+                // Note: 'result' properties like FileName are usually safe, 
+                // but avoid using result.FullPath with System.IO.File
+                stablePaths.Add((stablePath, DateTime.Now));
             }
+
 
             currentVideo = 0;
 
@@ -126,7 +120,7 @@ public partial class MainPage : ContentPage
                 MainThread.BeginInvokeOnMainThread(() => CreateBtn.Text = $"Adding video {videoNumber}/{totalVideos}...");
                 SentrySdk.AddBreadcrumb($"Processing video {currentVideo}");
 
-                var video = await videoService.CreateOriginalVideo(user, session, createdTime);
+                var video = await _videoService.CreateOriginalVideo(user, session, createdTime);
                 SentrySdk.AddBreadcrumb($"Video record created: {video.Id}");
 
                 var originalVideoPath = Path.Combine(sessionFolderPaths.Original, $"{video.Id}.MOV");
