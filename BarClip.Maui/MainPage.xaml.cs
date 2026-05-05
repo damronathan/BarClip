@@ -58,7 +58,13 @@ public partial class MainPage : ContentPage
             }
 
             //var videos = await _picker.PickVideosAsync();
-            var videos = await MediaPicker.PickVideosAsync();
+            var videos = await MediaPicker.PickVideosAsync(new MediaPickerOptions()
+            {
+                Title = "Select Videos",
+                SelectionLimit = 0,
+                CompressionQuality = 50
+
+            });
 
             if (videos == null || !videos.Any())
             {
@@ -94,22 +100,22 @@ public partial class MainPage : ContentPage
             foreach (var result in videoList)
             {
                 currentVideo++;
-                MainThread.BeginInvokeOnMainThread(() => CreateBtn.Text = $"Copying video {currentVideo}/{totalVideos}...");
+                var videoNumber = currentVideo;
+                MainThread.BeginInvokeOnMainThread(() => CreateBtn.Text = $"Copying video {videoNumber}/{totalVideos}...");
+                SentrySdk.AddBreadcrumb($"Copying video {currentVideo}: {result.FileName}");
 
-                var stablePath = Path.Combine(FileSystem.CacheDirectory, Guid.NewGuid() + ".mov");
+                var stablePath = Path.Combine(FileSystem.CacheDirectory, Guid.NewGuid() + ".MOV");
+                var createdTime = new FileInfo(result.FullPath).CreationTime;
 
-                // Use OpenReadAsync instead of File.OpenRead(result.FullPath)
-                using (var sourceStream = await result.OpenReadAsync())
+                using (var sourceStream = File.OpenRead(result.FullPath))
                 using (var destStream = File.Create(stablePath))
                 {
                     await sourceStream.CopyToAsync(destStream);
                 }
 
-                // Note: 'result' properties like FileName are usually safe, 
-                // but avoid using result.FullPath with System.IO.File
-                stablePaths.Add((stablePath, DateTime.Now));
+                stablePaths.Add((stablePath, createdTime));
+                SentrySdk.AddBreadcrumb($"Secured video {currentVideo} to: {stablePath}");
             }
-
 
             currentVideo = 0;
 
