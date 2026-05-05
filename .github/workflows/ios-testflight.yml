@@ -45,7 +45,7 @@ jobs:
       # ---------------------------
       - name: Install MAUI workloads
         run: |
-          dotnet workload install maui
+          dotnet workload install maui --version 10.0.202
           dotnet workload install maui-ios
           dotnet workload install maui-android
           dotnet workload install maui-maccatalyst
