@@ -11,7 +11,7 @@ public class VideoPickerService
         var config = new PHPickerConfiguration(PHPhotoLibrary.SharedPhotoLibrary)
         {
             Filter = PHPickerFilter.VideosFilter,
-            SelectionLimit = 0
+            SelectionLimit = 0,            
         };
 
         var picker = new PHPickerViewController(config);

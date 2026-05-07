@@ -57,8 +57,20 @@ public partial class MainPage : ContentPage
                 return;
             }
 
+            var user = await _userRepository.GetByNameIdentifierAsync("test-user-123");
+            if (user == null)
+            {
+                user = new User { EntraId = "test-user-123", Email = "test@barclip.com" };
+                await _userRepository.CreateAsync(user);
+            }
+
+            var basePath = FileSystem.AppDataDirectory;
+            var session = await _sessionService.CreateSessionWithFolders(user, basePath, title);
+            var sessionFolderPath = Path.Combine(basePath, session.Id.ToString());
+            var sessionFolderPaths = BarClip.Core.Helpers.FileHelper.CreateSessionFolders(basePath, session.Id);
+
+
             var videos = await _picker.PickVideosAsync();
-            //var videos = await MediaPicker.PickVideosAsync();
 
             if (videos == null || !videos.Any())
             {
@@ -73,19 +85,6 @@ public partial class MainPage : ContentPage
             int totalVideos = videoList.Count;
 
             CreateBtn.Text = "Setting up session...";
-
-            var user = await _userRepository.GetByNameIdentifierAsync("test-user-123");
-            if (user == null)
-            {
-                user = new User { EntraId = "test-user-123", Email = "test@barclip.com" };
-                await _userRepository.CreateAsync(user);
-            }
-
-            var basePath = FileSystem.AppDataDirectory;
-            var session = await _sessionService.CreateSessionWithFolders(user, basePath, title);
-            var sessionFolderPath = Path.Combine(basePath, session.Id.ToString());
-
-            var sessionFolderPaths = BarClip.Core.Helpers.FileHelper.CreateSessionFolders(basePath, session.Id);
 
             int currentVideo = 0;
 
