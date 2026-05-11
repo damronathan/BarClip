@@ -272,7 +272,7 @@ public class AVFoundationHelper
             var startTime = CMTime.FromSeconds(originalVideo.TrimStart.TotalSeconds, 600);
             var duration = CMTime.FromSeconds(processedVideo.Duration.TotalSeconds, 600);
 
-            using var exportSession = new AVAssetExportSession(asset, AVAssetExportSessionPreset.HighestQuality)
+            using var exportSession = new AVAssetExportSession(asset, AVAssetExportSessionPreset.Passthrough)
             {
                 OutputUrl = NSUrl.FromFilename(processedVideo.FilePath),
                 OutputFileType = "com.apple.quicktime-movie",
