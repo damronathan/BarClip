@@ -219,7 +219,10 @@ public class AVFoundationHelper
         instruction.TimeRange = new CMTimeRange { Start = CMTime.Zero, Duration = composition.Duration };
         instruction.LayerInstructions = new[] { layerInstruction };
         var videoComposition = AVMutableVideoComposition.Create();
-        videoComposition.RenderSize = new CGSize(naturalSize.Height, naturalSize.Width);
+        var isPortrait = transform.B == 1 || transform.B == -1;
+        videoComposition.RenderSize = isPortrait
+            ? new CGSize(naturalSize.Height, naturalSize.Width)
+            : new CGSize(naturalSize.Width, naturalSize.Height);
         videoComposition.FrameDuration = new CMTime(1, 60);
         videoComposition.Instructions = new[] { instruction };
 
