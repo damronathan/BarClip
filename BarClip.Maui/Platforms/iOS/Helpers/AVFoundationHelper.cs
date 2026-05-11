@@ -168,9 +168,9 @@ public class AVFoundationHelper
         return thumbnailPath;
     }
 
-    
 
-        public static async Task<string> MergeVideos(SessionFolderPaths sessionFolderPaths, Guid sessionId)
+
+    public static async Task<string> MergeVideos(SessionFolderPaths sessionFolderPaths, Guid sessionId)
     {
         var videoPaths = Directory.GetFiles(sessionFolderPaths.Processed, "*.MOV")
                           .OrderBy(f => int.Parse(Path.GetFileNameWithoutExtension(f).Split('_')[0]))
@@ -269,7 +269,7 @@ public class AVFoundationHelper
             var startTime = CMTime.FromSeconds(originalVideo.TrimStart.TotalSeconds, 600);
             var duration = CMTime.FromSeconds(processedVideo.Duration.TotalSeconds, 600);
 
-            using var exportSession = new AVAssetExportSession(asset, AVAssetExportSessionPreset.Preset1280x720)
+            using var exportSession = new AVAssetExportSession(asset, AVAssetExportSessionPreset.HighestQuality)
             {
                 OutputUrl = NSUrl.FromFilename(processedVideo.FilePath),
                 OutputFileType = "com.apple.quicktime-movie",
@@ -279,12 +279,14 @@ public class AVFoundationHelper
 
             await exportSession.ExportTaskAsync();
 
+            await SaveVideoToCameraRoll(NSUrl.FromFilename(processedVideo.FilePath));
+
             if (exportSession.Status != AVAssetExportSessionStatus.Completed)
             {
                 var details = new System.Text.StringBuilder();
                 details.AppendLine($"Status: {exportSession.Status}");
                 if (exportSession.Error != null)
-                {   
+                {
                     details.AppendLine($"Description: {exportSession.Error.LocalizedDescription}");
                     details.AppendLine($"Domain: {exportSession.Error.Domain}");
                     details.AppendLine($"Code: {exportSession.Error.Code}");
