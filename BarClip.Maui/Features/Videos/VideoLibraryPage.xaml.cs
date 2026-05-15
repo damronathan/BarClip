@@ -46,6 +46,9 @@ public partial class VideoLibraryPage : ContentPage
             await _videoService.UpsertVideos(apiVideos);
 
             var updated = await _videoService.GetAllVideos();
+            foreach (var video in updated)
+                video.ThumbnailSasUrl = await CacheService.DownloadThumbnailToCacheAsync(video.ThumbnailSasUrl, video.Id);
+
             Videos.Clear();
             foreach (var video in updated)
                 Videos.Add(video);

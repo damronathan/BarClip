@@ -20,5 +20,18 @@
 
             return cachePath;
         }
+        public static async Task<string> DownloadThumbnailToCacheAsync(string url, Guid id)
+        {
+            var cachePath = Path.Combine(FileSystem.CacheDirectory, $"{id}.jpg");
+
+            if (File.Exists(cachePath))
+                return cachePath;
+
+            using var client = new HttpClient();
+            var bytes = await client.GetByteArrayAsync(url);
+            await File.WriteAllBytesAsync(cachePath, bytes);
+
+            return cachePath;
+        }
     }
 }
