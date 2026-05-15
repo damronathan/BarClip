@@ -7,7 +7,6 @@ using BarClip.Models.Requests;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
-using static BarClip.Core.Helpers.FileHelper;
 using static BarClip.Maui.Services.CacheService;
 
 namespace BarClip.Maui.Models;

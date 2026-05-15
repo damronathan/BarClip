@@ -1,4 +1,5 @@
 using BarClip.Core.Services;
+using BarClip.Maui.Services;
 using BarClip.Models.Requests;
 using BarClip.Models.Responses;
 using System.Collections.ObjectModel;
@@ -46,10 +47,21 @@ public partial class VideoLibraryPage : ContentPage
     {
         if (sender is Grid grid && grid.BindingContext is VideoResponse video)
         {
-            if (!string.IsNullOrEmpty(video.VideoSasUrl))
-                await Shell.Current.GoToAsync($"VideoPlayerPage?VideoUrl={Uri.EscapeDataString(video.VideoSasUrl)}");
-            else
+            if (string.IsNullOrEmpty(video.VideoSasUrl))
+            {
                 await DisplayAlert("Error", "Video URL not available", "OK");
+                return;
+            }
+
+            try
+            {
+                var localPath = await CacheService.DownloadToCacheAsync(video.VideoSasUrl, video.Id);
+                await Shell.Current.GoToAsync($"VideoPlayerPage?VideoUrl={Uri.EscapeDataString(localPath)}");
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", $"Failed to load video: {ex.Message}", "OK");
+            }
         }
     }
 }

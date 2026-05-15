@@ -7,5 +7,18 @@
             var fileName = $"{id}.MOV";
             File.Move(path, Path.Combine(FileSystem.CacheDirectory, fileName));
         }
+        public static async Task<string> DownloadToCacheAsync(string url, Guid id)
+        {
+            var cachePath = Path.Combine(FileSystem.CacheDirectory, $"{id}.MOV");
+
+            if (File.Exists(cachePath))
+                return cachePath;
+
+            using var client = new HttpClient();
+            var bytes = await client.GetByteArrayAsync(url);
+            await File.WriteAllBytesAsync(cachePath, bytes);
+
+            return cachePath;
+        }
     }
 }
