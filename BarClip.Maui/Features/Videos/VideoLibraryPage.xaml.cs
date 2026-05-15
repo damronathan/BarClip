@@ -1,4 +1,5 @@
 using BarClip.Core.Services;
+using BarClip.Data.Schema;
 using BarClip.Maui.Services;
 using BarClip.Models.Requests;
 using BarClip.Models.Responses;
@@ -9,12 +10,14 @@ namespace BarClip.Maui;
 public partial class VideoLibraryPage : ContentPage
 {
     private readonly ApiClientService _client;
-    public ObservableCollection<VideoResponse> Videos { get; } = new();
+    private readonly IVideoService _videoService;
+    public ObservableCollection<Video> Videos { get; } = new();
 
-    public VideoLibraryPage(ApiClientService client)
+    public VideoLibraryPage(ApiClientService client, IVideoService videoService)
     {
         InitializeComponent();
         _client = client;
+        _videoService = videoService;
         BindingContext = this;
     }
 
@@ -28,13 +31,23 @@ public partial class VideoLibraryPage : ContentPage
     {
         try
         {
+            // Phase 1: local
+            var local = await _videoService.GetAllVideos();
+            Videos.Clear();
+            foreach (var video in local)
+                Videos.Add(video);
+
+            // Phase 2: API sync
             var request = new GetVideosRequest
             {
                 UserId = Guid.Parse("91031072-b93e-429a-92b2-571f16126605")
             };
-            var videos = await _client.GetVideosAsync(request);
+            var apiVideos = await _client.GetVideosAsync(request);
+            await _videoService.UpsertVideos(apiVideos);
+
+            var updated = await _videoService.GetAllVideos();
             Videos.Clear();
-            foreach (var video in videos)
+            foreach (var video in updated)
                 Videos.Add(video);
         }
         catch (Exception ex)
@@ -45,7 +58,7 @@ public partial class VideoLibraryPage : ContentPage
 
     private async void OnVideoTapped(object sender, EventArgs e)
     {
-        if (sender is Grid grid && grid.BindingContext is VideoResponse video)
+        if (sender is Grid grid && grid.BindingContext is Video video)
         {
             if (string.IsNullOrEmpty(video.VideoSasUrl))
             {

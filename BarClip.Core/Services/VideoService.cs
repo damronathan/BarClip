@@ -1,11 +1,12 @@
-﻿using FFMpegCore;
-using BarClip.Models.Requests;
-using System.Text.Json;
-using BarClip.Data.Schema;
-using static BarClip.Core.Helpers.FileHelper;
-using BarClip.Core.Helpers;
-using BarClip.Core.Repositories;
+﻿using BarClip.Core.Helpers;
 using BarClip.Core.Interfaces;
+using BarClip.Core.Repositories;
+using BarClip.Data.Schema;
+using BarClip.Models.Requests;
+using BarClip.Models.Responses;
+using FFMpegCore;
+using System.Text.Json;
+using static BarClip.Core.Helpers.FileHelper;
 
 namespace BarClip.Core.Services;
 
@@ -16,6 +17,8 @@ public interface IVideoService
 
     Task UpdateVideos(OriginalVideo original, ProcessedVideo processed);
     Task Upload(UploadRequest request);
+    Task<ICollection<Video>> GetAllVideos();
+    Task UpsertVideos(IEnumerable<VideoResponse> videos);
 }
 
 public class VideoService : IVideoService
@@ -71,6 +74,14 @@ public class VideoService : IVideoService
             CreatedTime = createdTime,
         };
         return await _repo.CreateOriginalVideoAsync(video);
+    }
+    public async Task<ICollection<Video>> GetAllVideos()
+    {
+        return await _repo.GetAllVideosAsync();
+    }
+    public async Task UpsertVideos(IEnumerable<VideoResponse> videos)
+    {
+        await _repo.UpsertVideosAsync(videos);
     }
 
     //public async Task<ProcessedVideoRequest> ProcessVideo(SessionFolderPaths sessionFolderPaths, OriginalVideoRequest video)

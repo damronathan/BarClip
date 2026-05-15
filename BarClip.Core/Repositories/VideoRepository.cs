@@ -1,22 +1,19 @@
-﻿using BarClip.Data;
+﻿using BarClip.Core.Services;
+using BarClip.Data;
 using BarClip.Data.Schema;
-using Microsoft.EntityFrameworkCore;
-using BarClip.Core.Services;
 using BarClip.Models.Requests;
+using BarClip.Models.Responses;
+using Microsoft.EntityFrameworkCore;
 
 namespace BarClip.Core.Repositories;
 
 public class VideoRepository
 {
     private readonly AppDbContext _context;
-    private readonly StorageService _storageService;
-    private readonly UserRepository _userRepository;
 
-    public VideoRepository(AppDbContext context, StorageService storageService, UserRepository userRepository)
+    public VideoRepository(AppDbContext context)
     {
         _context = context;
-        _storageService = storageService;
-        _userRepository = userRepository;
     }
     public Task SaveChangesAsync() => _context.SaveChangesAsync();
 
@@ -69,6 +66,34 @@ public class VideoRepository
     {
         return await _context.OriginalVideos
             .FirstOrDefaultAsync(v => v.CurrentProcessedVideoId == trimmedVideoId);
+    }
+    public async Task<ICollection<Video>> GetAllVideosAsync()
+    {
+        return await _context.Videos
+            .ToListAsync();
+    }
+    public async Task UpsertVideosAsync(IEnumerable<VideoResponse> videos)
+    {
+        foreach (var video in videos)
+        {
+            var existing = await _context.Videos.FindAsync(video.Id);
+            if (existing == null)
+            {
+                _context.Videos.Add(new Video
+                {
+                    Id = video.Id,
+                    VideoSasUrl = video.VideoSasUrl,
+                    ThumbnailSasUrl = video.ThumbnailSasUrl
+                });
+            }
+            else
+            {
+                existing.VideoSasUrl = video.VideoSasUrl;
+                existing.ThumbnailSasUrl = video.ThumbnailSasUrl;
+            }
+        }
+
+        await _context.SaveChangesAsync();
     }
 
 }
