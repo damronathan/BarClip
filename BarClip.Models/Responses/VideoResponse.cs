@@ -13,4 +13,5 @@ public class VideoResponse
     public bool IsFull { get; set; }
     public string? VideoSasUrl { get; set; }
     public string? ThumbnailSasUrl { get; set; }
+    public string? CachePath { get; set; }
 }

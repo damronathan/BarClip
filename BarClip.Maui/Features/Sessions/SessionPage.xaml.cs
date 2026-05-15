@@ -1,29 +1,16 @@
-using AddressBookUI;
-using BarClip.Core.Helpers;
 using BarClip.Core.Interfaces;
 using BarClip.Core.Services;
-using BarClip.Data.Schema;
-using BarClip.Models.Requests;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Windows.Input;
-using static BarClip.Core.Helpers.FileHelper;
+using BarClip.Maui.Models;
+using BarClip.Maui.Services;
 
 namespace BarClip.Maui;
 
 [QueryProperty(nameof(SessionIdString), "SessionId")]
 public partial class SessionPage : ContentPage
 {
-    private readonly IVideoService _videoService;
-    private readonly IVideoEditor _videoEditor;
-    private readonly LiftService _liftService;
-    private readonly SessionService _sessionService;
-    private Guid _sessionId;
-    private FileHelper.SessionFolderPaths _sessionFolderPaths;
+    private readonly SessionViewModel _viewModel;
     private bool _hasLoaded = false;
-    private readonly Guid _userId = Guid.Parse("1D1ACF20-C5D5-4B2C-9FED-121F291966E1");
-    private double _progress;
-    private readonly ApiClientService _client;
+    private Guid _sessionId;
 
     private string _sessionIdString;
     public string SessionIdString
@@ -36,48 +23,16 @@ public partial class SessionPage : ContentPage
                 _sessionId = guid;
         }
     }
-    public double Progress
-    {
-        get => _progress;
-        set
-        {
-            _progress = value;
-            OnPropertyChanged(); // notify UI
-        }
-    }
-    private bool _isProcessing;
-    public bool IsProcessing
-    {
-        get => _isProcessing;
-        set
-        {
-            _isProcessing = value;
-            OnPropertyChanged();
-        }
-    }
 
-
-    public ObservableCollection<VideoLiftViewModel> LiftVideos { get; } = new();
-    public ObservableCollection<OriginalVideo> OriginalVideos { get; } = new();
-    public ObservableCollection<Lift> Lifts { get; } = new();
-    public ICommand SubmitSessionCommand { get; }
-    public ICommand ProcessSessionCommand { get; }
-    public ICommand DeleteSessionCommand { get; }
-    public ICommand UploadSessionCommand { get; }
-
-    public SessionPage(IVideoService videoService, LiftService liftService, IVideoEditor videoEditor, SessionService sessionService, ApiClientService client)
+    public SessionPage(SessionViewModel viewModel)
     {
         InitializeComponent();
-        _videoService = videoService;
-        _liftService = liftService;
-        _videoEditor = videoEditor;
-        _client = client;
-        SubmitSessionCommand = new Command(async () => await OnSubmitSessionAsync());
-        ProcessSessionCommand = new Command(async () => await OnProcessSessionAsync());
-        DeleteSessionCommand = new Command(async () => await OnDeleteSessionAsync());
-        UploadSessionCommand = new Command(async () => await OnUploadSessionAsync());
-        BindingContext = this;
-        _sessionService = sessionService;
+        _viewModel = viewModel;
+        BindingContext = _viewModel;
+
+        _viewModel.AlertRequested += (t, m, b) => DisplayAlert(t, m, b);
+        _viewModel.ConfirmRequested += (t, m, b) => DisplayAlert(t, m, b, "Cancel");
+        _viewModel.NavigateBackRequested += async () => await Shell.Current.GoToAsync("..");
     }
 
     protected override async void OnAppearing()
@@ -87,179 +42,7 @@ public partial class SessionPage : ContentPage
         if (_sessionId != Guid.Empty && !_hasLoaded)
         {
             _hasLoaded = true;
-            await LoadVideosAsync();
-            await CreateLiftVideoViewModelsAsync();
+            await _viewModel.InitializeAsync(_sessionId);
         }
     }
-
-    private async Task CreateLiftVideoViewModelsAsync()
-    {
-        int currentVideo = 0;
-        foreach (var video in OriginalVideos)
-        {
-            currentVideo++;
-            var lift = await _liftService.GetLiftByOriginalVideoId(video.Id, _sessionId);
-            lift.SessionId = _sessionId;
-
-            var liftVideoViewModel = new VideoLiftViewModel
-            {
-                Video = video,
-                Lift = lift,
-                ThumbnailPath = Path.Combine(_sessionFolderPaths.Thumbnails, $"{video.Id}.png"),
-                VideoPath = Path.Combine(_sessionFolderPaths.Original, $"{video.Id}.MOV"),
-                CompressedPath = Path.Combine(_sessionFolderPaths.Compressed, $"compressed_{video.Id}.MOV"),
-                IsWhole = lift.LifterFilter == LifterFilter.Whole,
-                IsLeft = lift.LifterFilter == LifterFilter.Left,
-                IsRight = lift.LifterFilter == LifterFilter.Right,
-                Order = currentVideo
-            };
-
-            LiftVideos.Add(liftVideoViewModel);
-        }
-    }
-
-
-    private async Task LoadVideosAsync()
-    {
-        var basePath = FileSystem.AppDataDirectory;
-        _sessionFolderPaths = FileHelper.CreateSessionFolders(basePath, _sessionId);
-
-        try
-        {
-            OriginalVideos.Clear();
-            var allVideos = await _videoService.GetOriginalVideosForSession(_sessionId);
-
-            foreach (var video in allVideos.OrderBy(v => v.CreatedTime))
-                OriginalVideos.Add(video);
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Error loading videos for session {_sessionId}: {ex.Message}");
-        }
-    }
-    private async Task OnSubmitSessionAsync()
-    {
-        foreach (var liftVideo in LiftVideos)
-        {
-            await _liftService.UpdateLift(liftVideo.Lift);
-        }
-    }
-
-    private async Task OnUploadSessionAsync()
-    {
-        IsProcessing = true; // show overlay
-        Progress = 0;
-
-
-        var finalOutputPath = Path.Combine(_sessionFolderPaths.Session, $"FullSession{_sessionId}.MOV");
-        var request = new SasUrlRequest()
-        {
-            Id = _sessionId,
-            ContainerName = "videos",
-            Extension = ".mov"
-        };
-        var sasUrlResponse = await _client.GetUploadSasUrlAsync(request);
-        var thumnailRequest = new SasUrlRequest()
-        {
-            Id = _sessionId,
-            ContainerName = "thumbnails",
-            Extension = ".jpg"
-        };
-        var thuUrlResponse = await _client.GetUploadSasUrlAsync(thumnailRequest);
-        Progress = .5;
-        var uploadVideoRequest = new UploadVideoRequest()
-        {
-            Content = File.OpenRead(finalOutputPath),
-            ContentType = "video/quicktime",
-            UserId = sasUrlResponse.UserId,
-            SasUrl = sasUrlResponse.UploadSasUrl,
-            VideoId = _sessionId,
-            SessionId = _sessionId,
-            CreatedAt = DateTime.UtcNow,
-            OrderNumber = 1,
-            IsFull = true
-        };
-        await _videoService.UploadVideo(uploadVideoRequest);
-        var thumbnailPath = await _videoEditor.ExtractThumbnail(_sessionFolderPaths.Session, _sessionFolderPaths.Thumbnails);
-        if (thumbnailPath == null)
-            throw new Exception("No thumbnail found");
-        var uploadThumbnailRequest = new UploadVideoRequest()
-        {
-            Content = File.OpenRead(thumbnailPath),
-            ContentType = "image/jpeg",
-            UserId = thuUrlResponse.UserId,
-            SasUrl = thuUrlResponse.UploadSasUrl,
-            VideoId = _sessionId,
-            SessionId = _sessionId,
-            CreatedAt = DateTime.UtcNow,
-            OrderNumber = 1,
-            IsFull = true
-        };
-        await _videoService.UploadVideo(uploadThumbnailRequest);
-        Progress = 1;
-        await DisplayAlert("Success", "Video uploaded successfully!", "OK");
-
-
-    }
-
-    private async Task OnProcessSessionAsync()
-    {
-        IsProcessing = true; // show overlay
-        Progress = 0;
-
-        try
-        {
-            await OnSubmitSessionAsync();
-
-            int totalVideos = LiftVideos.Count;
-            int completed = 0;
-            int currentVideo = 0;
-
-            foreach (var liftVideo in LiftVideos)
-            {
-                currentVideo++;
-                var originalVideoRequest = new OriginalVideoRequest()
-                {
-                    Id = liftVideo.Video.Id,
-                    FilePath = liftVideo.VideoPath,
-                    CompressedPath = liftVideo.CompressedPath,
-                    UploadedAt = DateTime.Now,
-                    LifterFilter = liftVideo.Lift.LifterFilter,
-                    WeightKg = liftVideo.Lift.WeightKg,
-                    UserId = _userId,
-                    LiftNumber = currentVideo
-                };
-                await Task.Run(() => _videoEditor.ProcessVideo(_sessionFolderPaths, originalVideoRequest));
-                completed++;
-                Progress = (double)completed / totalVideos;
-            }
-
-            var finalOutputPath = await Task.Run(() => _videoEditor.MergeVideos(_sessionFolderPaths, _sessionId));
-
-            await DisplayAlert("Success", "Video processed successfully!", "OK");
-
-        }
-        finally
-        {
-            IsProcessing = false; // hide overlay
-        }
-    }
-    private async Task OnDeleteSessionAsync()
-    {
-        bool confirm = await Application.Current.MainPage.DisplayAlert(
-            "Delete Session",
-            "Are you sure you want to delete this session? This cannot be undone.",
-            "Delete",
-            "Cancel");
-
-        if (confirm)
-        {
-            Directory.Delete(_sessionFolderPaths.Session, recursive: true);
-            await _sessionService.DeleteSession(_sessionId);
-            await Shell.Current.GoToAsync("..");
-        }
-    }
-
-
-
 }

@@ -175,7 +175,7 @@ public class AVFoundationHelper
         var videoPaths = Directory.GetFiles(sessionFolderPaths.Processed, "*.MOV")
                           .OrderBy(f => int.Parse(Path.GetFileNameWithoutExtension(f).Split('_')[0]))
                           .ToArray();
-        var finalOutputPath = Path.Combine(sessionFolderPaths.Session, $"FullSession{sessionId}.MOV");
+        var finalOutputPath = Path.Combine(sessionFolderPaths.Session, $"{sessionId}.MOV");
         if (File.Exists(finalOutputPath))
             File.Delete(finalOutputPath);
         var videoAssets = new List<AVUrlAsset>();
@@ -272,7 +272,7 @@ public class AVFoundationHelper
             var startTime = CMTime.FromSeconds(originalVideo.TrimStart.TotalSeconds, 600);
             var duration = CMTime.FromSeconds(processedVideo.Duration.TotalSeconds, 600);
 
-            using var exportSession = new AVAssetExportSession(asset, AVAssetExportSessionPreset.Passthrough)
+            using var exportSession = new AVAssetExportSession(asset, AVAssetExportSessionPreset.HighestQuality)
             {
                 OutputUrl = NSUrl.FromFilename(processedVideo.FilePath),
                 OutputFileType = "com.apple.quicktime-movie",

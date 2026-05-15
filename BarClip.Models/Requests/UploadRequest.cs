@@ -1,6 +1,6 @@
 ﻿namespace BarClip.Models.Requests
 {
-    public class UploadVideoRequest
+    public class UploadRequest
     {
         public Stream Content { get; set; }
         public string ContentType { get; set; }

@@ -15,7 +15,7 @@ public interface IVideoService
     Task<List<OriginalVideo>> GetOriginalVideosForSession(Guid SessionId);
 
     Task UpdateVideos(OriginalVideo original, ProcessedVideo processed);
-    Task UploadVideo(UploadVideoRequest request);
+    Task Upload(UploadRequest request);
 }
 
 public class VideoService : IVideoService
@@ -36,7 +36,7 @@ public class VideoService : IVideoService
 
     }
 
-    public async Task UploadVideo(UploadVideoRequest request)
+    public async Task Upload(UploadRequest request)
     {
         if (_storageService != null)
         {

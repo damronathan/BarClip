@@ -7,6 +7,10 @@ using SkiaSharp.Views.Maui.Controls.Hosting;
 using BarClip.Core.Interfaces;
 using Microsoft.Identity.Client;
 using CommunityToolkit.Maui;
+using BarClip.Maui.Services;
+using BarClip.Maui.Models;
+
+
 
 #if IOS
 using BarClip.Maui.Platforms.iOS.Services;
@@ -95,6 +99,7 @@ public static class MauiProgram
                 client.Timeout = TimeSpan.FromSeconds(120);
             }); 
             builder.Services.AddSingleton<ApiClientService>();
+            builder.Services.AddScoped<UploadService>();
         }
         catch (Exception ex)
         {
@@ -112,6 +117,7 @@ public static class MauiProgram
         // Register pages
         builder.Services.AddSingleton<MainPage>();
         builder.Services.AddTransient<SessionLibraryPage>();
+        builder.Services.AddTransient<SessionViewModel>();
         builder.Services.AddTransient<SessionPage>();
         builder.Services.AddTransient<VideoLibraryPage>();
         builder.Services.AddTransient<VideoPlayerPage>();

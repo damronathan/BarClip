@@ -13,7 +13,7 @@ public class StorageService
         _httpClient = httpClient;
     }
 
-    public async Task UploadAsync(UploadVideoRequest request)
+    public async Task UploadAsync(UploadRequest request)
     {
         using var streamContent = new StreamContent(request.Content);
         streamContent.Headers.ContentType = new MediaTypeHeaderValue(request.ContentType);
