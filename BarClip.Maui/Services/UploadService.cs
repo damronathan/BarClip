@@ -29,6 +29,7 @@ namespace BarClip.Maui.Services
                 Extension = ".jpg"
             };
 
+
             var sasUrlResponse = await _client.GetUploadSasUrlAsync(videoRequest);
 
             var thumbnailSasUrlResponse = await _client.GetUploadSasUrlAsync(thumnailRequest);

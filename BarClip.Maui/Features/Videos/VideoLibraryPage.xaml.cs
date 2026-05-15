@@ -31,23 +31,21 @@ public partial class VideoLibraryPage : ContentPage
     {
         try
         {
-            // Phase 1: local
             var local = await _videoService.GetAllVideos();
             Videos.Clear();
             foreach (var video in local)
                 Videos.Add(video);
 
-            // Phase 2: API sync
-            var request = new GetVideosRequest
-            {
-                UserId = Guid.Parse("91031072-b93e-429a-92b2-571f16126605")
-            };
+            var request = new GetVideosRequest();
             var apiVideos = await _client.GetVideosAsync(request);
             await _videoService.UpsertVideos(apiVideos);
 
             var updated = await _videoService.GetAllVideos();
             foreach (var video in updated)
-                video.ThumbnailSasUrl = await CacheService.DownloadThumbnailToCacheAsync(video.ThumbnailSasUrl, video.Id);
+            {
+                if (!string.IsNullOrEmpty(video.ThumbnailSasUrl))
+                    video.ThumbnailSasUrl = await CacheService.DownloadThumbnailToCacheAsync(video.ThumbnailSasUrl, video.Id);
+            }
 
             Videos.Clear();
             foreach (var video in updated)
