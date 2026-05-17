@@ -69,8 +69,7 @@ namespace BarClip.Maui.Services
 
             try
             {
-                await _videoService.Upload(uploadVideoRequest);
-
+                await _videoService.Upload(uploadThumbnailRequest);
             }
             catch (Exception ex)
             {
@@ -78,12 +77,11 @@ namespace BarClip.Maui.Services
             }
             try
             {
-                await _videoService.Upload(uploadThumbnailRequest);
-
+                await _videoService.Upload(uploadVideoRequest);
             }
             catch (Exception ex)
             {
-                throw new Exception("Failed to upload thumbnail", ex);
+                throw new Exception("Failed to upload video", ex);
             }
         }
 

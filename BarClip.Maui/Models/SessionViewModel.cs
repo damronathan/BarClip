@@ -118,13 +118,12 @@ public partial class SessionViewModel : ObservableObject
         if (thumbnailPath == null)
             throw new Exception("No thumbnail found");
 
-        Progress = 0.5;
+        Progress = 0.1;
 
         await _uploadService.UploadVideo(_sessionId, sessionPath, thumbnailPath);
 
         Progress = 1;
         await (AlertRequested?.Invoke("Success", "Video uploaded successfully!", "OK") ?? Task.CompletedTask);
-        MoveToCache(sessionPath, _sessionId);
         IsProcessing = false;
     }
 
