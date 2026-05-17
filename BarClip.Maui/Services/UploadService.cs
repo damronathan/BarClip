@@ -16,23 +16,14 @@ namespace BarClip.Maui.Services
 
         public async Task UploadVideo(Guid sessionId, string sessionPath, string thumbnailPath)
         {
-            var videoRequest = new SasUrlRequest()
+            var request = new SasUrlRequest()
             {
                 Id = sessionId,
-                ContainerName = "videos",
-                Extension = ".mov"
-            };
-            var thumnailRequest = new SasUrlRequest()
-            {
-                Id = sessionId,
-                ContainerName = "thumbnails",
-                Extension = ".jpg"
             };
 
 
-            var sasUrlResponse = await _client.GetUploadSasUrlAsync(videoRequest);
+            var response = await _client.GetUploadSasUrlAsync(request);
 
-            var thumbnailSasUrlResponse = await _client.GetUploadSasUrlAsync(thumnailRequest);
 
 
             if (!File.Exists(sessionPath))
@@ -45,8 +36,8 @@ namespace BarClip.Maui.Services
             {
                 Content = File.OpenRead(sessionPath),
                 ContentType = "video/quicktime",
-                UserId = sasUrlResponse.UserId,
-                SasUrl = sasUrlResponse.UploadSasUrl,
+                UserId = response.UserId,
+                SasUrl = response.VideoSasUrl,
                 VideoId = sessionId,
                 SessionId = sessionId,
                 CreatedAt = DateTime.UtcNow,
@@ -58,8 +49,8 @@ namespace BarClip.Maui.Services
             {
                 Content = File.OpenRead(thumbnailPath),
                 ContentType = "image/jpeg",
-                UserId = thumbnailSasUrlResponse.UserId,
-                SasUrl = thumbnailSasUrlResponse.UploadSasUrl,
+                UserId = response.UserId,
+                SasUrl = response.ThumbnailSasUrl,
                 VideoId = sessionId,
                 SessionId = sessionId,
                 CreatedAt = DateTime.UtcNow,

@@ -49,8 +49,6 @@ public class ApiClientService
     {
         var query = System.Web.HttpUtility.ParseQueryString(string.Empty);
         query["Id"] = request.Id.ToString();
-        query["ContainerName"] = request.ContainerName;
-        query["Extension"] = request.Extension;
 
         var url = $"{_url}/video/upload-sas-url?{query}";
 
