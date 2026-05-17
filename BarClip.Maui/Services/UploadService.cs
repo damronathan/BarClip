@@ -74,7 +74,7 @@ namespace BarClip.Maui.Services
             }
             catch (Exception ex)
             {
-                throw new Exception("Failed to upload video", ex);
+                throw new Exception("Failed to upload thumbnail", ex);
             }
             try
             {
