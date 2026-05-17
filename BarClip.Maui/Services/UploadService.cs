@@ -34,6 +34,13 @@ namespace BarClip.Maui.Services
 
             var thumbnailSasUrlResponse = await _client.GetUploadSasUrlAsync(thumnailRequest);
 
+
+            if (!File.Exists(sessionPath))
+                throw new Exception($"Video file not found: {sessionPath}");
+
+            if (!File.Exists(thumbnailPath))
+                throw new Exception($"Thumbnail file not found: {thumbnailPath}");
+
             var uploadVideoRequest = new UploadRequest()
             {
                 Content = File.OpenRead(sessionPath),
@@ -79,5 +86,6 @@ namespace BarClip.Maui.Services
                 throw new Exception("Failed to upload thumbnail", ex);
             }
         }
+
     }
 }
