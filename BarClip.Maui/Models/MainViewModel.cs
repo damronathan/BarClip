@@ -34,6 +34,8 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private string _statusText;
 
+    public event Action<Guid> NavigateToSessionRequested;
+
     public MainViewModel(
         UserRepository userRepository,
         SessionService sessionService,
@@ -59,6 +61,7 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     private async Task CreateSessionAsync()
     {
+        var session = new Session();
         try
         {
             string title = await (PromptRequested?.Invoke(
@@ -82,7 +85,7 @@ public partial class MainViewModel : ObservableObject
             }
 
             var basePath = FileSystem.AppDataDirectory;
-            var session = await _sessionService.CreateSessionWithFolders(user, basePath, title);
+            session = await _sessionService.CreateSessionWithFolders(user, basePath, title);
             var sessionFolderPaths = FileHelper.CreateSessionFolders(basePath, session.Id);
 
             var videos = await _picker.PickVideosAsync();
@@ -167,6 +170,9 @@ public partial class MainViewModel : ObservableObject
             await _videoEditor.ExtractThumbnails(sessionFolderPaths.Original, sessionFolderPaths.Thumbnails);
 
             await (AlertRequested?.Invoke("Success", "Session created!", "OK") ?? Task.CompletedTask);
+
+            await (AlertRequested?.Invoke("Success", "Session created!", "OK") ?? Task.CompletedTask);
+            NavigateToSessionRequested?.Invoke(session.Id);
         }
         catch (Exception ex)
         {
@@ -178,6 +184,7 @@ public partial class MainViewModel : ObservableObject
         finally
         {
             IsProcessing = false;
+
         }
     }
 

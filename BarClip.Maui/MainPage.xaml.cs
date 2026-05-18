@@ -9,12 +9,15 @@ public partial class MainPage : ContentPage
     public MainPage(MainViewModel viewModel)
     {
         InitializeComponent();
+
         _viewModel = viewModel;
         BindingContext = _viewModel;
 
         _viewModel.AlertRequested += (t, m, b) => DisplayAlert(t, m, b);
         _viewModel.ConfirmRequested += (t, m, b) => DisplayAlert(t, m, b, "Cancel");
         _viewModel.PromptRequested += (t, m, a, p) => DisplayPromptAsync(t, m, a, placeholder: p);
+        _viewModel.NavigateToSessionRequested += async (id) =>
+    await Shell.Current.GoToAsync($"SessionPage?SessionId={id}");
     }
 
     private async void OnAuthButtonClicked(object sender, EventArgs e)
