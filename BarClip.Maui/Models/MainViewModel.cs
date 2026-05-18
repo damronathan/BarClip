@@ -86,7 +86,6 @@ public partial class MainViewModel : ObservableObject
 
             if (videos == null || !videos.Any())
             {
-                CreateButtonText = "No videos selected";
                 return;
             }
 
