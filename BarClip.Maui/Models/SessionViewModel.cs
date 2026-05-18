@@ -149,8 +149,8 @@ public partial class SessionViewModel : ObservableObject
             {
                 currentVideo++;
                 StatusText = $"Processing video {currentVideo}/{totalVideos}...";
-                double rangeStart = (double)(currentVideo - 1) / totalVideos * 0.9;
-                double rangeEnd = (double)currentVideo / totalVideos * 0.9;
+                double rangeStart = (double)(currentVideo - 1) / totalVideos * 0.89;
+                double rangeEnd = (double)currentVideo / totalVideos * 0.89;
 
                 var videoProgress = new Progress<double>(value =>
                     Progress = rangeStart + value * (rangeEnd - rangeStart));

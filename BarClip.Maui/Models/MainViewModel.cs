@@ -126,6 +126,7 @@ public partial class MainViewModel : ObservableObject
             foreach (var (stablePath, createdTime) in stablePaths)
             {
                 currentVideo++;
+                StatusText = "Compressing Videos...";
                 double rangeStart = (double)(currentVideo - 1) / totalVideos;
                 double rangeEnd = (double)currentVideo / totalVideos;
 
