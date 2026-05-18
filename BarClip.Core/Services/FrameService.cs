@@ -39,7 +39,7 @@ public class FrameService
     //    return frames;
     //}
 
-    public List<Frame> ProcessFrames(string tempFramePath, LifterFilter lifterFilter)
+    public List<Frame> ProcessFrames(string tempFramePath, LifterFilter lifterFilter, IProgress<double> progress = null)
     {
         var session = new InferenceSession(_onnxModelPath);
 
@@ -49,12 +49,15 @@ public class FrameService
                              .OrderBy(FrameHelper.GetFrameNumber)
                              .ToList();
 
+        int processed = 0;
+        double weight = .4;
+
         Parallel.ForEach(files, file =>
         {
             try
             {
-                var preparedFrame = FrameHelper.PrepareFrame(file, lifterFilter); // Prepares the frame for conversion
-                var inputValue = OnnxHelper.ConvertToOnnxValue(preparedFrame); // Converts the frame to ONNX value
+                var preparedFrame = FrameHelper.PrepareFrame(file, lifterFilter);
+                var inputValue = OnnxHelper.ConvertToOnnxValue(preparedFrame);
                 var frame = new Frame
                 {
                     FilePath = file,
@@ -62,13 +65,15 @@ public class FrameService
                 };
 
                 frame.PlateDetections = OnnxHelper.GetDetections(frame, session);
-
                 frames.Add(frame);
             }
             finally
             {
                 if (File.Exists(file))
                     File.Delete(file);
+
+                var count = Interlocked.Increment(ref processed);
+                progress?.Report((double).2 + count / files.Count * weight);
             }
         });
 

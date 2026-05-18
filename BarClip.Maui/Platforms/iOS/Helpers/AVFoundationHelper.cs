@@ -1,4 +1,5 @@
 ﻿using AVFoundation;
+using Azure.Storage.Blobs.Models;
 using BarClip.Models.Requests;
 using CoreGraphics;
 using CoreMedia;
@@ -69,8 +70,9 @@ public class AVFoundationHelper
         });
     }
 
-    public static async Task ExtractAllFramesAsync(OriginalVideoRequest originalVideo, string tempFramePath)
+    public static async Task ExtractAllFramesAsync(OriginalVideoRequest originalVideo, string tempFramePath, IProgress<double> progress = null)
     {
+        double weight = .3;
         await Task.Run(async () =>
         {
             Directory.CreateDirectory(tempFramePath);
@@ -109,6 +111,9 @@ public class AVFoundationHelper
 
                 destination.AddImage(cgImage);
                 destination.Close();
+
+                progress?.Report((double)(frameIndex + 1) / frameCount * weight);
+
             }
 
         });
@@ -170,7 +175,7 @@ public class AVFoundationHelper
 
 
 
-    public static async Task<string> MergeVideos(SessionFolderPaths sessionFolderPaths, Guid sessionId)
+    public static async Task<string> MergeVideos(SessionFolderPaths sessionFolderPaths, Guid sessionId, IProgress<double> progress = null)
     {
         var videoPaths = Directory.GetFiles(sessionFolderPaths.Processed, "*.MOV")
                           .OrderBy(f => int.Parse(Path.GetFileNameWithoutExtension(f).Split('_')[0]))
@@ -189,6 +194,9 @@ public class AVFoundationHelper
         var compositionVideoTrack = composition.AddMutableTrack("vide", 1);
         var compositionAudioTrack = composition.AddMutableTrack("soun", 1);
         var insertTime = CMTime.Zero;
+        int totalAssets = videoAssets.Count;
+        int assetsLoaded = 0;
+
         foreach (var asset in videoAssets)
         {
             await asset.LoadValuesTaskAsync(["tracks"]);
@@ -203,10 +211,12 @@ public class AVFoundationHelper
             bool videoSuccess = compositionVideoTrack.InsertTimeRange(timeRange, assetVideoTrack, insertTime, out NSError videoError);
             bool audioSuccess = compositionAudioTrack.InsertTimeRange(timeRange, assetAudioTrack, insertTime, out NSError audioError);
             if (!videoSuccess || !audioSuccess)
-            {
                 throw new Exception("");
-            }
+
             insertTime = CMTime.Add(insertTime, duration);
+
+            assetsLoaded++;
+            progress?.Report(0.9 + (double)assetsLoaded / totalAssets * 0.1);
         }
 
         // Orientation fix

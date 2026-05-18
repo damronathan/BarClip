@@ -7,7 +7,6 @@ using BarClip.Models.Requests;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
-using static BarClip.Maui.Services.CacheService;
 
 namespace BarClip.Maui.Models;
 
@@ -133,6 +132,8 @@ public partial class SessionViewModel : ObservableObject
         IsProcessing = true;
         Progress = 0;
 
+        var progress = new Progress<double>(value => Progress = value);
+
         try
         {
             await SubmitSessionAsync();
@@ -144,6 +145,13 @@ public partial class SessionViewModel : ObservableObject
             foreach (var liftVideo in LiftVideos)
             {
                 currentVideo++;
+
+                double rangeStart = (double)(currentVideo - 1) / totalVideos * 0.9;
+                double rangeEnd = (double)currentVideo / totalVideos * 0.9;
+
+                var videoProgress = new Progress<double>(value =>
+                    Progress = rangeStart + value * (rangeEnd - rangeStart));
+
                 await Task.Run(() => _videoEditor.ProcessVideo(
                     _sessionFolderPaths,
                     new OriginalVideoRequest
@@ -154,13 +162,12 @@ public partial class SessionViewModel : ObservableObject
                         LifterFilter = liftVideo.Lift.LifterFilter,
                         WeightKg = liftVideo.Lift.WeightKg,
                         LiftNumber = currentVideo
-                    }));
+                    }, videoProgress));
 
                 completed++;
-                Progress = (double)completed / totalVideos;
             }
 
-            await Task.Run(() => _videoEditor.MergeVideos(_sessionFolderPaths, _sessionId));
+            await Task.Run(() => _videoEditor.MergeVideos(_sessionFolderPaths, _sessionId, progress));
             await (AlertRequested?.Invoke("Success", "Video processed successfully!", "OK") ?? Task.CompletedTask);
         }
         finally
