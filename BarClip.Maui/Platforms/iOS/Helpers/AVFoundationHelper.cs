@@ -270,7 +270,7 @@ public class AVFoundationHelper
         await SaveVideoToCameraRoll(NSUrl.FromFilename(finalOutputPath));
         return finalOutputPath;
     }
-    public static async Task TrimAsync(OriginalVideoRequest originalVideo, ProcessedVideoRequest processedVideo)
+    public static async Task TrimAsync(OriginalVideoRequest originalVideo, ProcessedVideoRequest processedVideo, IProgress<double> progress = null)
     {
         await Task.Run(async () =>
         {
@@ -299,7 +299,14 @@ public class AVFoundationHelper
                 TimeRange = new CMTimeRange { Start = startTime, Duration = duration }
             };
 
-            await exportSession.ExportTaskAsync();
+            var exportTask = exportSession.ExportTaskAsync();
+            while (!exportTask.IsCompleted)
+            {
+                progress?.Report(exportSession.Progress);
+                await Task.Delay(200);
+            }
+            await exportTask;
+            progress?.Report(1.0);
 
             await SaveVideoToCameraRoll(NSUrl.FromFilename(processedVideo.FilePath));
 
@@ -317,9 +324,7 @@ public class AVFoundationHelper
                 throw new Exception($"Trim failed — {details}");
             }
         });
-
     }
-
     public static async Task<TimeSpan> GetDurationAsync(string filePath)
     {
         using var asset = AVAsset.FromUrl(NSUrl.FromFilename(filePath));
