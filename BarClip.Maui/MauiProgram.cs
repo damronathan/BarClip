@@ -116,6 +116,7 @@ public static class MauiProgram
 
         // Register pages
         builder.Services.AddSingleton<MainPage>();
+        builder.Services.AddSingleton<MainViewModel>();
         builder.Services.AddTransient<SessionLibraryPage>();
         builder.Services.AddTransient<SessionViewModel>();
         builder.Services.AddTransient<SessionPage>();

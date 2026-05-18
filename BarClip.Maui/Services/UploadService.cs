@@ -21,10 +21,7 @@ namespace BarClip.Maui.Services
                 Id = sessionId,
             };
 
-
             var response = await _client.GetUploadSasUrlAsync(request);
-
-
 
             if (!File.Exists(sessionPath))
                 throw new Exception($"Video file not found: {sessionPath}");

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:skia="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI" xmlns:d="http://schemas.microsoft.com/dotnet/2021/maui/design"
+
              x:Class="BarClip.Maui.MainPage">
     <ContentPage.ToolbarItems>
         <ToolbarItem
@@ -8,7 +10,8 @@
             Text="Sign In"
             Clicked="OnAuthButtonClicked" />
     </ContentPage.ToolbarItems>
-    <ScrollView>
+    
+    <d:ScrollView>
         <VerticalStackLayout
             Padding="30,0"
             Spacing="25"
@@ -65,5 +68,36 @@
                 FontAttributes="Bold"
                 FontSize="40" />
         </VerticalStackLayout>
-    </ScrollView>
+        
+    </d:ScrollView>
+    <Grid BackgroundColor="Black" IsVisible="{Binding IsProcessing}">
+        <VerticalStackLayout VerticalOptions="Center" 
+                     HorizontalOptions="Center" 
+                     Spacing="20">
+
+            <skia:SKLottieView 
+        Source="Bar-Clip-Lottie.json"
+        RepeatCount="-1"
+        WidthRequest="300"
+        HeightRequest="300"
+        HorizontalOptions="Center"
+        VerticalOptions="Center"/>
+
+            <!-- Progress Bar -->
+            <ProgressBar 
+        Progress="{Binding Progress}" 
+        HeightRequest="20" 
+        WidthRequest="250"
+        Margin="0,-80,0,0"/>
+
+            <Label 
+        Text="{Binding Progress, StringFormat='{0:P0}'}" 
+        HorizontalOptions="Center" 
+        TextColor="White" 
+        FontAttributes="Bold"
+        Margin="0,-10,0,0"/>
+
+        </VerticalStackLayout>
+    </Grid>
 </ContentPage>
+    
