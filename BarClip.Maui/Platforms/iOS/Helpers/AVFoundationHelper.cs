@@ -229,7 +229,6 @@ public class AVFoundationHelper
             insertTime = CMTime.Add(insertTime, duration);
 
             assetsLoaded++;
-            progress?.Report(0.9 + (double)assetsLoaded / totalAssets * 0.05);
         }
 
         // Orientation fix
