@@ -303,7 +303,7 @@ public class AVFoundationHelper
             var exportTask = exportSession.ExportTaskAsync();
             while (!exportTask.IsCompleted)
             {
-                progress?.Report(exportSession.Progress);
+                progress?.Report(0.8 + exportSession.Progress * 0.2);
                 await Task.Delay(200);
             }
             await exportTask;
