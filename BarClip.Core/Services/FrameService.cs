@@ -73,7 +73,7 @@ public class FrameService
                     File.Delete(file);
 
                 var count = Interlocked.Increment(ref processed);
-                progress?.Report((double).2 + count / files.Count * weight);
+                progress?.Report((double).3 + count / files.Count * weight);
             }
         });
 
