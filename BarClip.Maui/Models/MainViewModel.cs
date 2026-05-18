@@ -171,7 +171,6 @@ public partial class MainViewModel : ObservableObject
 
             await (AlertRequested?.Invoke("Success", "Session created!", "OK") ?? Task.CompletedTask);
 
-            await (AlertRequested?.Invoke("Success", "Session created!", "OK") ?? Task.CompletedTask);
             NavigateToSessionRequested?.Invoke(session.Id);
         }
         catch (Exception ex)
