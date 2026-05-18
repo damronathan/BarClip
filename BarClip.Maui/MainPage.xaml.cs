@@ -20,6 +20,12 @@ public partial class MainPage : ContentPage
     await Shell.Current.GoToAsync($"SessionPage?SessionId={id}");
     }
 
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        AuthToolbarItem.Text = await _viewModel.IsSignedInAsync() ? "Sign Out" : "Sign In";
+    }
+
     private async void OnAuthButtonClicked(object sender, EventArgs e)
     {
         if (await _viewModel.IsSignedInAsync())
