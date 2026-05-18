@@ -13,7 +13,7 @@ namespace BarClip.Maui.Platforms.iOS.Helpers;
 
 public class AVFoundationHelper
 {
-    public static async Task CompressVideoAsync(string inputPath, string outputPath)
+    public static async Task CompressVideoAsync(string inputPath, string outputPath, IProgress<double> progress = null)
     {
         var asset = AVUrlAsset.Create(NSUrl.FromFilename(inputPath));
         var exportSession = new AVAssetExportSession(asset, AVAssetExportSessionPreset.Preset640x480)
@@ -23,13 +23,24 @@ public class AVFoundationHelper
         };
 
         var exportTask = exportSession.ExportTaskAsync();
+
+        var pollingTask = Task.Run(async () =>
+        {
+            while (!exportTask.IsCompleted)
+            {
+                progress?.Report(exportSession.Progress);
+                await Task.Delay(200);
+            }
+        });
+
         if (await Task.WhenAny(exportTask, Task.Delay(TimeSpan.FromSeconds(60))) != exportTask)
         {
             SentrySdk.CaptureMessage($"Export timed out: {inputPath}");
             throw new Exception($"Compression timed out: {inputPath}");
         }
-        await exportTask;
 
+        await exportTask;
+        progress?.Report(1.0);
         if (exportSession.Status != AVAssetExportSessionStatus.Completed)
         {
             SentrySdk.CaptureMessage($"Export failed. status={exportSession.Status}, error={exportSession.Error?.LocalizedDescription}, code={exportSession.Error?.Code}, domain={exportSession.Error?.Domain}");
@@ -37,6 +48,7 @@ public class AVFoundationHelper
         }
 
     }
+
     public static async Task ExtractSingleFrameAsync(string originalFilePath, double thumbnailTime, string thumbnailPath)
     {
         await Task.Run(() =>
@@ -248,7 +260,7 @@ public class AVFoundationHelper
         var exportTask = exportSession.ExportTaskAsync();
         while (!exportTask.IsCompleted)
         {
-            progress?.Report(0.95 + exportSession.Progress * 0.05);
+            progress?.Report(0.9 + exportSession.Progress * 0.1);
             await Task.Delay(200);
         }
         await exportTask;

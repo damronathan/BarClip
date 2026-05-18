@@ -94,15 +94,13 @@ public partial class MainViewModel : ObservableObject
 
             IsProcessing = true;
             Progress = 0;
-            StatusText = "Compressing Videos...";
+            StatusText = "Initializing...";
 
             var videoList = videos
                 .OrderBy(v => new FileInfo(v.FullPath).CreationTime)
                 .ToList();
 
             int totalVideos = videoList.Count;
-            const double copyWeight = 0.25;
-            const double compressWeight = 0.65;
             int currentVideo = 0;
 
             var stablePaths = new List<(string stablePath, DateTime createdTime)>();
@@ -121,7 +119,6 @@ public partial class MainViewModel : ObservableObject
 
                 stablePaths.Add((stablePath, createdTime));
                 SentrySdk.AddBreadcrumb($"Secured video {currentVideo} to: {stablePath}");
-                Progress = (double)currentVideo / totalVideos * copyWeight;
             }
 
             currentVideo = 0;
@@ -129,6 +126,11 @@ public partial class MainViewModel : ObservableObject
             foreach (var (stablePath, createdTime) in stablePaths)
             {
                 currentVideo++;
+                double rangeStart = (double)(currentVideo - 1) / totalVideos;
+                double rangeEnd = (double)currentVideo / totalVideos;
+
+                var videoProgress = new Progress<double>(value =>
+                    Progress = rangeStart + value * (rangeEnd - rangeStart));
                 SentrySdk.AddBreadcrumb($"Processing video {currentVideo}");
 
                 var video = await _videoService.CreateOriginalVideo(user, session, createdTime);
@@ -143,9 +145,8 @@ public partial class MainViewModel : ObservableObject
                 SentrySdk.AddBreadcrumb($"Copy complete for video {currentVideo}");
 
                 var compressedVideoPath = Path.Combine(sessionFolderPaths.Compressed, $"compressed_{video.Id}.MOV");
-                await _videoEditor.CompressVideo(originalVideoPath, compressedVideoPath);
+                await _videoEditor.CompressVideo(originalVideoPath, compressedVideoPath, videoProgress);
                 SentrySdk.AddBreadcrumb($"Compression complete for video {currentVideo}");
-                Progress = copyWeight + (double)currentVideo / totalVideos * compressWeight;
 
             }
 
@@ -163,7 +164,6 @@ public partial class MainViewModel : ObservableObject
             }
 
             await _videoEditor.ExtractThumbnails(sessionFolderPaths.Original, sessionFolderPaths.Thumbnails);
-            Progress = 1.0;
 
             await (AlertRequested?.Invoke("Success", "Session created!", "OK") ?? Task.CompletedTask);
         }
