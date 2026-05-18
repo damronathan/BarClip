@@ -118,6 +118,7 @@ public class AVFoundationHelper
 
         });
     }
+
     public async static Task<string[]> ExtractThumbnails(string originalFolderPath, string thumbnailFolderPath)
     {
         var originalFilePaths = Directory.GetFiles(originalFolderPath, "*.MOV");
