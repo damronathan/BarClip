@@ -51,23 +51,6 @@
                     BorderColor="White"
                     FontAttributes="Bold"
                     FontSize="40" />
-                <Button
-                    x:Name="CameraBtn"
-                    Text="Camera View"
-                    SemanticProperties.Hint="Directs user to camera view"
-                    Clicked="NavigateToCameraPage"
-                    HorizontalOptions="Fill"
-                    BorderColor="White"
-                    FontAttributes="Bold"
-                    FontSize="40" />
-                <Button
-                    x:Name="TestApiBtn"
-                    Text="Test API"
-                    Clicked="OnTestApiClicked"
-                    HorizontalOptions="Fill"
-                    BorderColor="White"
-                    FontAttributes="Bold"
-                    FontSize="40" />
             </VerticalStackLayout>
         </ScrollView>
 
