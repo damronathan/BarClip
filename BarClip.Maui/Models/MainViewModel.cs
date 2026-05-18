@@ -31,6 +31,9 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private double _progress;
 
+    [ObservableProperty]
+    private string _statusText;
+
     public MainViewModel(
         UserRepository userRepository,
         SessionService sessionService,
@@ -91,6 +94,7 @@ public partial class MainViewModel : ObservableObject
 
             IsProcessing = true;
             Progress = 0;
+            StatusText = "Compressing Videos...";
 
             var videoList = videos
                 .OrderBy(v => new FileInfo(v.FullPath).CreationTime)

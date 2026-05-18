@@ -83,6 +83,12 @@
                     HeightRequest="300"
                     HorizontalOptions="Center"
                     VerticalOptions="Center"/>
+                <Label
+                    Text="{Binding StatusText}"
+                    HorizontalOptions="Center"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    FontSize="16"/>
                 <ProgressBar
                     Progress="{Binding Progress}"
                     HeightRequest="20"

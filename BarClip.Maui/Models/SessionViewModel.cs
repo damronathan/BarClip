@@ -27,6 +27,9 @@ public partial class SessionViewModel : ObservableObject
     [ObservableProperty]
     private bool _isProcessing;
 
+    [ObservableProperty]
+    private string _statusText;
+
     public ObservableCollection<VideoLiftViewModel> LiftVideos { get; } = new();
     public ObservableCollection<OriginalVideo> OriginalVideos { get; } = new();
 
@@ -145,7 +148,7 @@ public partial class SessionViewModel : ObservableObject
             foreach (var liftVideo in LiftVideos)
             {
                 currentVideo++;
-
+                StatusText = $"Processing video {currentVideo}/{totalVideos}...";
                 double rangeStart = (double)(currentVideo - 1) / totalVideos * 0.9;
                 double rangeEnd = (double)currentVideo / totalVideos * 0.9;
 
@@ -166,7 +169,7 @@ public partial class SessionViewModel : ObservableObject
 
                 completed++;
             }
-
+            StatusText = "Creating Final Video...";
             await Task.Run(() => _videoEditor.MergeVideos(_sessionFolderPaths, _sessionId, progress));
             await (AlertRequested?.Invoke("Success", "Video processed successfully!", "OK") ?? Task.CompletedTask);
         }
