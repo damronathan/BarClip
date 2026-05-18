@@ -87,7 +87,7 @@ public class IOSVideoEditor : IVideoEditor
 
         try
         {
-            var frames = _frameService.ProcessFrames(tempFramePath, originalVideo.LifterFilter, progress);
+            var frames = await _frameService.ProcessFrames(tempFramePath, originalVideo.LifterFilter, progress);
             return frames;
         }
         catch (Exception ex)

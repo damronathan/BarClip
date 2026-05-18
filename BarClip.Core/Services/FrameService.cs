@@ -39,7 +39,7 @@ public class FrameService
     //    return frames;
     //}
 
-    public List<Frame> ProcessFrames(string tempFramePath, LifterFilter lifterFilter, IProgress<double> progress = null)
+    public async Task<List<Frame>> ProcessFrames(string tempFramePath, LifterFilter lifterFilter, IProgress<double> progress = null)
     {
         var session = new InferenceSession(_onnxModelPath);
 
@@ -52,7 +52,7 @@ public class FrameService
         int processed = 0;
         double weight = .4;
 
-        Parallel.ForEach(files, file =>
+        await Parallel.ForEachAsync(files, async (file, ct) =>
         {
             try
             {
@@ -73,7 +73,7 @@ public class FrameService
                     File.Delete(file);
 
                 var count = Interlocked.Increment(ref processed);
-                progress?.Report((double).3 + count / files.Count * weight);
+                progress?.Report((double)count / files.Count);
             }
         });
 

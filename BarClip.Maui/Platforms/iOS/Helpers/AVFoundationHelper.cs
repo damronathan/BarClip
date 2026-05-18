@@ -216,7 +216,7 @@ public class AVFoundationHelper
             insertTime = CMTime.Add(insertTime, duration);
 
             assetsLoaded++;
-            progress?.Report(0.9 + (double)assetsLoaded / totalAssets * 0.1);
+            progress?.Report(0.9 + (double)assetsLoaded / totalAssets * 0.05);
         }
 
         // Orientation fix
@@ -243,7 +243,16 @@ public class AVFoundationHelper
             ShouldOptimizeForNetworkUse = true,
             VideoComposition = videoComposition
         };
-        await exportSession.ExportTaskAsync();
+
+        var exportTask = exportSession.ExportTaskAsync();
+        while (!exportTask.IsCompleted)
+        {
+            progress?.Report(0.95 + exportSession.Progress * 0.05);
+            await Task.Delay(200);
+        }
+        await exportTask;
+        progress?.Report(1.0);
+
         if (exportSession.Status != AVAssetExportSessionStatus.Completed)
         {
             var details = new System.Text.StringBuilder();
@@ -257,10 +266,10 @@ public class AVFoundationHelper
             }
             throw new Exception($"Merge failed — {details}");
         }
+
         await SaveVideoToCameraRoll(NSUrl.FromFilename(finalOutputPath));
         return finalOutputPath;
     }
-
     public static async Task TrimAsync(OriginalVideoRequest originalVideo, ProcessedVideoRequest processedVideo)
     {
         await Task.Run(async () =>
