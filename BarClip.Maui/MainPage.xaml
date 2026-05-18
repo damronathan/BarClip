@@ -88,7 +88,8 @@
                     HorizontalOptions="Center"
                     TextColor="White"
                     FontAttributes="Bold"
-                    FontSize="16"/>
+                    FontSize="16"
+                    Margin="0,0,0,60"/>
                 <ProgressBar
                     Progress="{Binding Progress}"
                     HeightRequest="20"
