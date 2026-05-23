@@ -1,9 +1,19 @@
 ﻿using BarClip.Data.Schema;
-using BarClip.Models.Requests;
+using BarClip.Maui.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
-public partial class VideoLiftViewModel : ObservableObject
+namespace BarClip.Maui.Models;
+
+public partial class LiftVideoViewModel : ObservableObject
 {
+    private readonly IVideoLiftActions _actions;
+
+    public LiftVideoViewModel(IVideoLiftActions actions)
+    {
+        _actions = actions;
+    }
+
     public OriginalVideo Video { get; set; }
     public Lift Lift { get; set; }
     public string ThumbnailPath { get; set; }
@@ -11,16 +21,6 @@ public partial class VideoLiftViewModel : ObservableObject
     public string? CompressedPath { get; set; }
     public int? Order { get; set; }
 
-    [ObservableProperty]
-    private bool _isWhole;
-
-    [ObservableProperty]
-    private bool _isLeft;
-
-    [ObservableProperty]
-    private bool _isRight;
-
-    partial void OnIsWholeChanged(bool value) { if (value) Lift.LifterFilter = LifterFilter.Whole; }
-    partial void OnIsLeftChanged(bool value) { if (value) Lift.LifterFilter = LifterFilter.Left; }
-    partial void OnIsRightChanged(bool value) { if (value) Lift.LifterFilter = LifterFilter.Right; }
+    [RelayCommand]
+    private Task ProcessAsync() => _actions.ProcessLiftVideoAsync(this);
 }

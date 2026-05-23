@@ -2,6 +2,7 @@
 using BarClip.Core.Interfaces;
 using BarClip.Core.Services;
 using BarClip.Data.Schema;
+using BarClip.Maui.Interfaces;
 using BarClip.Maui.Services;
 using BarClip.Models.Requests;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -10,7 +11,7 @@ using System.Collections.ObjectModel;
 
 namespace BarClip.Maui.Models;
 
-public partial class SessionViewModel : ObservableObject
+public partial class SessionViewModel : ObservableObject, IVideoLiftActions
 {
     private readonly IVideoService _videoService;
     private readonly IVideoEditor _videoEditor;
@@ -30,7 +31,7 @@ public partial class SessionViewModel : ObservableObject
     [ObservableProperty]
     private string _statusText;
 
-    public ObservableCollection<VideoLiftViewModel> LiftVideos { get; } = new();
+    public ObservableCollection<LiftVideoViewModel> LiftVideos { get; } = new();
     public ObservableCollection<OriginalVideo> OriginalVideos { get; } = new();
 
     public event Func<string, string, string, Task<bool>> ConfirmRequested;
@@ -86,18 +87,48 @@ public partial class SessionViewModel : ObservableObject
             var lift = await _liftService.GetLiftByOriginalVideoId(video.Id, _sessionId);
             lift.SessionId = _sessionId;
 
-            LiftVideos.Add(new VideoLiftViewModel
+            LiftVideos.Add(new LiftVideoViewModel(this)
             {
                 Video = video,
                 Lift = lift,
                 ThumbnailPath = Path.Combine(_sessionFolderPaths.Thumbnails, $"{video.Id}.png"),
                 VideoPath = Path.Combine(_sessionFolderPaths.Original, $"{video.Id}.MOV"),
                 CompressedPath = Path.Combine(_sessionFolderPaths.Compressed, $"compressed_{video.Id}.MOV"),
-                IsWhole = lift.LifterFilter == LifterFilter.Whole,
-                IsLeft = lift.LifterFilter == LifterFilter.Left,
-                IsRight = lift.LifterFilter == LifterFilter.Right,
                 Order = currentVideo
             });
+        }
+    }
+
+    public async Task ProcessLiftVideoAsync(LiftVideoViewModel vm)
+    {
+        IsProcessing = true;
+        Progress = 0;
+
+        var index = LiftVideos.IndexOf(vm) + 1;
+        StatusText = $"Processing video {index}...";
+
+        var videoProgress = new Progress<double>(value => Progress = value);
+
+        try
+        {
+            await _liftService.UpdateLift(vm.Lift);
+            await Task.Run(() => _videoEditor.ProcessVideo(
+                _sessionFolderPaths,
+                new OriginalVideoRequest
+                {
+                    Id = vm.Video.Id,
+                    FilePath = vm.VideoPath,
+                    CompressedPath = vm.CompressedPath,
+                    LifterFilter = vm.Lift.LifterFilter,
+                    WeightKg = vm.Lift.WeightKg,
+                    LiftNumber = index
+                }, videoProgress));
+
+            await (AlertRequested?.Invoke("Success", "Video processed!", "OK") ?? Task.CompletedTask);
+        }
+        finally
+        {
+            IsProcessing = false;
         }
     }
 

@@ -12,25 +12,32 @@
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Border Margin="5,5,5,0"
-                            Padding="10"
-                            StrokeShape="RoundRectangle 8"
-                            Stroke="White"
-                            BackgroundColor="Transparent">
+                Padding="10"
+                StrokeShape="RoundRectangle 8"
+                Stroke="White"
+                BackgroundColor="Transparent">
 
-                        <Grid ColumnDefinitions="400,*" RowDefinitions="Auto">
+                        <Grid ColumnDefinitions="120,*" RowDefinitions="Auto">
 
-                            <!-- Thumbnail -->
                             <Image Grid.Column="0"
-                                   Source="{Binding ThumbnailPath}"
-                                   Aspect="AspectFit"
-                                   HeightRequest="400"
-                                   WidthRequest="400" />
+                       Source="{Binding ThumbnailPath}"
+                       Aspect="AspectFit"
+                       HeightRequest="120"
+                       WidthRequest="120" />
 
-                            <!-- Form -->
                             <VerticalStackLayout Grid.Column="1"
-                                                 Spacing="10"
-                                                 Padding="10,0"
-                                                 VerticalOptions="Center">
+                                     Spacing="10"
+                                     Padding="10,0"
+                                     VerticalOptions="Center">
+
+                                <Button Text="Process"
+                            Command="{Binding ProcessCommand}"
+                            BackgroundColor="{DynamicResource Primary}"
+                            TextColor="White"
+                            FontAttributes="Bold"
+                            HeightRequest="40"
+                            CornerRadius="8"
+                            HorizontalOptions="Fill" />
 
                             </VerticalStackLayout>
 
