@@ -102,6 +102,20 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
 
     public async Task ProcessLiftVideoAsync(LiftVideoViewModel vm)
     {
+        var processedPath = Path.Combine(_sessionFolderPaths.Processed, $"{LiftVideos.IndexOf(vm) + 1}_Trimmed,{vm.Video.Id}.MOV");
+
+        if (File.Exists(processedPath))
+        {
+            bool playVideo = await (ConfirmRequested?.Invoke(
+                "Already Processed",
+                "This video has already been processed. Would you like to play it?",
+                "Play") ?? Task.FromResult(false));
+
+            if (playVideo)
+                NavigateToPlayerRequested?.Invoke(processedPath);
+
+            return;
+        }
         IsProcessing = true;
         Progress = 0;
 
