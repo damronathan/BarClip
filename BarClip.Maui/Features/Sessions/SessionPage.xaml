@@ -4,112 +4,111 @@
              x:Class="BarClip.Maui.SessionPage"
              Title="Session">
 
-
     <Grid>
 
-        <ScrollView>
-            <VerticalStackLayout Spacing="20" Padding="10">
+        <CollectionView ItemsSource="{Binding LiftVideos}"
+                        SelectionMode="None">
 
-                <VerticalStackLayout 
-                    Spacing="20"
-                    BindableLayout.ItemsSource="{Binding LiftVideos}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border Margin="5,5,5,0"
+                            Padding="10"
+                            StrokeShape="RoundRectangle 8"
+                            Stroke="White"
+                            BackgroundColor="Transparent">
 
-                    <BindableLayout.ItemTemplate>
-                        <DataTemplate>
-                            <Frame Margin="5"
-                                   Padding="10"
-                                   CornerRadius="8"
-                                   HasShadow="True"
-                                   BorderColor="White"
-                                   BackgroundColor="Transparent">
+                        <Grid ColumnDefinitions="400,*" RowDefinitions="Auto">
 
-                                <Grid ColumnDefinitions="400,*" RowDefinitions="Auto">
+                            <!-- Thumbnail -->
+                            <Image Grid.Column="0"
+                                   Source="{Binding ThumbnailPath}"
+                                   Aspect="AspectFit"
+                                   HeightRequest="400"
+                                   WidthRequest="400" />
 
-                                    <!-- Thumbnail -->
-                                    <Image Grid.Column="0"
-                                           Source="{Binding ThumbnailPath}"
-                                           Aspect="AspectFit"
-                                           HeightRequest="400"
-                                           WidthRequest="400" />
+                            <!-- Form -->
+                            <VerticalStackLayout Grid.Column="1"
+                                                 Spacing="10"
+                                                 Padding="10,0"
+                                                 VerticalOptions="Center">
 
-                                    <!-- Form -->
-                                    <VerticalStackLayout Grid.Column="1"
-                                                         Spacing="10"
-                                                         Padding="10,0"
-                                                         VerticalOptions="Center">
-                                   
-                                    </VerticalStackLayout>
-                                </Grid>
-                            </Frame>
-                        </DataTemplate>
-                    </BindableLayout.ItemTemplate>
+                            </VerticalStackLayout>
+
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+            <CollectionView.Footer>
+                <VerticalStackLayout Spacing="10" Padding="10,10,10,20">
+
+                    <Button Text="Process Session"
+                            Command="{Binding ProcessSessionCommand}"
+                            BackgroundColor="{DynamicResource Primary}"
+                            TextColor="White"
+                            FontAttributes="Bold"
+                            HeightRequest="55"
+                            CornerRadius="12"
+                            HorizontalOptions="Fill"/>
+
+                    <Button Text="Upload Session"
+                            Command="{Binding UploadSessionCommand}"
+                            BackgroundColor="{DynamicResource Primary}"
+                            TextColor="White"
+                            FontAttributes="Bold"
+                            HeightRequest="55"
+                            CornerRadius="12"
+                            HorizontalOptions="Fill"/>
+
+                    <Button Text="Delete Session"
+                            Command="{Binding DeleteSessionCommand}"
+                            BackgroundColor="{DynamicResource Primary}"
+                            TextColor="White"
+                            FontAttributes="Bold"
+                            HeightRequest="55"
+                            CornerRadius="12"
+                            HorizontalOptions="Fill"/>
+
                 </VerticalStackLayout>
+            </CollectionView.Footer>
 
-                <Button Text="Process Session"
-                        Command="{Binding ProcessSessionCommand}"
-                        BackgroundColor="{DynamicResource Primary}"
-                        TextColor="White"
-                        FontAttributes="Bold"
-                        HeightRequest="55"
-                        CornerRadius="12"
-                        HorizontalOptions="Fill"
-                        Margin="0,10,0,20"/>
-                <Button Text="Upload Session"
-                        Command="{Binding UploadSessionCommand}"
-                        BackgroundColor="{DynamicResource Primary}"
-                        TextColor="White"
-                        FontAttributes="Bold"
-                        HeightRequest="55"
-                        CornerRadius="12"
-                        HorizontalOptions="Fill"
-                        Margin="0,10,0,20"/>
-                <Button Text="Delete Session"
-                        Command="{Binding DeleteSessionCommand}"
-                        BackgroundColor="{DynamicResource Primary}"
-                        TextColor="White"
-                        FontAttributes="Bold"
-                        HeightRequest="55"
-                        CornerRadius="12"
-                        HorizontalOptions="Fill"
-                        Margin="0,10,0,20"/>
+        </CollectionView>
 
-
-            </VerticalStackLayout>
-        </ScrollView>
-
+        <!-- Processing Overlay -->
         <Grid BackgroundColor="Black" IsVisible="{Binding IsProcessing}">
-            <VerticalStackLayout VerticalOptions="Center" 
-                                 HorizontalOptions="Center" 
+            <VerticalStackLayout VerticalOptions="Center"
+                                 HorizontalOptions="Center"
                                  Spacing="20">
 
                 <skia:SKLottieView
-    Source="Bar-Clip-Lottie.json"
-    RepeatCount="-1"
-    WidthRequest="300"
-    HeightRequest="300"
-    HorizontalOptions="Center"
-    VerticalOptions="Center"/>
-                <Label
-    Text="{Binding StatusText}"
-    HorizontalOptions="Center"
-    TextColor="White"
-    FontAttributes="Bold"
-    FontSize="16"
-    Margin="0,0,0,60"/>
-                <ProgressBar
-    Progress="{Binding Progress}"
-    HeightRequest="20"
-    WidthRequest="250"
-    Margin="0,-80,0,0"/>
-                <Label
-    Text="{Binding Progress, StringFormat='{0:P0}'}"
-    HorizontalOptions="Center"
-    TextColor="White"
-    FontAttributes="Bold"
-    Margin="0,-10,0,0"/>
+                    Source="Bar-Clip-Lottie.json"
+                    RepeatCount="-1"
+                    WidthRequest="300"
+                    HeightRequest="300"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"/>
+
+                <Label Text="{Binding StatusText}"
+                       HorizontalOptions="Center"
+                       TextColor="White"
+                       FontAttributes="Bold"
+                       FontSize="16"
+                       Margin="0,0,0,60"/>
+
+                <ProgressBar Progress="{Binding Progress}"
+                             HeightRequest="20"
+                             WidthRequest="250"
+                             Margin="0,-80,0,0"/>
+
+                <Label Text="{Binding Progress, StringFormat='{0:P0}'}"
+                       HorizontalOptions="Center"
+                       TextColor="White"
+                       FontAttributes="Bold"
+                       Margin="0,-10,0,0"/>
 
             </VerticalStackLayout>
         </Grid>
 
     </Grid>
+
 </ContentPage>
