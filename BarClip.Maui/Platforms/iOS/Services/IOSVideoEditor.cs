@@ -2,6 +2,7 @@
 using BarClip.Core.Services;
 using BarClip.Maui.Platforms.iOS.Helpers;
 using BarClip.Models.Requests;
+using Foundation;
 using static BarClip.Core.Helpers.FileHelper;
 
 namespace BarClip.Maui.Platforms.iOS.Services;
@@ -62,6 +63,7 @@ public class IOSVideoEditor : IVideoEditor
             
 
             await AVFoundationHelper.TrimAsync(video, processedVideo, progress);
+
             return processedVideo;
 
         }
@@ -110,5 +112,9 @@ public class IOSVideoEditor : IVideoEditor
     public async Task CompressVideo(string inputPath, string outputPath, IProgress<double> progress = null)
     {
         await AVFoundationHelper.CompressVideoAsync(inputPath, outputPath, progress);
+    }
+    public async Task SaveVideo(string videoPath)
+    {
+        await AVFoundationHelper.SaveVideoToCameraRoll(NSUrl.FromFilename(videoPath));
     }
 }

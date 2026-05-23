@@ -33,6 +33,10 @@ public partial class SessionPage : ContentPage
         _viewModel.AlertRequested += (t, m, b) => DisplayAlert(t, m, b);
         _viewModel.ConfirmRequested += (t, m, b) => DisplayAlert(t, m, b, "Cancel");
         _viewModel.NavigateBackRequested += async () => await Shell.Current.GoToAsync("..");
+        _viewModel.NavigateToPlayerRequested += async (path) =>
+        {
+            await Shell.Current.GoToAsync($"VideoPlayerPage?VideoUrl={Uri.EscapeDataString(path)}");
+        };
     }
 
     protected override async void OnAppearing()

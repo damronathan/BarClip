@@ -37,6 +37,7 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
     public event Func<string, string, string, Task<bool>> ConfirmRequested;
     public event Func<string, string, string, Task> AlertRequested;
     public event Action NavigateBackRequested;
+    public event Action<string> NavigateToPlayerRequested;
 
     public SessionViewModel(
         IVideoService videoService,
@@ -112,7 +113,7 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
         try
         {
             await _liftService.UpdateLift(vm.Lift);
-            await Task.Run(() => _videoEditor.ProcessVideo(
+            var processedVideo = await Task.Run(() => _videoEditor.ProcessVideo(
                 _sessionFolderPaths,
                 new OriginalVideoRequest
                 {
@@ -125,6 +126,8 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
                 }, videoProgress));
 
             await (AlertRequested?.Invoke("Success", "Video processed!", "OK") ?? Task.CompletedTask);
+
+            NavigateToPlayerRequested?.Invoke(processedVideo.FilePath);
         }
         finally
         {
