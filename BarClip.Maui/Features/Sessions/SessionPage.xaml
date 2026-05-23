@@ -1,6 +1,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:skia="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="BarClip.Maui.SessionPage"
              Title="Session">
 
@@ -31,13 +32,24 @@
                                      VerticalOptions="Center">
 
                                 <Button Text="Trim"
-                            Command="{Binding ProcessCommand}"
-                            BackgroundColor="{DynamicResource Primary}"
-                            TextColor="White"
-                            FontAttributes="Bold"
-                            HeightRequest="30"
-                            CornerRadius="8"
-                            HorizontalOptions="Fill" />
+        IsVisible="{Binding IsProcessed, Converter={StaticResource InvertedBoolConverter}}"
+        Command="{Binding ProcessCommand}"
+        BackgroundColor="{DynamicResource Primary}"
+        TextColor="White"
+        FontAttributes="Bold"
+        HeightRequest="30"
+        CornerRadius="8"
+        HorizontalOptions="Fill" />
+
+                                <Button Text="Play"
+        IsVisible="{Binding IsProcessed}"
+        Command="{Binding ProcessCommand}"
+        BackgroundColor="{DynamicResource Primary}"
+        TextColor="White"
+        FontAttributes="Bold"
+        HeightRequest="30"
+        CornerRadius="8"
+        HorizontalOptions="Fill" />
 
                             </VerticalStackLayout>
 

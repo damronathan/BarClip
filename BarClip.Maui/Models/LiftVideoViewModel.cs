@@ -20,7 +20,15 @@ public partial class LiftVideoViewModel : ObservableObject
     public string VideoPath { get; set; }
     public string? CompressedPath { get; set; }
     public int? Order { get; set; }
-
+    public bool IsProcessed
+    {
+        get => Video.IsProcessed;
+        set
+        {
+            Video.IsProcessed = value;
+            OnPropertyChanged();
+        }
+    }
     [RelayCommand]
     private Task ProcessAsync() => _actions.ProcessLiftVideoAsync(this);
 }

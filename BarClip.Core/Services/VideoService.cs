@@ -19,6 +19,7 @@ public interface IVideoService
     Task Upload(UploadRequest request);
     Task<ICollection<Video>> GetAllVideos();
     Task UpsertVideos(IEnumerable<VideoResponse> videos);
+    Task UpdateOriginalVideo(OriginalVideo originalVideo);
 }
 
 public class VideoService : IVideoService
@@ -45,6 +46,10 @@ public class VideoService : IVideoService
         {
             await _storageService.UploadAsync(request);
         }
+    }
+    public async Task UpdateOriginalVideo(OriginalVideo originalVideo)
+    {
+        await _repo.UpdateOriginalVideoAsync(originalVideo);
     }
 
 

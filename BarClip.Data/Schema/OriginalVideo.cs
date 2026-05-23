@@ -14,8 +14,9 @@ public class OriginalVideo : BaseEntity
     public TimeSpan TrimStart { get; set; }
     public TimeSpan TrimFinish { get; set; }
     public List<ProcessedVideo>? ProcessedVideos { get; set; }
-    public Guid? CurrentProcessedVideoId { get; set; }
+    public Guid? CurrentProcessedVideoId { get; set; }  
     public DateTime? CreatedTime { get; set; }
+    public bool IsProcessed { get; set; } = false;
 
     public static void Configure(ModelBuilder modelBuilder)
     {

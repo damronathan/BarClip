@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BarClip.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class AddVideo : Migration
+    public partial class AddIsProcessed : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -73,6 +73,7 @@ namespace BarClip.Data.Migrations
                     TrimFinish = table.Column<TimeSpan>(type: "TEXT", nullable: false),
                     CurrentProcessedVideoId = table.Column<Guid>(type: "TEXT", nullable: true),
                     CreatedTime = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    IsProcessed = table.Column<bool>(type: "INTEGER", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>

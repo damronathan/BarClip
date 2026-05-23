@@ -74,6 +74,9 @@ namespace BarClip.Data.Migrations
                     b.Property<Guid?>("CurrentProcessedVideoId")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsProcessed")
+                        .HasColumnType("INTEGER");
+
                     b.Property<Guid>("SessionId")
                         .HasColumnType("TEXT");
 

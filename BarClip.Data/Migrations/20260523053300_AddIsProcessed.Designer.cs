@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BarClip.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260515054140_AddVideo")]
-    partial class AddVideo
+    [Migration("20260523053300_AddIsProcessed")]
+    partial class AddIsProcessed
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -76,6 +76,9 @@ namespace BarClip.Data.Migrations
 
                     b.Property<Guid?>("CurrentProcessedVideoId")
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsProcessed")
+                        .HasColumnType("INTEGER");
 
                     b.Property<Guid>("SessionId")
                         .HasColumnType("TEXT");

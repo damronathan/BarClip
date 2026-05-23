@@ -102,24 +102,43 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
 
     public async Task ProcessLiftVideoAsync(LiftVideoViewModel vm)
     {
-        var processedPath = Path.Combine(_sessionFolderPaths.Processed, $"{LiftVideos.IndexOf(vm) + 1}_Trimmed,{vm.Video.Id}.MOV");
+        var index = LiftVideos.IndexOf(vm) + 1;
+
+        var processedPath = Path.Combine(_sessionFolderPaths.Processed, $"{index}_Trimmed,{vm.Video.Id}.MOV");
+
+
 
         if (File.Exists(processedPath))
         {
-            bool playVideo = await (ConfirmRequested?.Invoke(
-                "Already Processed",
-                "This video has already been processed. Would you like to play it?",
-                "Play") ?? Task.FromResult(false));
+            if (!vm.Video.IsProcessed)
+            {
+                vm.Video.IsProcessed = true;
+                await _videoService.UpdateOriginalVideo(vm.Video);
 
-            if (playVideo)
-                NavigateToPlayerRequested?.Invoke(processedPath);
+                bool playVideo = await (ConfirmRequested?.Invoke(
+                    "Already Processed",
+                    "This video has already been processed. Would you like to play it?",
+                    "Play") ?? Task.FromResult(false));
 
+                if (playVideo)
+                    NavigateToPlayerRequested?.Invoke(processedPath);
+
+                return;
+            }
+
+            NavigateToPlayerRequested?.Invoke(processedPath);
             return;
         }
+
+        if (vm.Video.IsProcessed && !File.Exists(processedPath))
+        {
+            vm.IsProcessed = false;
+            await _videoService.UpdateOriginalVideo(vm.Video);
+        }
+
         IsProcessing = true;
         Progress = 0;
 
-        var index = LiftVideos.IndexOf(vm) + 1;
         StatusText = $"Processing video {index}...";
 
         var videoProgress = new Progress<double>(value => Progress = value);
@@ -138,6 +157,9 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
                     WeightKg = vm.Lift.WeightKg,
                     LiftNumber = index
                 }, videoProgress));
+
+            vm.IsProcessed = true;
+            await _videoService.UpdateOriginalVideo(vm.Video);
 
             await (AlertRequested?.Invoke("Success", "Video processed!", "OK") ?? Task.CompletedTask);
 
