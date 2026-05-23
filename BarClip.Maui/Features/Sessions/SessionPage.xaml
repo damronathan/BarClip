@@ -17,25 +17,25 @@
                 Stroke="White"
                 BackgroundColor="Transparent">
 
-                        <Grid ColumnDefinitions="120,*" RowDefinitions="Auto">
+                        <Grid ColumnDefinitions="200,*" RowDefinitions="Auto">
 
                             <Image Grid.Column="0"
                        Source="{Binding ThumbnailPath}"
                        Aspect="AspectFit"
-                       HeightRequest="120"
-                       WidthRequest="120" />
+                       HeightRequest="200"
+                       WidthRequest="200" />
 
                             <VerticalStackLayout Grid.Column="1"
                                      Spacing="10"
                                      Padding="10,0"
                                      VerticalOptions="Center">
 
-                                <Button Text="Process"
+                                <Button Text="Trim"
                             Command="{Binding ProcessCommand}"
                             BackgroundColor="{DynamicResource Primary}"
                             TextColor="White"
                             FontAttributes="Bold"
-                            HeightRequest="40"
+                            HeightRequest="30"
                             CornerRadius="8"
                             HorizontalOptions="Fill" />
 
