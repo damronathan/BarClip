@@ -112,9 +112,9 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
 
         if (File.Exists(processedPath))
         {
-            if (!vm.Video.IsProcessed)
+            if (!vm.IsProcessed)
             {
-                vm.Video.IsProcessed = true;
+                vm.IsProcessed = true;
                 await _videoService.UpdateOriginalVideo(vm.Video);
 
                 bool playVideo = await (ConfirmRequested?.Invoke(
@@ -249,6 +249,8 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
                         WeightKg = liftVideo.Lift.WeightKg,
                         LiftNumber = liftNumber
                     }, videoProgress));
+                liftVideo.IsProcessed = true;
+                await _videoService.UpdateOriginalVideo(liftVideo.Video);
 
             }
             StatusText = "Creating Final Video...";
