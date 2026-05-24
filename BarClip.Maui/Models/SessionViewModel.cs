@@ -90,19 +90,16 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
             var lift = await _liftService.GetLiftByOriginalVideoId(video.Id, _sessionId);
             lift.SessionId = _sessionId;
 
-            var vm = new LiftVideoViewModel(this)
+            LiftVideos.Add(new LiftVideoViewModel(this)
             {
                 Video = video,
                 Lift = lift,
                 ThumbnailPath = Path.Combine(_sessionFolderPaths.Thumbnails, $"{video.Id}.png"),
                 VideoPath = Path.Combine(_sessionFolderPaths.Original, $"{video.Id}.MOV"),
                 CompressedPath = Path.Combine(_sessionFolderPaths.Compressed, $"compressed_{video.Id}.MOV"),
-                Order = currentVideo
-            };
-
-            var processedPath = Path.Combine(_sessionFolderPaths.Processed, $"{currentVideo}_Trimmed,{video.Id}.MOV");
-            vm.IsProcessed = video.IsProcessed || File.Exists(processedPath);
-            LiftVideos.Add(vm);
+                Order = currentVideo,
+                IsProcessed = video.IsProcessed
+            });
         }
     }
 
@@ -235,7 +232,7 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
             foreach (var (liftVideo, liftNumber) in pendingVideos)
             {
                 currentPending++;
-
+               
                 StatusText = $"Processing video {currentPending}/{totalVideos}...";
                 double rangeStart = (double)(currentPending - 1) / totalVideos * 0.9;
                 double rangeEnd = (double)currentPending / totalVideos * 0.9;
