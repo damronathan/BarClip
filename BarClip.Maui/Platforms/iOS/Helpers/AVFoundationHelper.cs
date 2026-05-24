@@ -279,7 +279,6 @@ public class AVFoundationHelper
             throw new Exception($"Merge failed — {details}");
         }
 
-        await SaveVideoToCameraRoll(NSUrl.FromFilename(finalOutputPath));
         return finalOutputPath;
     }
     public static async Task TrimAsync(OriginalVideoRequest originalVideo, ProcessedVideoRequest processedVideo, IProgress<double> progress = null)
@@ -320,7 +319,6 @@ public class AVFoundationHelper
             await exportTask;
             progress?.Report(1.0);
 
-            await SaveVideoToCameraRoll(NSUrl.FromFilename(processedVideo.FilePath));
 
             if (exportSession.Status != AVAssetExportSessionStatus.Completed)
             {

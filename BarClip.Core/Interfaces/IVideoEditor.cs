@@ -12,4 +12,5 @@ public interface IVideoEditor
     Task<ProcessedVideoRequest> ProcessVideo(SessionFolderPaths sessionFolderPaths, OriginalVideoRequest video, IProgress<double> progress = null);
     Task CompressVideo(string inputPath, string outputPath, IProgress<double> progress = null);
     Task<string> ExtractThumbnail(string folderPath, string thumbnailFolderPath);
+    Task SaveVideo(string videoPath);
 }

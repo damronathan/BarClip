@@ -5,4 +5,5 @@ namespace BarClip.Maui.Interfaces;
 public interface IVideoLiftActions
 {
     Task ProcessLiftVideoAsync(LiftVideoViewModel vm);
+    Task SaveLiftVideoAsync(LiftVideoViewModel vm);
 }

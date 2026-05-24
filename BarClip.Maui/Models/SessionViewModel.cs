@@ -179,6 +179,13 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
         }
     }
 
+    public async Task SaveLiftVideoAsync(LiftVideoViewModel vm)
+    {
+        var index = LiftVideos.IndexOf(vm) + 1;
+        var processedPath = Path.Combine(_sessionFolderPaths.Processed, $"{index}_Trimmed,{vm.Video.Id}.MOV");
+        await _videoEditor.SaveVideo(processedPath);
+    }
+
     [RelayCommand]
     private async Task SubmitSessionAsync()
     {
@@ -297,5 +304,11 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
         Directory.Delete(_sessionFolderPaths.Session, recursive: true);
         await _sessionService.DeleteSession(_sessionId);
         NavigateBackRequested?.Invoke();
+    }
+    [RelayCommand]
+    private async Task SaveVideoAsync()
+    {
+        var fullVideoPath = Path.Combine(_sessionFolderPaths.Session, $"{_sessionId}.MOV");
+        await _videoEditor.SaveVideo(fullVideoPath);
     }
 }
