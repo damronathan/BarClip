@@ -45,6 +45,7 @@ public class VideoRepository
         existing.TrimStart = original.TrimStart;
         existing.TrimFinish = original.TrimFinish;
         existing.CurrentProcessedVideoId = original.CurrentProcessedVideoId;
+        existing.IsProcessed = original.IsProcessed;
 
         await _context.SaveChangesAsync();
     }
