@@ -79,31 +79,32 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
         }
     }
 
-        private async Task CreateLiftVideoViewModelsAsync()
+    private async Task CreateLiftVideoViewModelsAsync()
+    {
+        LiftVideos.Clear();
+        int currentVideo = 0;
+
+        foreach (var video in OriginalVideos)
         {
-            LiftVideos.Clear();
-            int currentVideo = 0;
+            currentVideo++;
+            var lift = await _liftService.GetLiftByOriginalVideoId(video.Id, _sessionId);
+            lift.SessionId = _sessionId;
 
-            foreach (var video in OriginalVideos)
+            var vm = new LiftVideoViewModel(this)
             {
-                currentVideo++;
-                var lift = await _liftService.GetLiftByOriginalVideoId(video.Id, _sessionId);
-                lift.SessionId = _sessionId;
+                Video = video,
+                Lift = lift,
+                ThumbnailPath = Path.Combine(_sessionFolderPaths.Thumbnails, $"{video.Id}.png"),
+                VideoPath = Path.Combine(_sessionFolderPaths.Original, $"{video.Id}.MOV"),
+                CompressedPath = Path.Combine(_sessionFolderPaths.Compressed, $"compressed_{video.Id}.MOV"),
+                Order = currentVideo
+            };
 
-                var vm = new LiftVideoViewModel(this)
-                {
-                    Video = video,
-                    Lift = lift,
-                    ThumbnailPath = Path.Combine(_sessionFolderPaths.Thumbnails, $"{video.Id}.png"),
-                    VideoPath = Path.Combine(_sessionFolderPaths.Original, $"{video.Id}.MOV"),
-                    CompressedPath = Path.Combine(_sessionFolderPaths.Compressed, $"compressed_{video.Id}.MOV"),
-                    Order = currentVideo
-                };
-
-                vm.IsProcessed = video.IsProcessed;
-                LiftVideos.Add(vm);
-            }
+            var processedPath = Path.Combine(_sessionFolderPaths.Processed, $"{currentVideo}_Trimmed,{video.Id}.MOV");
+            vm.IsProcessed = video.IsProcessed || File.Exists(processedPath);
+            LiftVideos.Add(vm);
         }
+    }
 
     public async Task ProcessLiftVideoAsync(LiftVideoViewModel vm)
     {
@@ -234,7 +235,7 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
             foreach (var (liftVideo, liftNumber) in pendingVideos)
             {
                 currentPending++;
-               
+
                 StatusText = $"Processing video {currentPending}/{totalVideos}...";
                 double rangeStart = (double)(currentPending - 1) / totalVideos * 0.9;
                 double rangeEnd = (double)currentPending / totalVideos * 0.9;
