@@ -8,6 +8,7 @@ using BarClip.Models.Requests;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using static BarClip.Core.Helpers.FileHelper;
 
 namespace BarClip.Maui.Models;
 
@@ -212,17 +213,28 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
         {
             await SubmitSessionAsync();
 
-            int totalVideos = LiftVideos.Count;
-            int completed = 0;
-            int currentVideo = 0;
+            var pendingVideos = new List<(LiftVideoViewModel vm, int index)>();
+            var currentVideo = 0;
 
             foreach (var liftVideo in LiftVideos)
             {
                 currentVideo++;
-                StatusText = $"Processing video {currentVideo}/{totalVideos}...";
-                double rangeStart = (double)(currentVideo - 1) / totalVideos * 0.9;
-                double rangeEnd = (double)currentVideo / totalVideos * 0.9;
+                var processedPath = Path.Combine(_sessionFolderPaths.Processed, $"{currentVideo}_Trimmed,{liftVideo.Video.Id}.MOV");
+                if (!File.Exists(processedPath))
+                    pendingVideos.Add((liftVideo, currentVideo));
+            }
 
+
+            int totalVideos = pendingVideos.Count;
+            int currentPending = 0;
+
+            foreach (var (liftVideo, liftNumber) in pendingVideos)
+            {
+                currentPending++;
+               
+                StatusText = $"Processing video {currentPending}/{totalVideos}...";
+                double rangeStart = (double)(currentPending - 1) / totalVideos * 0.9;
+                double rangeEnd = (double)currentPending / totalVideos * 0.9;
                 var videoProgress = new Progress<double>(value =>
                     Progress = rangeStart + value * (rangeEnd - rangeStart));
 
@@ -235,14 +247,17 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
                         CompressedPath = liftVideo.CompressedPath,
                         LifterFilter = liftVideo.Lift.LifterFilter,
                         WeightKg = liftVideo.Lift.WeightKg,
-                        LiftNumber = currentVideo
+                        LiftNumber = liftNumber
                     }, videoProgress));
 
-                completed++;
             }
             StatusText = "Creating Final Video...";
-            await Task.Run(() => _videoEditor.MergeVideos(_sessionFolderPaths, _sessionId, progress));
+            var fullVideoPath = await Task.Run(() => _videoEditor.MergeVideos(_sessionFolderPaths, _sessionId, progress));
+
             await (AlertRequested?.Invoke("Success", "Video processed successfully!", "OK") ?? Task.CompletedTask);
+
+            NavigateToPlayerRequested?.Invoke(fullVideoPath);
+
         }
         finally
         {
