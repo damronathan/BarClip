@@ -124,8 +124,8 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
                 await _videoService.UpdateOriginalVideo(vm.Video);
 
                 bool playVideo = await (ConfirmRequested?.Invoke(
-                    "Already Processed",
-                    "This video has already been processed. Would you like to play it?",
+                    "Already Trimmed",
+                    "This video has already been trimmed. Would you like to play it?",
                     "Play") ?? Task.FromResult(false));
 
                 if (playVideo)
@@ -147,7 +147,7 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
         IsProcessing = true;
         Progress = 0;
 
-        StatusText = $"Processing video {index}...";
+        StatusText = "Trimming video...";
 
         var videoProgress = new Progress<double>(value => Progress = value);
 
@@ -169,7 +169,7 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
             vm.IsProcessed = true;
             await _videoService.UpdateOriginalVideo(vm.Video);
 
-            await (AlertRequested?.Invoke("Success", "Video processed!", "OK") ?? Task.CompletedTask);
+            await (AlertRequested?.Invoke("Success", "Video trimmed!", "OK") ?? Task.CompletedTask);
 
             NavigateToPlayerRequested?.Invoke(processedVideo.FilePath);
         }
@@ -184,6 +184,7 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
         var index = LiftVideos.IndexOf(vm) + 1;
         var processedPath = Path.Combine(_sessionFolderPaths.Processed, $"{index}_Trimmed,{vm.Video.Id}.MOV");
         await _videoEditor.SaveVideo(processedPath);
+        await (AlertRequested?.Invoke("Success", "Video saved successfully!", "OK") ?? Task.CompletedTask);
     }
 
     [RelayCommand]
@@ -254,7 +255,7 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
             {
                 currentPending++;
 
-                StatusText = $"Processing video {currentPending}/{totalVideos}...";
+                StatusText = $"Trimming video {currentPending}/{totalVideos}...";
                 double rangeStart = (double)(currentPending - 1) / totalVideos * 0.9;
                 double rangeEnd = (double)currentPending / totalVideos * 0.9;
                 var videoProgress = new Progress<double>(value =>
@@ -280,7 +281,7 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
             IsSessionProcessed = true;
 
 
-            await (AlertRequested?.Invoke("Success", "Video processed successfully!", "OK") ?? Task.CompletedTask);
+            await (AlertRequested?.Invoke("Success", "Full video created successfully!", "OK") ?? Task.CompletedTask);
 
             NavigateToPlayerRequested?.Invoke(fullVideoPath);
 
@@ -310,5 +311,7 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
     {
         var fullVideoPath = Path.Combine(_sessionFolderPaths.Session, $"{_sessionId}.MOV");
         await _videoEditor.SaveVideo(fullVideoPath);
+        await (AlertRequested?.Invoke("Success", "Video saved successfully!", "OK") ?? Task.CompletedTask);
+
     }
 }
