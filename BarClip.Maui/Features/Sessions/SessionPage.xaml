@@ -61,14 +61,25 @@
             <CollectionView.Footer>
                 <VerticalStackLayout Spacing="10" Padding="10,10,10,20">
 
-                    <Button Text="Process Session"
-                            Command="{Binding ProcessSessionCommand}"
-                            BackgroundColor="{DynamicResource Primary}"
-                            TextColor="White"
-                            FontAttributes="Bold"
-                            HeightRequest="55"
-                            CornerRadius="12"
-                            HorizontalOptions="Fill"/>
+                    <Button Text="Create Full Video"
+        IsVisible="{Binding IsSessionProcessed, Converter={StaticResource InvertedBoolConverter}}"
+        Command="{Binding ProcessSessionCommand}"
+        BackgroundColor="{DynamicResource Primary}"
+        TextColor="White"
+        FontAttributes="Bold"
+        HeightRequest="55"
+        CornerRadius="12"
+        HorizontalOptions="Fill"/>
+
+                    <Button Text="Play Full Video"
+        IsVisible="{Binding IsSessionProcessed}"
+        Command="{Binding ProcessSessionCommand}"
+        BackgroundColor="{DynamicResource Primary}"
+        TextColor="White"
+        FontAttributes="Bold"
+        HeightRequest="55"
+        CornerRadius="12"
+        HorizontalOptions="Fill"/>
 
                     <Button Text="Upload Session"
                             Command="{Binding UploadSessionCommand}"

@@ -33,6 +33,9 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
     [ObservableProperty]
     private string _statusText;
 
+    [ObservableProperty]
+    private bool _isSessionProcessed;
+
     public ObservableCollection<LiftVideoViewModel> LiftVideos { get; } = new();
     public ObservableCollection<OriginalVideo> OriginalVideos { get; } = new();
 
@@ -60,6 +63,8 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
         _sessionId = sessionId;
         await LoadVideosAsync();
         await CreateLiftVideoViewModelsAsync();
+        IsSessionProcessed = File.Exists(Path.Combine(_sessionFolderPaths.Session, $"{_sessionId}.MOV"));
+
     }
 
     private async Task LoadVideosAsync()
@@ -212,6 +217,15 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
 
         try
         {
+            var fullVideoPath = Path.Combine(_sessionFolderPaths.Session, $"{_sessionId}.MOV");
+
+            if (File.Exists(fullVideoPath))
+            {
+                NavigateToPlayerRequested?.Invoke(fullVideoPath);
+
+                return;
+            }
+
             await SubmitSessionAsync();
 
             var pendingVideos = new List<(LiftVideoViewModel vm, int index)>();
@@ -232,7 +246,7 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
             foreach (var (liftVideo, liftNumber) in pendingVideos)
             {
                 currentPending++;
-               
+
                 StatusText = $"Processing video {currentPending}/{totalVideos}...";
                 double rangeStart = (double)(currentPending - 1) / totalVideos * 0.9;
                 double rangeEnd = (double)currentPending / totalVideos * 0.9;
@@ -255,7 +269,9 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
 
             }
             StatusText = "Creating Final Video...";
-            var fullVideoPath = await Task.Run(() => _videoEditor.MergeVideos(_sessionFolderPaths, _sessionId, progress));
+            await Task.Run(() => _videoEditor.MergeVideos(_sessionFolderPaths, _sessionId, progress));
+            IsSessionProcessed = true;
+
 
             await (AlertRequested?.Invoke("Success", "Video processed successfully!", "OK") ?? Task.CompletedTask);
 
