@@ -95,7 +95,8 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
                 ThumbnailPath = Path.Combine(_sessionFolderPaths.Thumbnails, $"{video.Id}.png"),
                 VideoPath = Path.Combine(_sessionFolderPaths.Original, $"{video.Id}.MOV"),
                 CompressedPath = Path.Combine(_sessionFolderPaths.Compressed, $"compressed_{video.Id}.MOV"),
-                Order = currentVideo
+                Order = currentVideo,
+                IsProcessed = video.IsProcessed
             });
         }
     }
