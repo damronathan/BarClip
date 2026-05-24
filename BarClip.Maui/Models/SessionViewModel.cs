@@ -29,6 +29,7 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
     [ObservableProperty]
     private bool _isProcessing;
 
+
     [ObservableProperty]
     private string _statusText;
 
@@ -78,29 +79,31 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
         }
     }
 
-    private async Task CreateLiftVideoViewModelsAsync()
-    {
-        LiftVideos.Clear();
-        int currentVideo = 0;
-
-        foreach (var video in OriginalVideos)
+        private async Task CreateLiftVideoViewModelsAsync()
         {
-            currentVideo++;
-            var lift = await _liftService.GetLiftByOriginalVideoId(video.Id, _sessionId);
-            lift.SessionId = _sessionId;
+            LiftVideos.Clear();
+            int currentVideo = 0;
 
-            LiftVideos.Add(new LiftVideoViewModel(this)
+            foreach (var video in OriginalVideos)
             {
-                Video = video,
-                Lift = lift,
-                ThumbnailPath = Path.Combine(_sessionFolderPaths.Thumbnails, $"{video.Id}.png"),
-                VideoPath = Path.Combine(_sessionFolderPaths.Original, $"{video.Id}.MOV"),
-                CompressedPath = Path.Combine(_sessionFolderPaths.Compressed, $"compressed_{video.Id}.MOV"),
-                Order = currentVideo,
-                IsProcessed = video.IsProcessed
-            });
+                currentVideo++;
+                var lift = await _liftService.GetLiftByOriginalVideoId(video.Id, _sessionId);
+                lift.SessionId = _sessionId;
+
+                var vm = new LiftVideoViewModel(this)
+                {
+                    Video = video,
+                    Lift = lift,
+                    ThumbnailPath = Path.Combine(_sessionFolderPaths.Thumbnails, $"{video.Id}.png"),
+                    VideoPath = Path.Combine(_sessionFolderPaths.Original, $"{video.Id}.MOV"),
+                    CompressedPath = Path.Combine(_sessionFolderPaths.Compressed, $"compressed_{video.Id}.MOV"),
+                    Order = currentVideo
+                };
+
+                vm.IsProcessed = video.IsProcessed;
+                LiftVideos.Add(vm);
+            }
         }
-    }
 
     public async Task ProcessLiftVideoAsync(LiftVideoViewModel vm)
     {
