@@ -333,7 +333,7 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
     [RelayCommand]
     private async Task CaptureVideoForSessionAsync()
     {
-        var video = await MediaPicker.CaptureVideoAsync();
+        var video = await _picker.CaptureVideoAsync();
         if (video != null)
         {
             await AddVideosToSessionAsync(new List<FileResult> { video });

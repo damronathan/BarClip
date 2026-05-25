@@ -1,6 +1,7 @@
 ﻿using Foundation;
 using Photos;
 using PhotosUI;
+using UIKit;
 
 public class VideoPickerService
 {
@@ -21,6 +22,64 @@ public class VideoPickerService
         vc?.PresentViewController(picker, true, null);
 
         return await tcs.Task;
+    }
+
+    public async Task<FileResult?> CaptureVideoAsync()
+    {
+        var tcs = new TaskCompletionSource<FileResult?>();
+
+        var picker = new UIImagePickerController
+        {
+            SourceType = UIImagePickerControllerSourceType.Camera,
+            MediaTypes = new string[] { "public.movie" },
+            VideoQuality = UIImagePickerControllerQualityType.High,
+            VideoMaximumDuration = 90
+        };
+
+        picker.Delegate = new CameraDelegate(tcs);
+
+        var vc = Platform.GetCurrentUIViewController();
+        vc?.PresentViewController(picker, true, null);
+
+        return await tcs.Task;
+    }
+
+    private class CameraDelegate : UIImagePickerControllerDelegate
+    {
+        private readonly TaskCompletionSource<FileResult?> _tcs;
+
+        public CameraDelegate(TaskCompletionSource<FileResult?> tcs) => _tcs = tcs;
+
+        public override async void FinishedPickingMedia(UIImagePickerController picker, NSDictionary info)
+        {
+            picker.DismissViewController(true, null);
+
+            var mediaUrl = info[UIImagePickerController.MediaURL] as NSUrl;
+            if (mediaUrl == null)
+            {
+                _tcs.SetResult(null);
+                return;
+            }
+
+            var tempPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".MOV");
+
+            try
+            {
+                File.Copy(mediaUrl.Path!, tempPath);
+                _tcs.SetResult(new FileResult(tempPath));
+            }
+            catch (Exception ex)
+            {
+                SentrySdk.CaptureException(ex);
+                _tcs.SetResult(null);
+            }
+        }
+
+        public override void Canceled(UIImagePickerController picker)
+        {
+            picker.DismissViewController(true, null);
+            _tcs.SetResult(null);
+        }
     }
 
     private class PickerDelegate : PHPickerViewControllerDelegate
