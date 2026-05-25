@@ -64,19 +64,8 @@ public partial class MainViewModel : ObservableObject
         var session = new Session();
         try
         {
-            string title = await (PromptRequested?.Invoke(
-                "New Session",
-                "Enter a title for this session:",
-                "OK",
-                "session title") ?? Task.FromResult<string>(null));
-
-            if (string.IsNullOrWhiteSpace(title))
-            {
-                await (AlertRequested?.Invoke("Cancelled", "Session creation cancelled.", "OK") ?? Task.CompletedTask);
-                return;
-            }
-
-
+            string dateTimeString = DateTime.Now.ToString("dd/MM/yy hh:mmtt").ToLower();
+                        
             var user = await _userRepository.GetByNameIdentifierAsync("test-user-123");
             if (user == null)
             {
@@ -85,93 +74,10 @@ public partial class MainViewModel : ObservableObject
             }
 
             var basePath = FileSystem.AppDataDirectory;
-            session = await _sessionService.CreateSessionWithFolders(user, basePath, title);
-            var sessionFolderPaths = FileHelper.CreateSessionFolders(basePath, session.Id);
-
-            var videos = await _picker.PickVideosAsync();
-
-            if (videos == null || !videos.Any())
-            {
-                return;
-            }
-
-            IsProcessing = true;
-            Progress = 0;
-            StatusText = "Initializing...";
-
-            var videoList = videos
-                .OrderBy(v => new FileInfo(v.FullPath).CreationTime)
-                .ToList();
-
-            int totalVideos = videoList.Count;
-            int currentVideo = 0;
-
-            var stablePaths = new List<(string stablePath, DateTime createdTime)>();
-
-            foreach (var result in videoList)
-            {
-                currentVideo++;
-                SentrySdk.AddBreadcrumb($"Copying video {currentVideo}: {result.FileName}");
-
-                var stablePath = Path.Combine(FileSystem.CacheDirectory, Guid.NewGuid() + ".MOV");
-                var createdTime = new FileInfo(result.FullPath).CreationTime;
-
-                using (var sourceStream = File.OpenRead(result.FullPath))
-                using (var destStream = File.Create(stablePath))
-                    await sourceStream.CopyToAsync(destStream);
-
-                stablePaths.Add((stablePath, createdTime));
-                SentrySdk.AddBreadcrumb($"Secured video {currentVideo} to: {stablePath}");
-            }
-
-            currentVideo = 0;
-
-            foreach (var (stablePath, createdTime) in stablePaths)
-            {
-                currentVideo++;
-                StatusText = "Compressing Videos...";
-                double rangeStart = (double)(currentVideo - 1) / totalVideos;
-                double rangeEnd = (double)currentVideo / totalVideos;
-
-                var videoProgress = new Progress<double>(value =>
-                    Progress = rangeStart + value * (rangeEnd - rangeStart));
-                SentrySdk.AddBreadcrumb($"Processing video {currentVideo}");
-
-                var video = await _videoService.CreateOriginalVideo(user, session, createdTime);
-                SentrySdk.AddBreadcrumb($"Video record created: {video.Id}");
-
-                var originalVideoPath = Path.Combine(sessionFolderPaths.Original, $"{video.Id}.MOV");
-
-                using (var sourceStream = File.OpenRead(stablePath))
-                using (var destStream = File.Create(originalVideoPath))
-                    await sourceStream.CopyToAsync(destStream);
-
-                SentrySdk.AddBreadcrumb($"Copy complete for video {currentVideo}");
-
-                var compressedVideoPath = Path.Combine(sessionFolderPaths.Compressed, $"compressed_{video.Id}.MOV");
-                await _videoEditor.CompressVideo(originalVideoPath, compressedVideoPath, videoProgress);
-                SentrySdk.AddBreadcrumb($"Compression complete for video {currentVideo}");
-
-            }
-
-            foreach (var (stablePath, _) in stablePaths)
-            {
-                try
-                {
-                    if (File.Exists(stablePath))
-                        File.Delete(stablePath);
-                }
-                catch (Exception ex)
-                {
-                    SentrySdk.AddBreadcrumb($"Failed to delete cache file {stablePath}: {ex.Message}");
-                }
-            }
-
-            await _videoEditor.ExtractThumbnails(sessionFolderPaths.Original, sessionFolderPaths.Thumbnails);
-
-            await (AlertRequested?.Invoke("Success", "Session created!", "OK") ?? Task.CompletedTask);
+            session = await _sessionService.CreateSessionWithFolders(user, basePath, dateTimeString);
 
             NavigateToSessionRequested?.Invoke(session.Id);
+            
         }
         catch (Exception ex)
         {

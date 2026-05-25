@@ -18,7 +18,8 @@
                             Stroke="White"
                             BackgroundColor="Transparent">
 
-                        <Grid ColumnDefinitions="200,*" RowDefinitions="Auto">
+                        <Grid ColumnDefinitions="200,*"
+                              RowDefinitions="Auto">
 
                             <Image Grid.Column="0"
                                    Source="{Binding ThumbnailPath}"
@@ -64,12 +65,14 @@
                             </VerticalStackLayout>
 
                         </Grid>
+
                     </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
 
             <CollectionView.Footer>
-                <VerticalStackLayout Spacing="10" Padding="10,10,10,20">
+                <VerticalStackLayout Spacing="10"
+                                     Padding="10,10,10,20">
 
                     <Button Text="Create Full Video"
                             IsVisible="{Binding IsSessionProcessed, Converter={StaticResource InvertedBoolConverter}}"
@@ -110,6 +113,24 @@
                             CornerRadius="12"
                             HorizontalOptions="Fill" />
 
+                    <Button Text="Add Videos"
+                            Command="{Binding PickVideosForSessionCommand}"
+                            BackgroundColor="{DynamicResource Primary}"
+                            TextColor="White"
+                            FontAttributes="Bold"
+                            HeightRequest="55"
+                            CornerRadius="12"
+                            HorizontalOptions="Fill" />
+
+                    <Button Text="Record Video"
+                            Command="{Binding CaptureVideoForSessionCommand}"
+                            BackgroundColor="{DynamicResource Primary}"
+                            TextColor="White"
+                            FontAttributes="Bold"
+                            HeightRequest="55"
+                            CornerRadius="12"
+                            HorizontalOptions="Fill" />
+
                     <Button Text="Delete Session"
                             Command="{Binding DeleteSessionCommand}"
                             BackgroundColor="{DynamicResource Primary}"
@@ -125,18 +146,19 @@
         </CollectionView>
 
         <!-- Processing Overlay -->
-        <Grid BackgroundColor="Black" IsVisible="{Binding IsProcessing}">
+        <Grid BackgroundColor="Black"
+              IsVisible="{Binding IsProcessing}">
+
             <VerticalStackLayout VerticalOptions="Center"
                                  HorizontalOptions="Center"
                                  Spacing="20">
 
-                <skia:SKLottieView
-                        Source="Bar-Clip-Lottie.json"
-                        RepeatCount="-1"
-                        WidthRequest="300"
-                        HeightRequest="300"
-                        HorizontalOptions="Center"
-                        VerticalOptions="Center" />
+                <skia:SKLottieView Source="Bar-Clip-Lottie.json"
+                                   RepeatCount="-1"
+                                   WidthRequest="300"
+                                   HeightRequest="300"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
 
                 <Label Text="{Binding StatusText}"
                        HorizontalOptions="Center"
@@ -157,6 +179,7 @@
                        Margin="0,-10,0,0" />
 
             </VerticalStackLayout>
+
         </Grid>
 
     </Grid>

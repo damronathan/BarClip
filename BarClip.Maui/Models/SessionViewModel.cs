@@ -1,5 +1,6 @@
 ﻿using BarClip.Core.Helpers;
 using BarClip.Core.Interfaces;
+using BarClip.Core.Repositories;
 using BarClip.Core.Services;
 using BarClip.Data.Schema;
 using BarClip.Maui.Interfaces;
@@ -19,6 +20,7 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
     private readonly LiftService _liftService;
     private readonly SessionService _sessionService;
     private readonly UploadService _uploadService;
+    private readonly VideoPickerService _picker;
 
     private Guid _sessionId;
     private FileHelper.SessionFolderPaths _sessionFolderPaths;
@@ -49,13 +51,15 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
         IVideoEditor videoEditor,
         LiftService liftService,
         SessionService sessionService,
-        UploadService uploadService)
+        UploadService uploadService,
+        VideoPickerService picker)
     {
         _videoService = videoService;
         _videoEditor = videoEditor;
         _liftService = liftService;
         _sessionService = sessionService;
         _uploadService = uploadService;
+        _picker = picker;
     }
 
     public async Task InitializeAsync(Guid sessionId)
@@ -292,6 +296,7 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
         }
     }
 
+    
     [RelayCommand]
     private async Task DeleteSessionAsync()
     {
@@ -314,4 +319,127 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
         await (AlertRequested?.Invoke("Success", "Video saved successfully!", "OK") ?? Task.CompletedTask);
 
     }
+
+    [RelayCommand]
+
+    private async Task PickVideosForSessionAsync()
+    {
+        var videos = await _picker.PickVideosAsync();
+        if (videos != null && videos.Any())
+        {
+            await AddVideosToSessionAsync(videos);
+        }
+    }
+    [RelayCommand]
+    private async Task CaptureVideoForSessionAsync()
+    {
+        var video = await MediaPicker.CaptureVideoAsync();
+        if (video != null)
+        {
+            await AddVideosToSessionAsync(new List<FileResult> { video });
+        }
+    }
+
+
+    private async Task AddVideosToSessionAsync(List<FileResult> videos)
+    {
+        try
+        {
+            if (videos == null || !videos.Any())
+            {
+                return;
+            }
+
+            IsProcessing = true;
+            Progress = 0;
+            StatusText = "Adding Videos...";
+
+            var videoList = videos
+                .OrderBy(v => new FileInfo(v.FullPath).CreationTime)
+                .ToList();
+
+            int totalVideos = videoList.Count;
+            int currentVideo = 0;
+
+            var stablePaths = new List<(string stablePath, DateTime createdTime)>();
+
+            foreach (var result in videoList)
+            {
+                currentVideo++;
+                SentrySdk.AddBreadcrumb($"Copying video {currentVideo}: {result.FileName}");
+
+                var stablePath = Path.Combine(FileSystem.CacheDirectory, Guid.NewGuid() + ".MOV");
+                var createdTime = new FileInfo(result.FullPath).CreationTime;
+
+                using (var sourceStream = File.OpenRead(result.FullPath))
+                using (var destStream = File.Create(stablePath))
+                    await sourceStream.CopyToAsync(destStream);
+
+                stablePaths.Add((stablePath, createdTime));
+                SentrySdk.AddBreadcrumb($"Secured video {currentVideo} to: {stablePath}");
+            }
+
+            currentVideo = 0;
+
+            foreach (var (stablePath, createdTime) in stablePaths)
+            {
+                currentVideo++;
+                double rangeStart = (double)(currentVideo - 1) / totalVideos;
+                double rangeEnd = (double)currentVideo / totalVideos;
+
+                var videoProgress = new Progress<double>(value =>
+                    Progress = rangeStart + value * (rangeEnd - rangeStart));
+                SentrySdk.AddBreadcrumb($"Processing video {currentVideo}");
+
+                var video = await _videoService.CreateOriginalVideo(_sessionId, createdTime);
+                SentrySdk.AddBreadcrumb($"Video record created: {video.Id}");
+
+                var originalVideoPath = Path.Combine(_sessionFolderPaths.Original, $"{video.Id}.MOV");
+
+                using (var sourceStream = File.OpenRead(stablePath))
+                using (var destStream = File.Create(originalVideoPath))
+                    await sourceStream.CopyToAsync(destStream);
+
+                SentrySdk.AddBreadcrumb($"Copy complete for video {currentVideo}");
+
+                var compressedVideoPath = Path.Combine(_sessionFolderPaths.Compressed, $"compressed_{video.Id}.MOV");
+                await _videoEditor.CompressVideo(originalVideoPath, compressedVideoPath, videoProgress);
+                SentrySdk.AddBreadcrumb($"Compression complete for video {currentVideo}");
+
+            }
+
+            foreach (var (stablePath, _) in stablePaths)
+            {
+                try
+                {
+                    if (File.Exists(stablePath))
+                        File.Delete(stablePath);
+                }
+                catch (Exception ex)
+                {
+                    SentrySdk.AddBreadcrumb($"Failed to delete cache file {stablePath}: {ex.Message}");
+                }
+            }
+
+            await _videoEditor.ExtractThumbnails(_sessionFolderPaths.Original, _sessionFolderPaths.Thumbnails);
+
+            await LoadVideosAsync();
+
+            await (AlertRequested?.Invoke("Success", "New videos added!", "OK") ?? Task.CompletedTask);
+
+        }
+        catch (Exception ex)
+        {
+            SentrySdk.CaptureException(ex);
+            await (AlertRequested?.Invoke("Error", ex.Message, "OK") ?? Task.CompletedTask);
+            System.Diagnostics.Debug.WriteLine($"Processing Error: {ex}");
+            System.Diagnostics.Debug.WriteLine($"Stack: {ex.StackTrace}");
+        }
+        finally
+        {
+            IsProcessing = false;
+
+        }
+    }
+
 }
