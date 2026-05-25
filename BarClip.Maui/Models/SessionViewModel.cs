@@ -424,9 +424,11 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
 
             await _videoEditor.ExtractThumbnails(_sessionFolderPaths.Original, _sessionFolderPaths.Thumbnails);
 
-            await LoadVideosAsync();
+            IsProcessing = false;
 
             await (AlertRequested?.Invoke("Success", "New videos added!", "OK") ?? Task.CompletedTask);
+
+            await LoadVideosAsync();
 
         }
         catch (Exception ex)
@@ -439,7 +441,6 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
         finally
         {
             IsProcessing = false;
-
         }
     }
 
