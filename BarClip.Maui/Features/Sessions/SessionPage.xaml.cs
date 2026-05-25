@@ -39,7 +39,8 @@ public partial class SessionPage : ContentPage
         };
         _viewModel.NavigateToSessionRequested += async (id) =>
         {
-            await Shell.Current.GoToAsync($"//SessionPage?SessionId={id}");
+            await Shell.Current.GoToAsync("..");
+            await Shell.Current.GoToAsync($"SessionPage?SessionId={id}");
         };
     }
 
