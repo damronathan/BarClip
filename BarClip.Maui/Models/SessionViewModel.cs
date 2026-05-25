@@ -391,7 +391,8 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
                     Progress = rangeStart + value * (rangeEnd - rangeStart));
                 SentrySdk.AddBreadcrumb($"Processing video {currentVideo}");
 
-                var video = await _videoService.CreateOriginalVideo(_sessionId, createdTime);
+                var (user, session) = await _sessionService.GetSession(_sessionId);
+                var video = await _videoService.CreateOriginalVideo(user, session, createdTime);
                 SentrySdk.AddBreadcrumb($"Video record created: {video.Id}");
 
                 var originalVideoPath = Path.Combine(_sessionFolderPaths.Original, $"{video.Id}.MOV");

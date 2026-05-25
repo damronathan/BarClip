@@ -19,8 +19,9 @@ public class SessionRepository
     }
     public async Task<Session?> GetSessionByIdAsync(Guid sessionId)
     {
-        var result = await _context.Sessions.FindAsync(sessionId);
-        return result;
+        return await _context.Sessions
+            .Include(s => s.User)
+            .FirstOrDefaultAsync(s => s.Id == sessionId);
     }
     public async Task<List<Session>> GetAllSessionsAsync()
     {

@@ -43,6 +43,16 @@ public class SessionService
 
         return session;
     }
+    public async Task<(User user, Session session)> GetSession(Guid sessionId)
+    {
+        var session = await _repo.GetSessionByIdAsync(sessionId);
+        if (session == null)
+        {
+            throw new Exception("Session not found");
+        }
+        var user = session.User;
+        return (user, session);
+    }
     public async Task<List<Session>> GetAllSessions()
     {
         return await _repo.GetAllSessionsAsync();
