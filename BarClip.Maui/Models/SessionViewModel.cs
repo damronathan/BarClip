@@ -45,6 +45,8 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
     public event Func<string, string, string, Task> AlertRequested;
     public event Action NavigateBackRequested;
     public event Action<string> NavigateToPlayerRequested;
+    public event Action<Guid> NavigateToSessionRequested;
+
 
     public SessionViewModel(
         IVideoService videoService,
@@ -427,8 +429,8 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
             IsProcessing = false;
 
             await (AlertRequested?.Invoke("Success", "New videos added!", "OK") ?? Task.CompletedTask);
+            NavigateToSessionRequested?.Invoke(_sessionId);
 
-            await LoadVideosAsync();
 
         }
         catch (Exception ex)

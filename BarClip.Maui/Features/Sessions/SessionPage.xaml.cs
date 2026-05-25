@@ -37,6 +37,8 @@ public partial class SessionPage : ContentPage
         {
             await Shell.Current.GoToAsync($"VideoPlayerPage?VideoUrl={Uri.EscapeDataString(path)}");
         };
+        _viewModel.NavigateToSessionRequested += async (id) =>
+    await Shell.Current.GoToAsync($"SessionPage?SessionId={id}");
     }
 
     protected override async void OnAppearing()
