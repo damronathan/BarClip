@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:skia="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
@@ -74,8 +75,26 @@
                 <VerticalStackLayout Spacing="10"
                                      Padding="10,10,10,20">
 
+                    <Button Text="Add Videos"
+                            Command="{Binding PickVideosForSessionCommand}"
+                            BackgroundColor="{DynamicResource Primary}"
+                            TextColor="White"
+                            FontAttributes="Bold"
+                            HeightRequest="55"
+                            CornerRadius="12"
+                            HorizontalOptions="Fill" />
+
+                    <Button Text="Record Video"
+                            Command="{Binding CaptureVideoForSessionCommand}"
+                            BackgroundColor="{DynamicResource Primary}"
+                            TextColor="White"
+                            FontAttributes="Bold"
+                            HeightRequest="55"
+                            CornerRadius="12"
+                            HorizontalOptions="Fill" />
+
                     <Button Text="Create Full Video"
-                            IsVisible="{Binding IsSessionProcessed, Converter={StaticResource InvertedBoolConverter}}"
+                            IsVisible="{Binding HasVideos}"
                             Command="{Binding ProcessSessionCommand}"
                             BackgroundColor="{DynamicResource Primary}"
                             TextColor="White"
@@ -105,25 +124,8 @@
                             HorizontalOptions="Fill" />
 
                     <Button Text="Upload Session"
+                            IsVisible="{Binding HasVideos}"
                             Command="{Binding UploadSessionCommand}"
-                            BackgroundColor="{DynamicResource Primary}"
-                            TextColor="White"
-                            FontAttributes="Bold"
-                            HeightRequest="55"
-                            CornerRadius="12"
-                            HorizontalOptions="Fill" />
-
-                    <Button Text="Add Videos"
-                            Command="{Binding PickVideosForSessionCommand}"
-                            BackgroundColor="{DynamicResource Primary}"
-                            TextColor="White"
-                            FontAttributes="Bold"
-                            HeightRequest="55"
-                            CornerRadius="12"
-                            HorizontalOptions="Fill" />
-
-                    <Button Text="Record Video"
-                            Command="{Binding CaptureVideoForSessionCommand}"
                             BackgroundColor="{DynamicResource Primary}"
                             TextColor="White"
                             FontAttributes="Bold"

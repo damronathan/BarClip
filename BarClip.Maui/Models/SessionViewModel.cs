@@ -38,6 +38,9 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
     [ObservableProperty]
     private bool _isSessionProcessed;
 
+    [ObservableProperty]
+    private bool _hasVideos;
+
     public ObservableCollection<LiftVideoViewModel> LiftVideos { get; } = new();
     public ObservableCollection<OriginalVideo> OriginalVideos { get; } = new();
 
@@ -112,6 +115,7 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
                 IsProcessed = video.IsProcessed
             });
         }
+        HasVideos = LiftVideos.Any();
     }
 
     public async Task ProcessLiftVideoAsync(LiftVideoViewModel vm)
