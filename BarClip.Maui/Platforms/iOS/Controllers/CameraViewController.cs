@@ -107,7 +107,15 @@ public class CameraViewController : UIViewController
 
         _movieOutput = new AVCaptureMovieFileOutput();
         if (_session.CanAddOutput(_movieOutput))
+        {
             _session.AddOutput(_movieOutput);
+
+            var connection = _movieOutput.ConnectionFromMediaType(AVMediaTypes.Video.GetConstant());
+            if (connection != null && connection.SupportsVideoMinFrameDuration)
+            {
+                connection.VideoMinFrameDuration = new CMTime(1, 60);
+            }
+        }
 
         _previewLayer = new AVCaptureVideoPreviewLayer(_session);
         _previewLayer.VideoGravity = AVLayerVideoGravity.ResizeAspectFill;
@@ -115,6 +123,7 @@ public class CameraViewController : UIViewController
 
         _session.StartRunning();
     }
+
     private void SetupUI()
     {
         // Cancel button
