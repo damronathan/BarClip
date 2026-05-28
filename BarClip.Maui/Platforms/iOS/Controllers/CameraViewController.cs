@@ -43,7 +43,7 @@ public class CameraViewController : UIViewController
     private void SetupCamera()
     {
         _session = new AVCaptureSession();
-        _session.SessionPreset = AVCaptureSession.PresetHigh;
+        _session.SessionPreset = AVCaptureSession.PresetMedium;
 
         // Camera input
         var camera = AVCaptureDevice.GetDefaultDevice(AVMediaTypes.Video);
