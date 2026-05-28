@@ -5,10 +5,16 @@
              xmlns:converters="clr-namespace:BarClip.Maui.Converters;assembly=BarClip.Maui"
              x:Class="BarClip.Maui.SessionPage"
              Title="Session">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem
+            Text="Delete"
+            Command="{Binding DeleteSessionCommand}" />
+    </ContentPage.ToolbarItems>
 
-    <Grid>
+    <Grid RowDefinitions="*, Auto">
 
-        <CollectionView ItemsSource="{Binding LiftVideos}"
+        <CollectionView Grid.Row="0"
+                        ItemsSource="{Binding LiftVideos}"
                         SelectionMode="None">
 
             <CollectionView.ItemTemplate>
@@ -75,24 +81,6 @@
                 <VerticalStackLayout Spacing="10"
                                      Padding="10,10,10,20">
 
-                    <Button Text="Add Videos"
-                            Command="{Binding PickVideosForSessionCommand}"
-                            BackgroundColor="{DynamicResource Primary}"
-                            TextColor="White"
-                            FontAttributes="Bold"
-                            HeightRequest="55"
-                            CornerRadius="12"
-                            HorizontalOptions="Fill" />
-
-                    <Button Text="Record Video"
-                            Command="{Binding CaptureVideoForSessionCommand}"
-                            BackgroundColor="{DynamicResource Primary}"
-                            TextColor="White"
-                            FontAttributes="Bold"
-                            HeightRequest="55"
-                            CornerRadius="12"
-                            HorizontalOptions="Fill" />
-
                     <Button Text="Create Full Video"
                             IsVisible="{Binding HasVideos}"
                             Command="{Binding ProcessSessionCommand}"
@@ -133,22 +121,56 @@
                             CornerRadius="12"
                             HorizontalOptions="Fill" />
 
-                    <Button Text="Delete Session"
-                            Command="{Binding DeleteSessionCommand}"
-                            BackgroundColor="{DynamicResource Primary}"
-                            TextColor="White"
-                            FontAttributes="Bold"
-                            HeightRequest="55"
-                            CornerRadius="12"
-                            HorizontalOptions="Fill" />
-
                 </VerticalStackLayout>
             </CollectionView.Footer>
 
         </CollectionView>
 
+        <!-- Bottom Tab Bar -->
+        <Grid Grid.Row="1"
+              ColumnDefinitions="*,*"
+              BackgroundColor="Black"
+              Padding="0,12,0,12">
+
+            <VerticalStackLayout Grid.Column="1"
+                     HorizontalOptions="Center"
+                     Spacing="4">
+                <Label Text="⏺"
+           TextColor="White"
+           FontSize="22"
+           HorizontalOptions="Center" />
+                <Label Text="Record"
+           TextColor="White"
+           FontSize="12"
+           HorizontalOptions="Center" />
+                <VerticalStackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding CaptureVideoForSessionCommand}" />
+                </VerticalStackLayout.GestureRecognizers>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Grid.Column="0"
+                                 HorizontalOptions="Center"
+                                 Spacing="4">
+                <Label Text="＋"
+                       TextColor="White"
+                       FontSize="22"
+                       HorizontalOptions="Center" />
+                <Label Text="Add Videos"
+                       TextColor="White"
+                       FontSize="12"
+                       HorizontalOptions="Center" />
+                <VerticalStackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding PickVideosForSessionCommand}" />
+                </VerticalStackLayout.GestureRecognizers>
+            </VerticalStackLayout>
+
+
+
+        </Grid>
+
         <!-- Processing Overlay -->
-        <Grid BackgroundColor="Black"
+        <Grid Grid.RowSpan="2"
+              BackgroundColor="Black"
               IsVisible="{Binding IsProcessing}">
 
             <VerticalStackLayout VerticalOptions="Center"
