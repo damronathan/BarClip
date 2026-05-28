@@ -69,12 +69,25 @@ public class CameraViewController : UIViewController
                 }
             }
 
+            foreach (var format in camera.Formats)
+            {
+                foreach (var range in format.VideoSupportedFrameRateRanges)
+                {
+                    SentrySdk.AddBreadcrumb($"Format max fps: {range.MaxFrameRate}");
+                }
+            }
+
             var selectedFormat = formats60.LastOrDefault();
             if (selectedFormat != null)
             {
                 camera.ActiveFormat = selectedFormat;
                 camera.ActiveVideoMinFrameDuration = new CMTime(1, 60);
                 camera.ActiveVideoMaxFrameDuration = new CMTime(1, 60);
+                SentrySdk.AddBreadcrumb($"60fps format set. Formats found: {formats60.Count}");
+            }
+            else
+            {
+                SentrySdk.AddBreadcrumb($"No 60fps format found. Total formats checked: {camera.Formats.Length}");
             }
 
             camera.UnlockForConfiguration();
