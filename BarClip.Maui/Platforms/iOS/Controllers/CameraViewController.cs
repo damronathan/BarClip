@@ -12,6 +12,10 @@ public class CameraViewController : UIViewController
     private UIButton _recordButton;
     private bool _isRecording = false;
     private string _filePath;
+    private nfloat _lastZoomFactor = 1.0f;
+    private UILabel _timerLabel;
+    private NSTimer _timer;
+    private int _seconds = 0;
 
     public CameraViewController(TaskCompletionSource<FileResult?> tcs)
     {
@@ -133,6 +137,59 @@ public class CameraViewController : UIViewController
             _recordButton.WidthAnchor.ConstraintEqualTo(70),
             _recordButton.HeightAnchor.ConstraintEqualTo(70),
         });
+        var pinch = new UIPinchGestureRecognizer(HandlePinch);
+        View.AddGestureRecognizer(pinch);
+        _timerLabel = new UILabel
+        {
+            Text = "00:00",
+            TextColor = UIColor.White,
+            Font = UIFont.MonospacedDigitSystemFontOfSize(20, UIFontWeight.Medium),
+            TranslatesAutoresizingMaskIntoConstraints = false
+        };
+        View.AddSubview(_timerLabel);
+
+        NSLayoutConstraint.ActivateConstraints(new[]
+        {
+        _timerLabel.TopAnchor.ConstraintEqualTo(View.SafeAreaLayoutGuide.TopAnchor, 16),
+        _timerLabel.CenterXAnchor.ConstraintEqualTo(View.CenterXAnchor),
+    });
+    }
+    private void StartTimer()
+    {
+        _seconds = 0;
+        _timer = NSTimer.CreateRepeatingScheduledTimer(1.0, _ =>
+        {
+            _seconds++;
+            var minutes = _seconds / 60;
+            var secs = _seconds % 60;
+            BeginInvokeOnMainThread(() =>
+                _timerLabel.Text = $"{minutes:D2}:{secs:D2}");
+        });
+    }
+
+    private void StopTimer()
+    {
+        _timer?.Invalidate();
+        _timer = null;
+        BeginInvokeOnMainThread(() => _timerLabel.Text = "00:00");
+    }
+    private void HandlePinch(UIPinchGestureRecognizer recognizer)
+    {
+        var camera = AVCaptureDevice.GetDefaultDevice(AVMediaTypes.Video);
+        if (camera == null) return;
+
+        NSError error;
+        camera.LockForConfiguration(out error);
+        if (error != null) return;
+
+        var maxZoom = (nfloat)Math.Min(camera.ActiveFormat.VideoMaxZoomFactor, 10.0f);
+        var newZoom = (nfloat)Math.Clamp(_lastZoomFactor * recognizer.Scale, 1.0f, maxZoom);
+
+        camera.VideoZoomFactor = newZoom;
+        camera.UnlockForConfiguration();
+
+        if (recognizer.State == UIGestureRecognizerState.Ended)
+            _lastZoomFactor = newZoom;
     }
 
     private void OnRecordButtonTapped(object sender, EventArgs e)
@@ -142,6 +199,7 @@ public class CameraViewController : UIViewController
             _movieOutput.StopRecording();
             _recordButton.BackgroundColor = UIColor.Red;
             _isRecording = false;
+            StopTimer();
         }
         else
         {
@@ -151,6 +209,7 @@ public class CameraViewController : UIViewController
             _movieOutput.StartRecordingToOutputFile(fileUrl, delegate_);
             _recordButton.BackgroundColor = UIColor.FromRGB(180, 0, 0);
             _isRecording = true;
+            StartTimer();
         }
     }
 
