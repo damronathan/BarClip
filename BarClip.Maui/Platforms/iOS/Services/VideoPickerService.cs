@@ -2,6 +2,7 @@
 using Photos;
 using PhotosUI;
 using UIKit;
+using Vision;
 
 public class VideoPickerService
 {
@@ -27,20 +28,9 @@ public class VideoPickerService
     public async Task<FileResult?> CaptureVideoAsync()
     {
         var tcs = new TaskCompletionSource<FileResult?>();
-
-        var picker = new UIImagePickerController
-        {
-            SourceType = UIImagePickerControllerSourceType.Camera,
-            MediaTypes = new string[] { "public.movie" },
-            VideoQuality = UIImagePickerControllerQualityType.High,
-            VideoMaximumDuration = 90
-        };
-
-        picker.Delegate = new CameraDelegate(tcs);
-
+        var cameraVC = new CameraViewController(tcs);
         var vc = Platform.GetCurrentUIViewController();
-        vc?.PresentViewController(picker, true, null);
-
+        vc?.PresentViewController(cameraVC, true, null);
         return await tcs.Task;
     }
 

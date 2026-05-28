@@ -1,10 +1,14 @@
 ﻿using AVFoundation;
 using Azure.Storage.Blobs.Models;
+using BarClip.Data.Schema;
 using BarClip.Models.Requests;
 using CoreGraphics;
 using CoreMedia;
 using Foundation;
+using GameController;
+using HomeKit;
 using ImageIO;
+using MediaPlayer;
 using Photos;
 using UIKit;
 using static BarClip.Core.Helpers.FileHelper;
@@ -13,6 +17,7 @@ namespace BarClip.Maui.Platforms.iOS.Helpers;
 
 public class AVFoundationHelper
 {
+
     public static async Task CompressVideoAsync(string inputPath, string outputPath, IProgress<double> progress = null)
     {
         var asset = AVUrlAsset.Create(NSUrl.FromFilename(inputPath));
