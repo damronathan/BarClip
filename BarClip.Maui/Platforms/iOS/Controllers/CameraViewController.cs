@@ -49,7 +49,6 @@ public class CameraViewController : UIViewController
         _session = new AVCaptureSession();
 
         var camera = AVCaptureDevice.GetDefaultDevice(AVMediaTypes.Video);
-        camera.AutoVideoFrameRateEnabled = false;
         if (camera == null) { _tcs.TrySetResult(null); return; }
 
         NSError error;
@@ -70,27 +69,15 @@ public class CameraViewController : UIViewController
                 }
             }
 
-            foreach (var format in camera.Formats)
-            {
-                foreach (var range in format.VideoSupportedFrameRateRanges)
-                {
-                    SentrySdk.AddBreadcrumb($"Format max fps: {range.MaxFrameRate}");
-                }
-            }
-
             var selectedFormat = formats60.LastOrDefault();
             if (selectedFormat != null)
             {
                 camera.ActiveFormat = selectedFormat;
                 camera.ActiveVideoMinFrameDuration = new CMTime(1, 60);
                 camera.ActiveVideoMaxFrameDuration = new CMTime(1, 60);
-                SentrySdk.AddBreadcrumb($"60fps format set. Formats found: {formats60.Count}");
+                camera.AutoVideoFrameRateEnabled = false;
             }
-            else
-            {
-                SentrySdk.AddBreadcrumb($"No 60fps format found. Total formats checked: {camera.Formats.Length}");
-            }
-            SentrySdk.CaptureMessage("Camera setup complete");
+
             camera.UnlockForConfiguration();
         }
 
@@ -108,30 +95,18 @@ public class CameraViewController : UIViewController
 
         _movieOutput = new AVCaptureMovieFileOutput();
         if (_session.CanAddOutput(_movieOutput))
-        {
             _session.AddOutput(_movieOutput);
-
-            
-        }
 
         _previewLayer = new AVCaptureVideoPreviewLayer(_session);
         _previewLayer.VideoGravity = AVLayerVideoGravity.ResizeAspectFill;
         View.Layer.AddSublayer(_previewLayer);
 
         _session.StartRunning();
+
         var connection = _movieOutput.ConnectionFromMediaType(AVMediaTypes.Video.GetConstant());
         if (connection != null && connection.SupportsVideoMinFrameDuration)
-        {
             connection.VideoMinFrameDuration = new CMTime(1, 60);
-            SentrySdk.AddBreadcrumb($"Connection frame duration: {connection.VideoMinFrameDuration.Value}/{connection.VideoMinFrameDuration.TimeScale}");
-        }
-        else
-        {
-            SentrySdk.AddBreadcrumb($"Connection null: {connection == null}, SupportsMinFrameDuration: {connection?.SupportsVideoMinFrameDuration}");
-        }
-        SentrySdk.CaptureMessage("Camera setup complete");
     }
-
     private void SetupUI()
     {
         // Cancel button
