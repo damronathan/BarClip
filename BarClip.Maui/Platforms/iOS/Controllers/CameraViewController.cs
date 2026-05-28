@@ -43,26 +43,36 @@ public class CameraViewController : UIViewController
     private void SetupCamera()
     {
         _session = new AVCaptureSession();
-        _session.SessionPreset = AVCaptureSession.PresetMedium;
 
-        // Camera input
         var camera = AVCaptureDevice.GetDefaultDevice(AVMediaTypes.Video);
         if (camera == null) { _tcs.TrySetResult(null); return; }
 
-        // Set 60fps
         NSError error;
         camera.LockForConfiguration(out error);
         if (error == null)
         {
-            foreach (var range in camera.ActiveFormat.VideoSupportedFrameRateRanges)
+            var formats60 = new List<AVCaptureDeviceFormat>();
+
+            foreach (var format in camera.Formats)
             {
-                if (range.MaxFrameRate >= 60)
+                foreach (var range in format.VideoSupportedFrameRateRanges)
                 {
-                    camera.ActiveVideoMinFrameDuration = new CMTime(1, 60);
-                    camera.ActiveVideoMaxFrameDuration = new CMTime(1, 60);
-                    break;
+                    if (range.MaxFrameRate >= 60)
+                    {
+                        formats60.Add(format);
+                        break;
+                    }
                 }
             }
+
+            var selectedFormat = formats60.LastOrDefault();
+            if (selectedFormat != null)
+            {
+                camera.ActiveFormat = selectedFormat;
+                camera.ActiveVideoMinFrameDuration = new CMTime(1, 60);
+                camera.ActiveVideoMaxFrameDuration = new CMTime(1, 60);
+            }
+
             camera.UnlockForConfiguration();
         }
 
@@ -70,7 +80,6 @@ public class CameraViewController : UIViewController
         if (cameraInput != null && _session.CanAddInput(cameraInput))
             _session.AddInput(cameraInput);
 
-        // Mic input
         var mic = AVCaptureDevice.GetDefaultDevice(AVMediaTypes.Audio);
         if (mic != null)
         {
@@ -79,19 +88,16 @@ public class CameraViewController : UIViewController
                 _session.AddInput(micInput);
         }
 
-        // Movie output
         _movieOutput = new AVCaptureMovieFileOutput();
         if (_session.CanAddOutput(_movieOutput))
             _session.AddOutput(_movieOutput);
 
-        // Preview layer
         _previewLayer = new AVCaptureVideoPreviewLayer(_session);
         _previewLayer.VideoGravity = AVLayerVideoGravity.ResizeAspectFill;
         View.Layer.AddSublayer(_previewLayer);
 
         _session.StartRunning();
     }
-
     private void SetupUI()
     {
         // Cancel button
