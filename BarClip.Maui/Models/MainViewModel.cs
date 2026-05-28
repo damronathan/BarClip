@@ -64,7 +64,7 @@ public partial class MainViewModel : ObservableObject
         var session = new Session();
         try
         {
-            string dateTimeString = DateTime.Now.ToString("dd/MM/yy hh:mmtt").ToLower();
+            string dateTimeString = DateTime.Now.ToString("MM/dd/yy hh:mmtt").ToLower();
                         
             var user = await _userRepository.GetByNameIdentifierAsync("test-user-123");
             if (user == null)
