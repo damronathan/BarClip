@@ -89,7 +89,7 @@ public class CameraViewController : UIViewController
             {
                 SentrySdk.AddBreadcrumb($"No 60fps format found. Total formats checked: {camera.Formats.Length}");
             }
-
+            SentrySdk.CaptureMessage("Camera setup complete");
             camera.UnlockForConfiguration();
         }
 
