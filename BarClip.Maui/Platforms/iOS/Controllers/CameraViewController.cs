@@ -49,6 +49,7 @@ public class CameraViewController : UIViewController
         _session = new AVCaptureSession();
 
         var camera = AVCaptureDevice.GetDefaultDevice(AVMediaTypes.Video);
+        camera.AutoVideoFrameRateEnabled = false;
         if (camera == null) { _tcs.TrySetResult(null); return; }
 
         NSError error;
