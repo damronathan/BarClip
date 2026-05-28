@@ -110,11 +110,7 @@ public class CameraViewController : UIViewController
         {
             _session.AddOutput(_movieOutput);
 
-            var connection = _movieOutput.ConnectionFromMediaType(AVMediaTypes.Video.GetConstant());
-            if (connection != null && connection.SupportsVideoMinFrameDuration)
-            {
-                connection.VideoMinFrameDuration = new CMTime(1, 60);
-            }
+            
         }
 
         _previewLayer = new AVCaptureVideoPreviewLayer(_session);
@@ -122,6 +118,17 @@ public class CameraViewController : UIViewController
         View.Layer.AddSublayer(_previewLayer);
 
         _session.StartRunning();
+        var connection = _movieOutput.ConnectionFromMediaType(AVMediaTypes.Video.GetConstant());
+        if (connection != null && connection.SupportsVideoMinFrameDuration)
+        {
+            connection.VideoMinFrameDuration = new CMTime(1, 60);
+            SentrySdk.AddBreadcrumb($"Connection frame duration: {connection.VideoMinFrameDuration.Value}/{connection.VideoMinFrameDuration.TimeScale}");
+        }
+        else
+        {
+            SentrySdk.AddBreadcrumb($"Connection null: {connection == null}, SupportsMinFrameDuration: {connection?.SupportsVideoMinFrameDuration}");
+        }
+        SentrySdk.CaptureMessage("Camera setup complete");
     }
 
     private void SetupUI()
