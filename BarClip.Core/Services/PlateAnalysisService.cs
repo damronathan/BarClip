@@ -121,7 +121,7 @@ public class PlateAnalysisService
         }
 
         TimeSpan trimFinish = GetTrimFinish(video, plates, trimStartFrame.Value);
-        TimeSpan trimStart = TimeSpan.FromSeconds(Math.Max(trimStartFrame.Value - 2, 0));
+        TimeSpan trimStart = TimeSpan.FromSeconds(Math.Max(trimStartFrame.Value - 2.5, 0));
         Log($"Final trim - Start: {trimStart} Finish: {trimFinish}");
 
         return (trimStart, trimFinish);
@@ -192,7 +192,7 @@ public class PlateAnalysisService
             break;
     }
 
-    double endFrame = lastMovementFrame + 1.5;
+    double endFrame = lastMovementFrame + 2;
     Log($"Trim end found at frame {lastMovementFrame}, setting finish to {endFrame}");
     return TimeSpan.FromSeconds(endFrame);
 }
