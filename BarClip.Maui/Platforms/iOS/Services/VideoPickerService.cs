@@ -2,7 +2,6 @@
 using Photos;
 using PhotosUI;
 using UIKit;
-using Vision;
 
 public class VideoPickerService
 {
@@ -13,7 +12,7 @@ public class VideoPickerService
         var config = new PHPickerConfiguration(PHPhotoLibrary.SharedPhotoLibrary)
         {
             Filter = PHPickerFilter.VideosFilter,
-            SelectionLimit = 0,            
+            SelectionLimit = 0,
         };
 
         var picker = new PHPickerViewController(config);
@@ -28,9 +27,20 @@ public class VideoPickerService
     public async Task<FileResult?> CaptureVideoAsync()
     {
         var tcs = new TaskCompletionSource<FileResult?>();
-        var cameraVC = new CameraViewController(tcs);
+
+        var picker = new UIImagePickerController
+        {
+            SourceType = UIImagePickerControllerSourceType.Camera,
+            MediaTypes = new string[] { "public.movie" },
+            VideoQuality = UIImagePickerControllerQualityType.High,
+            VideoMaximumDuration = 90
+        };
+
+        picker.Delegate = new CameraDelegate(tcs);
+
         var vc = Platform.GetCurrentUIViewController();
-        vc?.PresentViewController(cameraVC, true, null);
+        vc?.PresentViewController(picker, true, null);
+
         return await tcs.Task;
     }
 
