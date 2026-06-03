@@ -193,14 +193,12 @@ public class AVFoundationHelper
 
 
 
-    public static async Task<string> MergeVideos(SessionFolderPaths sessionFolderPaths, Guid sessionId, IProgress<double> progress = null)
+    public static async Task<string> MergeVideos(SessionFolderPaths sessionFolderPaths, Guid sessionId, IEnumerable<string> videoPaths, IProgress<double> progress = null)
     {
-        var videoPaths = Directory.GetFiles(sessionFolderPaths.Processed, "*.MOV")
-                          .OrderBy(f => int.Parse(Path.GetFileNameWithoutExtension(f).Split('_')[0]))
-                          .ToArray();
         var finalOutputPath = Path.Combine(sessionFolderPaths.Session, $"{sessionId}.MOV");
         if (File.Exists(finalOutputPath))
             File.Delete(finalOutputPath);
+
         var videoAssets = new List<AVUrlAsset>();
         foreach (string path in videoPaths)
         {
@@ -286,6 +284,7 @@ public class AVFoundationHelper
 
         return finalOutputPath;
     }
+
     public static async Task TrimAsync(OriginalVideoRequest originalVideo, ProcessedVideoRequest processedVideo, IProgress<double> progress = null)
     {
         await Task.Run(async () =>

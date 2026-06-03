@@ -251,48 +251,42 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
 
             await SubmitSessionAsync();
 
-            var pendingVideos = new List<(LiftVideoViewModel vm, int index)>();
             var currentVideo = 0;
+            var processedPaths = new List<string>();
 
             foreach (var liftVideo in LiftVideos)
             {
                 currentVideo++;
                 var processedPath = Path.Combine(_sessionFolderPaths.Processed, $"{currentVideo}_Trimmed,{liftVideo.Video.Id}.MOV");
+
                 if (!File.Exists(processedPath))
-                    pendingVideos.Add((liftVideo, currentVideo));
+                {
+                    StatusText = $"Trimming video {currentVideo}/{LiftVideos.Count}...";
+                    var videoProgress = new Progress<double>(value =>
+                        Progress = (double)(currentVideo - 1) / LiftVideos.Count * 0.9
+                                 + value * (0.9 / LiftVideos.Count));
+
+                    await Task.Run(() => _videoEditor.ProcessVideo(
+                        _sessionFolderPaths,
+                        new OriginalVideoRequest
+                        {
+                            Id = liftVideo.Video.Id,
+                            FilePath = liftVideo.VideoPath,
+                            CompressedPath = liftVideo.CompressedPath,
+                            LifterFilter = liftVideo.Lift.LifterFilter,
+                            WeightKg = liftVideo.Lift.WeightKg,
+                            LiftNumber = currentVideo
+                        }, videoProgress));
+
+                    liftVideo.IsProcessed = true;
+                    await _videoService.UpdateOriginalVideo(liftVideo.Video);
+                }
+
+                processedPaths.Add(processedPath);
             }
 
-
-            int totalVideos = pendingVideos.Count;
-            int currentPending = 0;
-
-            foreach (var (liftVideo, liftNumber) in pendingVideos)
-            {
-                currentPending++;
-
-                StatusText = $"Trimming video {currentPending}/{totalVideos}...";
-                double rangeStart = (double)(currentPending - 1) / totalVideos * 0.9;
-                double rangeEnd = (double)currentPending / totalVideos * 0.9;
-                var videoProgress = new Progress<double>(value =>
-                    Progress = rangeStart + value * (rangeEnd - rangeStart));
-
-                await Task.Run(() => _videoEditor.ProcessVideo(
-                    _sessionFolderPaths,
-                    new OriginalVideoRequest
-                    {
-                        Id = liftVideo.Video.Id,
-                        FilePath = liftVideo.VideoPath,
-                        CompressedPath = liftVideo.CompressedPath,
-                        LifterFilter = liftVideo.Lift.LifterFilter,
-                        WeightKg = liftVideo.Lift.WeightKg,
-                        LiftNumber = liftNumber
-                    }, videoProgress));
-                liftVideo.IsProcessed = true;
-                await _videoService.UpdateOriginalVideo(liftVideo.Video);
-
-            }
             StatusText = "Creating Final Video...";
-            await Task.Run(() => _videoEditor.MergeVideos(_sessionFolderPaths, _sessionId, progress));
+            await Task.Run(() => _videoEditor.MergeVideos(_sessionFolderPaths, _sessionId, processedPaths, progress));
             IsSessionProcessed = true;
 
 

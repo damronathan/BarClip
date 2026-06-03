@@ -97,9 +97,9 @@ public class IOSVideoEditor : IVideoEditor
             throw new Exception("Error while processing frames: ", ex);
         }
     }
-    public async Task<string> MergeVideos(SessionFolderPaths sessionFolderPaths, Guid sessionId, IProgress<double> progress = null)
+    public async Task<string> MergeVideos(SessionFolderPaths sessionFolderPaths, Guid sessionId, IEnumerable<string> videoPaths, IProgress<double> progress = null)
     {
-        return await AVFoundationHelper.MergeVideos(sessionFolderPaths, sessionId, progress);
+        return await AVFoundationHelper.MergeVideos(sessionFolderPaths, sessionId, videoPaths,progress);
     }
     public async Task<string[]> ExtractThumbnails(string originalFolderPath, string thumbnailFolderPath)
     {
