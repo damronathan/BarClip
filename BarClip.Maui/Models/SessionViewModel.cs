@@ -448,6 +448,12 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
         }
         finally
         {
+            var fullVideoPath = Path.Combine(_sessionFolderPaths.Session, $"{_sessionId}.MOV");
+            if (File.Exists(fullVideoPath))
+            {
+                File.Delete(fullVideoPath);
+            }
+            IsSessionProcessed = false;
             IsProcessing = false;
         }
     }
