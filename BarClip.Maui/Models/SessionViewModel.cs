@@ -70,12 +70,15 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
     public async Task InitializeAsync(Guid sessionId)
     {
         _sessionId = sessionId;
-        await LoadVideosAsync();
-        await CreateLiftVideoViewModelsAsync();
+        await LoadLiftVideos();
         IsSessionProcessed = File.Exists(Path.Combine(_sessionFolderPaths.Session, $"{_sessionId}.MOV"));
 
     }
-
+    private async Task LoadLiftVideos()
+    {
+        await LoadVideosAsync();
+        await CreateLiftVideoViewModelsAsync();
+    }
     private async Task LoadVideosAsync()
     {
         _sessionFolderPaths = FileHelper.CreateSessionFolders(FileSystem.AppDataDirectory, _sessionId);
@@ -435,7 +438,7 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
             IsProcessing = false;
 
             await (AlertRequested?.Invoke("Success", "New videos added!", "OK") ?? Task.CompletedTask);
-            NavigateToSessionRequested?.Invoke(_sessionId);
+            await LoadLiftVideos();
 
 
         }
