@@ -82,7 +82,7 @@
                                      Padding="10,10,10,20">
 
                     <Button Text="Create Full Video"
-                            IsVisible="{Binding HasVideos}"
+                            IsVisible="{Binding CanCreateFullVideo}"
                             Command="{Binding ProcessSessionCommand}"
                             BackgroundColor="{DynamicResource Primary}"
                             TextColor="White"

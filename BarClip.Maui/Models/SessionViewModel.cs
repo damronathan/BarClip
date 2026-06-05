@@ -41,6 +41,11 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
     [ObservableProperty]
     private bool _hasVideos;
 
+    public bool CanCreateFullVideo => HasVideos && !IsSessionProcessed;
+
+    partial void OnHasVideosChanged(bool value) => OnPropertyChanged(nameof(CanCreateFullVideo));
+    partial void OnIsSessionProcessedChanged(bool value) => OnPropertyChanged(nameof(CanCreateFullVideo));
+
     public ObservableCollection<LiftVideoViewModel> LiftVideos { get; } = new();
     public ObservableCollection<OriginalVideo> OriginalVideos { get; } = new();
 
