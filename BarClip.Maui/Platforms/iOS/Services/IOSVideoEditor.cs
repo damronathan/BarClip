@@ -51,7 +51,7 @@ public class IOSVideoEditor : IVideoEditor
         {
             ProcessedVideoRequest processedVideo = new()
             {
-                FilePath = Path.Combine(sessionFolderPaths.Processed, $"{video.LiftNumber}_Trimmed,{video.Id}.MOV"),
+                FilePath = Path.Combine(sessionFolderPaths.Processed, $"{video.Id}.MOV"),
                 Duration = video.TrimFinish - video.TrimStart
             };
             string? weightText = null;
