@@ -130,7 +130,7 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
     {
         var index = LiftVideos.IndexOf(vm) + 1;
 
-        var processedPath = Path.Combine(_sessionFolderPaths.Processed, $"{index}_Trimmed,{vm.Video.Id}.MOV");
+        var processedPath = Path.Combine(_sessionFolderPaths.Processed, $"{vm.Video.Id}.MOV");
 
 
 
@@ -199,8 +199,7 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
 
     public async Task SaveLiftVideoAsync(LiftVideoViewModel vm)
     {
-        var index = LiftVideos.IndexOf(vm) + 1;
-        var processedPath = Path.Combine(_sessionFolderPaths.Processed, $"{index}_Trimmed,{vm.Video.Id}.MOV");
+        var processedPath = Path.Combine(_sessionFolderPaths.Processed, $"{vm.Video.Id}.MOV");
         //var processedPath = Path.Combine(_sessionFolderPaths.Original, $"{vm.Video.Id}.MOV");
 
         await _videoEditor.SaveVideo(processedPath);
@@ -262,7 +261,7 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
             foreach (var liftVideo in LiftVideos)
             {
                 currentVideo++;
-                var processedPath = Path.Combine(_sessionFolderPaths.Processed, $"{currentVideo}_Trimmed,{liftVideo.Video.Id}.MOV");
+                var processedPath = Path.Combine(_sessionFolderPaths.Processed, $"{liftVideo.Video.Id}.MOV");
 
                 if (!File.Exists(processedPath))
                 {
