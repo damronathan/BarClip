@@ -128,43 +128,30 @@
 
         <!-- Bottom Tab Bar -->
         <Grid Grid.Row="1"
-              ColumnDefinitions="*,*"
-              BackgroundColor="Black"
-              Padding="0,12,0,12">
+      ColumnDefinitions="*,*"
+      ColumnSpacing="10"
+      BackgroundColor="Black"
+      Padding="10,12,10,12">
 
-            <VerticalStackLayout Grid.Column="1"
-                     HorizontalOptions="Center"
-                     Spacing="4">
-                <Label Text="⏺"
-           TextColor="White"
-           FontSize="22"
-           HorizontalOptions="Center" />
-                <Label Text="Record"
-           TextColor="White"
-           FontSize="12"
-           HorizontalOptions="Center" />
-                <VerticalStackLayout.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding CaptureVideoForSessionCommand}" />
-                </VerticalStackLayout.GestureRecognizers>
-            </VerticalStackLayout>
+            <Button Grid.Column="0"
+            Text="Add Videos"
+            Command="{Binding PickVideosForSessionCommand}"
+            BackgroundColor="{DynamicResource Primary}"
+            TextColor="White"
+            FontAttributes="Bold"
+            HeightRequest="50"
+            CornerRadius="12"
+            HorizontalOptions="Fill" />
 
-            <VerticalStackLayout Grid.Column="0"
-                                 HorizontalOptions="Center"
-                                 Spacing="4">
-                <Label Text="＋"
-                       TextColor="White"
-                       FontSize="22"
-                       HorizontalOptions="Center" />
-                <Label Text="Add Videos"
-                       TextColor="White"
-                       FontSize="12"
-                       HorizontalOptions="Center" />
-                <VerticalStackLayout.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding PickVideosForSessionCommand}" />
-                </VerticalStackLayout.GestureRecognizers>
-            </VerticalStackLayout>
-
-
+            <Button Grid.Column="1"
+            Text="Record"
+            Command="{Binding CaptureVideoForSessionCommand}"
+            BackgroundColor="{DynamicResource Primary}"
+            TextColor="White"
+            FontAttributes="Bold"
+            HeightRequest="50"
+            CornerRadius="12"
+            HorizontalOptions="Fill" />
 
         </Grid>
 
