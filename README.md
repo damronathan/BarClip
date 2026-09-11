@@ -1,3 +1,10 @@
+
+
+
+
+
+
+
 # BarClip
 
 BarClip is a cross-platform (iOS/mobile) application that automatically detects and trims the usable portion of weightlifting training videos, eliminating the dead time at the start and end of each clip.
@@ -49,7 +56,7 @@ The YOLOv8 model is converted to **ONNX** and run via ONNX Runtime, enabling ful
 
 ## Demo
 
-
+https://github.com/user-attachments/assets/70316afb-8421-482b-ad49-0f213b4b0fe6
 
 ## Status
 
