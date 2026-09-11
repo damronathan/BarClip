@@ -1,8 +1,9 @@
 <Solution>
-  <Project Path="BarClip.Core/BarClip.Core.csproj" />
-  <Project Path="BarClip.Data/BarClip.Data.csproj" />
-  <Project Path="BarClip.Maui/BarClip.Maui.csproj">
+  <Project Path="../../../../../../../../BarClip.Main/repos/BarClip/BarClip.Core/BarClip.Core.csproj" />
+  <Project Path="../../../../../../../../BarClip.Main/repos/BarClip/BarClip.Data/BarClip.Data.csproj" />
+  <Project Path="../../../../../../../../BarClip.Main/repos/BarClip/BarClip.Maui/BarClip.Maui.csproj">
     <Deploy />
   </Project>
-  <Project Path="BarClip.Models/BarClip.Models.csproj" />
+  <Project Path="../../../../../../../../BarClip.Main/repos/BarClip/BarClip.Models/BarClip.Models.csproj" />
+  <Project Path="../../../../../../../../BarClip.Main/repos/BarClip/BarClip.Tests.Unit/BarClip.Tests.Unit.csproj" Id="e1a3418a-2ead-4c53-b481-c6239c9a02fe" />
 </Solution>
