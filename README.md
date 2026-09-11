@@ -1,19 +1,26 @@
+
+
+
+
+
+
+
 # BarClip
 
 BarClip is a cross-platform (iOS/mobile) application that automatically detects and trims the usable portion of weightlifting training videos, eliminating the dead time at the start and end of each clip.
 
 ## The Problem
 
-As a competitive weightlifter, I record a lot of training footage to critique technique and share on social media. Every clip comes with unusable dead time at the start and end — from setting up the phone to walking away after the lift — and manually trimming each video after training gets old fast. Left untrimmed, footage also eats up phone storage unnecessarily.
+As a competitive weightlifter, I record a lot of training footage to critique technique and share on social media. Every clip comes with unusable dead time at the start and end, from setting up the phone to walking away after the lift, and manually trimming each video after training gets old fast. Left untrimmed, footage also eats up phone storage unnecessarily.
 
-BarClip solves this by automatically identifying when a lift starts and ends, trimming the video down to just the working portion — for a single clip or an entire training session at once.
+BarClip solves this by automatically identifying when a lift starts and ends, trimming the video down to just the working portion for a single clip or an entire training session at once.
 
 ## How It Works
 
-1. A custom-trained **YOLOv8** computer vision model detects weightlifting plates in each frame of the video.
+1. A custom-trained **YOLOv8** computer vision model detects weightlifting plates at every second of the video.
 2. A custom multi-plate identity tracking system (`PlateIdentity`) locks onto and tracks each detected plate across frames — using a lock-in phase for the first several frames, then rank-based assignment afterward to maintain consistent tracking.
 3. The tracked plate positions are translated into vertical motion data, which is used to algorithmically identify the start and end of each lift.
-4. The video is automatically trimmed to the identified lifting window — either as a single clip, or batch-processed and merged across an entire session.
+4. The video is automatically trimmed to the identified lifting window either as a single clip, or batch-processed and merged across an entire session.
 
 The YOLOv8 model is converted to **ONNX** and run via ONNX Runtime, enabling fully on-device inference in C#/.NET without any server round-trip for video processing.
 
@@ -49,7 +56,7 @@ The YOLOv8 model is converted to **ONNX** and run via ONNX Runtime, enabling ful
 
 ## Demo
 
-*(Add your demo video or GIF here — showing the app UI alongside the bounding-box detection is a great way to illustrate both the user experience and what's happening under the hood.)*
+https://github.com/user-attachments/assets/70316afb-8421-482b-ad49-0f213b4b0fe6
 
 ## Status
 
