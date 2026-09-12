@@ -48,6 +48,8 @@ public class CameraViewController : UIViewController
     {
         _session = new AVCaptureSession();
 
+        _session.SessionPreset = AVCaptureSession.PresetInputPriority;
+
         var camera = AVCaptureDevice.GetDefaultDevice(AVMediaTypes.Video);
         if (camera == null) { _tcs.TrySetResult(null); return; }
 
@@ -103,9 +105,7 @@ public class CameraViewController : UIViewController
 
         _session.StartRunning();
 
-        var connection = _movieOutput.ConnectionFromMediaType(AVMediaTypes.Video.GetConstant());
-        if (connection != null && connection.SupportsVideoMinFrameDuration)
-            connection.VideoMinFrameDuration = new CMTime(1, 60);
+        
     }
     private void SetupUI()
     {

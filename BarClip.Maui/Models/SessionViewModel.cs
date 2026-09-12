@@ -27,7 +27,7 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
 
     [ObservableProperty]
     private double _progress;
-
+        
     [ObservableProperty]
     private bool _isProcessing;
 

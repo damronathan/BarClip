@@ -25,6 +25,42 @@ public class VideoPickerService
         return await tcs.Task;
     }
 
+    //public async Task<FileResult?> CaptureVideoAsync()
+    //{
+    //    var authStatus = AVCaptureDevice.GetAuthorizationStatus(AVAuthorizationMediaType.Video);
+
+    //    if (authStatus == AVAuthorizationStatus.NotDetermined)
+    //    {
+    //        var granted = await AVCaptureDevice.RequestAccessForMediaTypeAsync(AVAuthorizationMediaType.Video);
+    //        if (!granted)
+    //        {
+    //            SentrySdk.AddBreadcrumb("Camera access denied on first request");
+    //            return null;
+    //        }
+    //    }
+    //    else if (authStatus == AVAuthorizationStatus.Denied || authStatus == AVAuthorizationStatus.Restricted)
+    //    {
+    //        await ShowCameraPermissionDeniedAlertAsync();
+    //        return null;
+    //    }
+
+    //    var tcs = new TaskCompletionSource<FileResult?>();
+
+    //    var picker = new UIImagePickerController
+    //    {
+    //        SourceType = UIImagePickerControllerSourceType.Camera,
+    //        MediaTypes = new string[] { "public.movie" },
+    //        VideoQuality = 0,
+    //        VideoMaximumDuration = 90
+    //    };
+
+    //    picker.Delegate = new CameraDelegate(tcs);
+
+    //    var vc = Platform.GetCurrentUIViewController();
+    //    vc?.PresentViewController(picker, true, null);
+
+    //    return await tcs.Task;
+    //}
     public async Task<FileResult?> CaptureVideoAsync()
     {
         var authStatus = AVCaptureDevice.GetAuthorizationStatus(AVAuthorizationMediaType.Video);
@@ -46,18 +82,13 @@ public class VideoPickerService
 
         var tcs = new TaskCompletionSource<FileResult?>();
 
-        var picker = new UIImagePickerController
+        var cameraVC = new CameraViewController(tcs)
         {
-            SourceType = UIImagePickerControllerSourceType.Camera,
-            MediaTypes = new string[] { "public.movie" },
-            VideoQuality = UIImagePickerControllerQualityType.High,
-            VideoMaximumDuration = 90
+            ModalPresentationStyle = UIModalPresentationStyle.FullScreen
         };
 
-        picker.Delegate = new CameraDelegate(tcs);
-
         var vc = Platform.GetCurrentUIViewController();
-        vc?.PresentViewController(picker, true, null);
+        vc?.PresentViewController(cameraVC, true, null);
 
         return await tcs.Task;
     }

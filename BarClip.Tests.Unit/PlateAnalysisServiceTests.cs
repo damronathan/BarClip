@@ -91,6 +91,7 @@ namespace BarClip.Tests.Unit
 
             Assert.Equal(TimeSpan.FromSeconds(10), finish);
         }
+        
     }
 
     public static class OriginalVideoRequestTestExtensions
@@ -139,6 +140,7 @@ namespace BarClip.Tests.Unit
 
             return request;
         }
+
 
         public static PlateDetection Detection(
             float x = 100,
