@@ -111,7 +111,7 @@
                             CornerRadius="12"
                             HorizontalOptions="Fill" />
 
-                    <Button Text="Upload Session"
+                    <!--<Button Text="Upload Session"
                             IsVisible="{Binding HasVideos}"
                             Command="{Binding UploadSessionCommand}"
                             BackgroundColor="{DynamicResource Primary}"
@@ -119,7 +119,7 @@
                             FontAttributes="Bold"
                             HeightRequest="55"
                             CornerRadius="12"
-                            HorizontalOptions="Fill" />
+                            HorizontalOptions="Fill" />-->
 
                 </VerticalStackLayout>
             </CollectionView.Footer>
