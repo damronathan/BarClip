@@ -15,18 +15,18 @@
         Title="SessionLibraryPage"
         ContentTemplate="{DataTemplate local:SessionLibraryPage}"
         Route="SessionLibraryPage"        />
-    <ShellContent
+    <!--<ShellContent
         Title="VideoLibraryPage"
         ContentTemplate="{DataTemplate local:VideoLibraryPage}"
-        Route="VideoLibraryPage"        />
+        Route="VideoLibraryPage"        />-->
     <ShellContent
         Title="VideoPlayerPage"
         ContentTemplate="{DataTemplate local:VideoPlayerPage}"
         Route="VideoPlayerPage"        />
-    <ShellContent
+    <!--<ShellContent
         Title="CameraPage"
         ContentTemplate="{DataTemplate local:CameraPage}"
-        Route="CameraPage"        />
+        Route="CameraPage"        />-->
     
 
 </Shell>

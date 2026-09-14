@@ -4,12 +4,12 @@
              xmlns:skia="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
              x:Class="BarClip.Maui.MainPage">
 
-    <ContentPage.ToolbarItems>
+    <!--<ContentPage.ToolbarItems>
         <ToolbarItem
             x:Name="AuthToolbarItem"
             Text="Sign In"
             Clicked="OnAuthButtonClicked" />
-    </ContentPage.ToolbarItems>
+    </ContentPage.ToolbarItems>-->
 
     <Grid>
         <ScrollView>
@@ -42,7 +42,7 @@
                     BorderColor="White"
                     FontAttributes="Bold"
                     FontSize="40" />
-                <Button
+                <!--<Button
                     x:Name="VideoLibraryPageBtn"
                     Text="Video Library"
                     SemanticProperties.Hint="Directs user to video library"
@@ -50,7 +50,7 @@
                     HorizontalOptions="Fill"
                     BorderColor="White"
                     FontAttributes="Bold"
-                    FontSize="40" />
+                    FontSize="40" />-->
             </VerticalStackLayout>
         </ScrollView>
 

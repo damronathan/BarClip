@@ -54,48 +54,48 @@ public class CameraViewController : UIViewController
         if (camera == null) { _tcs.TrySetResult(null); return; }
 
         NSError error;
-        camera.LockForConfiguration(out error);
-        if (error == null)
+camera.LockForConfiguration(out error);
+if (error == null)
+{
+    AVCaptureDeviceFormat selectedFormat = null;
+
+    foreach (var format in camera.Formats)
+    {
+        var dims = ((CMVideoFormatDescription)format.FormatDescription).Dimensions;
+        if (dims.Width != 1280 || dims.Height != 720)
+            continue;
+
+        foreach (var range in format.VideoSupportedFrameRateRanges)
         {
-            AVCaptureDeviceFormat selectedFormat = null;
-
-            foreach (var format in camera.Formats)
+            if (range.MaxFrameRate >= 60)
             {
-                var dims = ((CMVideoFormatDescription)format.FormatDescription).Dimensions;
-                if (dims.Width != 1280 || dims.Height != 720)
-                    continue;
-
-                foreach (var range in format.VideoSupportedFrameRateRanges)
-                {
-                    if (range.MaxFrameRate >= 60)
-                    {
-                        selectedFormat = format;
-                        break;
-                    }
-                }
-
-                if (selectedFormat != null)
-                    break;
+                selectedFormat = format;
+                break;
             }
-
-            if (selectedFormat != null)
-            {
-                camera.ActiveFormat = selectedFormat;
-                camera.ActiveVideoMinFrameDuration = new CMTime(1, 60);
-                camera.ActiveVideoMaxFrameDuration = new CMTime(1, 60);
-                camera.AutoVideoFrameRateEnabled = false;
-            }
-            else
-            {
-                SentrySdk.AddBreadcrumb("No 1920x1080 @60fps camera format was found");
-            }
-
-            camera.UnlockForConfiguration();
         }
-        else
-        {
-            SentrySdk.AddBreadcrumb($"Failed to lock camera for configuration: {error.LocalizedDescription}");
-        }
+
+        if (selectedFormat != null)
+            break;
+    }
+
+    if (selectedFormat != null)
+    {
+        camera.ActiveFormat = selectedFormat;
+        camera.ActiveVideoMinFrameDuration = new CMTime(1, 60);
+        camera.ActiveVideoMaxFrameDuration = new CMTime(1, 60);
+        camera.AutoVideoFrameRateEnabled = false;
+    }
+    else
+    {
+        SentrySdk.AddBreadcrumb("No 1920x1080 @60fps camera format was found");
+    }
+
+    camera.UnlockForConfiguration();
+}
+else
+{
+    SentrySdk.AddBreadcrumb($"Failed to lock camera for configuration: {error.LocalizedDescription}");
+}
 
         var cameraInput = AVCaptureDeviceInput.FromDevice(camera, out error);
         if (cameraInput != null && _session.CanAddInput(cameraInput))
@@ -113,18 +113,6 @@ public class CameraViewController : UIViewController
         if (_session.CanAddOutput(_movieOutput))
             _session.AddOutput(_movieOutput);
 
-        var hevcConstant = AVVideoCodecType.Hevc.GetConstant();
-        var videoConnection = _movieOutput.ConnectionFromMediaType(AVMediaTypes.Video.GetConstant());
-        if (videoConnection != null && _movieOutput.AvailableVideoCodecTypes.Contains(hevcConstant))
-        {
-            var outputSettings = new NSDictionary(AVVideo.CodecKey, hevcConstant);
-            _movieOutput.SetOutputSettings(outputSettings, videoConnection);
-        }
-        else
-        {
-            SentrySdk.AddBreadcrumb("HEVC not available for this output; falling back to default codec");
-        }
-
         _previewLayer = new AVCaptureVideoPreviewLayer(_session);
         _previewLayer.VideoGravity = AVLayerVideoGravity.ResizeAspectFill;
         View.Layer.AddSublayer(_previewLayer);
@@ -133,6 +121,7 @@ public class CameraViewController : UIViewController
 
         
     }
+
     private void SetupUI()
     {
         // Cancel button
