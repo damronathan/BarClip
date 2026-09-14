@@ -57,21 +57,27 @@ public class CameraViewController : UIViewController
         camera.LockForConfiguration(out error);
         if (error == null)
         {
-            var formats60 = new List<AVCaptureDeviceFormat>();
+            AVCaptureDeviceFormat selectedFormat = null;
 
             foreach (var format in camera.Formats)
             {
+                var dims = ((CMVideoFormatDescription)format.FormatDescription).Dimensions;
+                if (dims.Width != 1920 || dims.Height != 1080)
+                    continue;
+
                 foreach (var range in format.VideoSupportedFrameRateRanges)
                 {
                     if (range.MaxFrameRate >= 60)
                     {
-                        formats60.Add(format);
+                        selectedFormat = format;
                         break;
                     }
                 }
+
+                if (selectedFormat != null)
+                    break;
             }
 
-            var selectedFormat = formats60.LastOrDefault();
             if (selectedFormat != null)
             {
                 camera.ActiveFormat = selectedFormat;
@@ -79,8 +85,16 @@ public class CameraViewController : UIViewController
                 camera.ActiveVideoMaxFrameDuration = new CMTime(1, 60);
                 camera.AutoVideoFrameRateEnabled = false;
             }
+            else
+            {
+                SentrySdk.AddBreadcrumb("No 1920x1080 @60fps camera format was found");
+            }
 
             camera.UnlockForConfiguration();
+        }
+        else
+        {
+            SentrySdk.AddBreadcrumb($"Failed to lock camera for configuration: {error.LocalizedDescription}");
         }
 
         var cameraInput = AVCaptureDeviceInput.FromDevice(camera, out error);

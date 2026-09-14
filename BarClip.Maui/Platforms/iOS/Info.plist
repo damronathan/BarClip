@@ -38,5 +38,11 @@
 	<string>This app needs access to photos gallery for picking photos and videos.</string>
 	<key>NSSupportsHevcMedia</key>
 	<true/>
+	<key>CFBundleIdentifier</key>
+	<string></string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>processing</string>
+	</array>
 </dict>
 </plist>
