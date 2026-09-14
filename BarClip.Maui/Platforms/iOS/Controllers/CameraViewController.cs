@@ -113,6 +113,18 @@ public class CameraViewController : UIViewController
         if (_session.CanAddOutput(_movieOutput))
             _session.AddOutput(_movieOutput);
 
+        var hevcConstant = AVVideoCodecType.Hevc.GetConstant();
+        var videoConnection = _movieOutput.ConnectionFromMediaType(AVMediaTypes.Video.GetConstant());
+        if (videoConnection != null && _movieOutput.AvailableVideoCodecTypes.Contains(hevcConstant))
+        {
+            var outputSettings = new NSDictionary(AVVideo.CodecKey, hevcConstant);
+            _movieOutput.SetOutputSettings(outputSettings, videoConnection);
+        }
+        else
+        {
+            SentrySdk.AddBreadcrumb("HEVC not available for this output; falling back to default codec");
+        }
+
         _previewLayer = new AVCaptureVideoPreviewLayer(_session);
         _previewLayer.VideoGravity = AVLayerVideoGravity.ResizeAspectFill;
         View.Layer.AddSublayer(_previewLayer);
