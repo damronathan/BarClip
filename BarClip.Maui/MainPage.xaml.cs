@@ -23,22 +23,22 @@ public partial class MainPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        AuthToolbarItem.Text = await _viewModel.IsSignedInAsync() ? "Sign Out" : "Sign In";
+        //AuthToolbarItem.Text = await _viewModel.IsSignedInAsync() ? "Sign Out" : "Sign In";
     }
 
-    private async void OnAuthButtonClicked(object sender, EventArgs e)
-    {
-        if (await _viewModel.IsSignedInAsync())
-        {
-            await _viewModel.SignOutAsync();
-            AuthToolbarItem.Text = "Sign In";
-        }
-        else
-        {
-            await _viewModel.SignInAsync();
-            AuthToolbarItem.Text = "Sign Out";
-        }
-    }
+    //private async void OnAuthButtonClicked(object sender, EventArgs e)
+    //{
+    //    if (await _viewModel.IsSignedInAsync())
+    //    {
+    //        await _viewModel.SignOutAsync();
+    //        AuthToolbarItem.Text = "Sign In";
+    //    }
+    //    else
+    //    {
+    //        await _viewModel.SignInAsync();
+    //        AuthToolbarItem.Text = "Sign Out";
+    //    }
+    //}
 
     private async void OnTestApiClicked(object sender, EventArgs e) =>
         await _viewModel.TestApiCommand.ExecuteAsync(null);
