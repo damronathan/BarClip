@@ -62,7 +62,7 @@ public class CameraViewController : UIViewController
             foreach (var format in camera.Formats)
             {
                 var dims = ((CMVideoFormatDescription)format.FormatDescription).Dimensions;
-                if (dims.Width != 1920 || dims.Height != 1080)
+                if (dims.Width != 1280 || dims.Height != 720)
                     continue;
 
                 foreach (var range in format.VideoSupportedFrameRateRanges)
