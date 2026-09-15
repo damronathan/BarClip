@@ -3,6 +3,7 @@ using BarClip.Core.Interfaces;
 using BarClip.Core.Repositories;
 using BarClip.Core.Services;
 using BarClip.Data.Schema;
+using BarClip.Maui.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -17,6 +18,8 @@ public partial class MainViewModel : ObservableObject
     private readonly IAuthService _authService;
     private readonly ApiClientService _apiClientService;
     private readonly IVideoService _videoService;
+    private readonly SetupService _setupService;
+    
 
     public event Func<string, string, string, Task> AlertRequested;
     public event Func<string, string, string, Task<bool>> ConfirmRequested;
@@ -43,6 +46,7 @@ public partial class MainViewModel : ObservableObject
         VideoPickerService picker,
         IAuthService authService,
         ApiClientService apiClientService,
+        SetupService setupService,
         IVideoService videoService)
     {
         _userRepository = userRepository;
@@ -51,9 +55,48 @@ public partial class MainViewModel : ObservableObject
         _picker = picker;
         _authService = authService;
         _apiClientService = apiClientService;
+        _setupService = setupService;
         _videoService = videoService;
     }
 
+    public MainViewModel(
+        UserRepository userRepository,
+        SessionService sessionService,
+        IVideoEditor videoEditor,
+        VideoPickerService picker,
+        IAuthService authService,
+        ApiClientService apiClientService,
+        IVideoService videoService,
+        SetupService setupService)
+    {
+        _userRepository = userRepository;
+        _sessionService = sessionService;
+        _videoEditor = videoEditor;
+        _picker = picker;
+        _authService = authService;
+        _apiClientService = apiClientService;
+        _videoService = videoService;
+        _setupService = setupService;
+    }
+
+    public async Task InitializeAsync()
+    {
+        IsProcessing = true;
+        StatusText = "Setting things up...";
+        try
+        {
+            await _setupService.InitializeAsync();
+        }
+        catch (Exception ex)
+        {
+            SentrySdk.CaptureException(ex);
+            await (AlertRequested?.Invoke("Error", "Something went wrong during setup.", "OK") ?? Task.CompletedTask);
+        }
+        finally
+        {
+            IsProcessing = false;
+        }
+    }
     public Task<bool> IsSignedInAsync() => _authService.IsSignedInAsync();
     public Task SignOutAsync() => _authService.SignOutAsync();
     public Task SignInAsync() => _authService.GetTokenAsync();

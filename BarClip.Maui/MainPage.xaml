@@ -4,12 +4,12 @@
              xmlns:skia="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
              x:Class="BarClip.Maui.MainPage">
 
-    <ContentPage.ToolbarItems>
+    <!--<ContentPage.ToolbarItems>
         <ToolbarItem
             x:Name="AuthToolbarItem"
             Text="Sign In"
             Clicked="OnAuthButtonClicked" />
-    </ContentPage.ToolbarItems>
+    </ContentPage.ToolbarItems>-->
 
     <Grid>
         <ScrollView>
@@ -73,7 +73,7 @@
                     FontAttributes="Bold"
                     FontSize="16"
                     Margin="0,0,0,60"/>
-                <ProgressBar
+                <!--<ProgressBar
                     Progress="{Binding Progress}"
                     HeightRequest="20"
                     WidthRequest="250"
@@ -83,7 +83,7 @@
                     HorizontalOptions="Center"
                     TextColor="White"
                     FontAttributes="Bold"
-                    Margin="0,-10,0,0"/>
+                    Margin="0,-10,0,0"/>-->
             </VerticalStackLayout>
         </Grid>
     </Grid>

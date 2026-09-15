@@ -67,24 +67,23 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 
-        
 
-        // Setup SQLite connection string and model path
+
         var dbPath = Path.Combine(FileSystem.AppDataDirectory, "barclip.db");
-        var modelPath = Path.Combine(FileSystem.AppDataDirectory, "PlateDetector.onnx");
 
         var configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                ["ConnectionStrings:DefaultConnection"] = $"Data Source={dbPath}",
-                ["OnnxModelOptions:Path"] = modelPath
-            })
-            .Build();
+    .AddInMemoryCollection(new Dictionary<string, string?>
+    {
+        ["ConnectionStrings:DefaultConnection"] = $"Data Source={dbPath}"
+    })
+    .Build();
 
         builder.Configuration.AddConfiguration(configuration);
         builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
-        
+
         builder.Services.RegisterMauiServices(builder.Configuration);
+        builder.Services.AddScoped<SetupService>();
+
 #if WINDOWS
         builder.Services.AddScoped<IVideoEditor, WindowsVideoEditor>();
 #elif IOS
@@ -124,6 +123,7 @@ public static class MauiProgram
         });
         builder.Services.AddSingleton<ApiClientService>();
         builder.Services.AddScoped<UploadService>();
+        builder.Services.AddSingleton<SetupService>();
 
         // ... rest of your existing pre-build code (RegisterMauiServices, pages, etc.) ...
 
@@ -142,46 +142,10 @@ public static class MauiProgram
             throw;
         }
 
-        // Initialize database and extract model
-        try
-        {
-            using (var scope = app.Services.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-                System.Diagnostics.Debug.WriteLine($"Database path: {dbPath}");
-
-
-                dbContext.Database.Migrate();
-
-                // Check if tables exist
-                var tables = dbContext.Model.GetEntityTypes().Select(t => t.GetTableName()).ToList();
-                System.Diagnostics.Debug.WriteLine($"Entity types found: {string.Join(", ", tables)}");
-            }
-
-            // Extract model if it doesn't exist
-            if (!File.Exists(modelPath))
-            {
-                ExtractOnnxModel().GetAwaiter().GetResult();
-            }
-        }
-        catch (Exception ex)
-        {
-            SentrySdk.CaptureException(ex);
-            SentrySdk.Flush(TimeSpan.FromSeconds(3));
-            System.Diagnostics.Debug.WriteLine($"Initialization error: {ex.Message}");
-            System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
-        }
 
         return app;
     }
 
-    private static async Task ExtractOnnxModel()
-    {
-        var targetPath = Path.Combine(FileSystem.AppDataDirectory, "PlateDetector.onnx");
 
-        using var stream = await FileSystem.OpenAppPackageFileAsync("PlateDetector.onnx");
-        using var fileStream = File.Create(targetPath);
-        await stream.CopyToAsync(fileStream);
-    }
 }

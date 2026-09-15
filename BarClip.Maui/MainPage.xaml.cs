@@ -23,7 +23,8 @@ public partial class MainPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        AuthToolbarItem.Text = await _viewModel.IsSignedInAsync() ? "Sign Out" : "Sign In";
+        await _viewModel.InitializeAsync();
+        //AuthToolbarItem.Text = await _viewModel.IsSignedInAsync() ? "Sign Out" : "Sign In";
     }
 
     private async void OnAuthButtonClicked(object sender, EventArgs e)
@@ -31,12 +32,12 @@ public partial class MainPage : ContentPage
         if (await _viewModel.IsSignedInAsync())
         {
             await _viewModel.SignOutAsync();
-            AuthToolbarItem.Text = "Sign In";
+            //AuthToolbarItem.Text = "Sign In";
         }
         else
         {
             await _viewModel.SignInAsync();
-            AuthToolbarItem.Text = "Sign Out";
+            //AuthToolbarItem.Text = "Sign Out";
         }
     }
 
