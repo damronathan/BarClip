@@ -4,12 +4,12 @@
              xmlns:skia="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
              x:Class="BarClip.Maui.MainPage">
 
-    <!--<ContentPage.ToolbarItems>
+    <ContentPage.ToolbarItems>
         <ToolbarItem
             x:Name="AuthToolbarItem"
             Text="Sign In"
             Clicked="OnAuthButtonClicked" />
-    </ContentPage.ToolbarItems>-->
+    </ContentPage.ToolbarItems>
 
     <Grid>
         <ScrollView>

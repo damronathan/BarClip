@@ -23,25 +23,25 @@ public partial class MainPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        //AuthToolbarItem.Text = await _viewModel.IsSignedInAsync() ? "Sign Out" : "Sign In";
+        AuthToolbarItem.Text = await _viewModel.IsSignedInAsync() ? "Sign Out" : "Sign In";
     }
 
-    //private async void OnAuthButtonClicked(object sender, EventArgs e)
-    //{
-    //    if (await _viewModel.IsSignedInAsync())
-    //    {
-    //        await _viewModel.SignOutAsync();
-    //        AuthToolbarItem.Text = "Sign In";
-    //    }
-    //    else
-    //    {
-    //        await _viewModel.SignInAsync();
-    //        AuthToolbarItem.Text = "Sign Out";
-    //    }
-    //}
+    private async void OnAuthButtonClicked(object sender, EventArgs e)
+    {
+        if (await _viewModel.IsSignedInAsync())
+        {
+            await _viewModel.SignOutAsync();
+            AuthToolbarItem.Text = "Sign In";
+        }
+        else
+        {
+            await _viewModel.SignInAsync();
+            AuthToolbarItem.Text = "Sign Out";
+        }
+    }
 
-    //private async void OnTestApiClicked(object sender, EventArgs e) =>
-    //    await _viewModel.TestApiCommand.ExecuteAsync(null);
+    private async void OnTestApiClicked(object sender, EventArgs e) =>
+        await _viewModel.TestApiCommand.ExecuteAsync(null);
 
     private async void CreateSession(object sender, EventArgs e) =>
         await _viewModel.CreateSessionCommand.ExecuteAsync(null);
@@ -49,8 +49,8 @@ public partial class MainPage : ContentPage
     private async void NavigateToSessionLibraryPage(object sender, EventArgs e) =>
         await Shell.Current.GoToAsync(nameof(SessionLibraryPage));
 
-    //private async void NavigateToVideoLibraryPage(object sender, EventArgs e) =>
-    //    await Shell.Current.GoToAsync(nameof(VideoLibraryPage));
+    private async void NavigateToVideoLibraryPage(object sender, EventArgs e) =>
+        await Shell.Current.GoToAsync(nameof(VideoLibraryPage));
 
     private async void NavigateToCameraPage(object sender, EventArgs e) =>
         await Shell.Current.GoToAsync(nameof(CameraPage));

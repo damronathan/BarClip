@@ -95,7 +95,7 @@ public static class CoreServiceRegistry
 
         RegisterRepositories(services);
         RegisterServices(services);
-        //services.AddSingleton<BlobServiceClient>(sp => null!);
+        services.AddSingleton<BlobServiceClient>(sp => null!);
 
 
         return services;

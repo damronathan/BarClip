@@ -81,31 +81,31 @@ public static class MauiProgram
 
         builder.Configuration.AddConfiguration(configuration);
         builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
-        //try
-        //{
-        //    var authConfig = builder.Configuration.GetSection("AzureAd");
+        try
+        {
+            var authConfig = builder.Configuration.GetSection("AzureAd");
 
-        //    var pca = PublicClientApplicationBuilder
-        //        .Create(authConfig["ClientId"])
-        //        .WithAuthority($"https://barclip.ciamlogin.com/barclip.onmicrosoft.com/SignUpSignIn")
-        //        .WithRedirectUri($"msal{authConfig["ClientId"]}://auth")
-        //        .WithIosKeychainSecurityGroup("com.nathandamron.barclip")
-        //        .Build();
+            var pca = PublicClientApplicationBuilder
+                .Create(authConfig["ClientId"])
+                .WithAuthority($"https://barclip.ciamlogin.com/barclip.onmicrosoft.com/SignUpSignIn")
+                .WithRedirectUri($"msal{authConfig["ClientId"]}://auth")
+                .WithIosKeychainSecurityGroup("com.nathandamron.barclip")
+                .Build();
 
-        //    builder.Services.AddSingleton<IPublicClientApplication>(pca);
-        //    builder.Services.AddSingleton<IAuthService, AuthService>();
-        //    builder.Services.AddHttpClient<ApiClientService>(client =>
-        //    {
-        //        client.Timeout = TimeSpan.FromSeconds(120);
-        //    }); 
-        //    builder.Services.AddSingleton<ApiClientService>();
-        //    builder.Services.AddScoped<UploadService>();
-        //}
-        //catch (Exception ex)
-        //{
-        //    SentrySdk.CaptureException(ex);
-        //    throw;
-        //}
+            builder.Services.AddSingleton<IPublicClientApplication>(pca);
+            builder.Services.AddSingleton<IAuthService, AuthService>();
+            builder.Services.AddHttpClient<ApiClientService>(client =>
+            {
+                client.Timeout = TimeSpan.FromSeconds(120);
+            }); 
+            builder.Services.AddSingleton<ApiClientService>();
+            builder.Services.AddScoped<UploadService>();
+        }
+        catch (Exception ex)
+        {
+            SentrySdk.CaptureException(ex);
+            throw;
+        }
         builder.Services.RegisterMauiServices(builder.Configuration);
 #if WINDOWS
         builder.Services.AddScoped<IVideoEditor, WindowsVideoEditor>();
@@ -120,7 +120,7 @@ public static class MauiProgram
         builder.Services.AddTransient<SessionLibraryPage>();
         builder.Services.AddTransient<SessionViewModel>();
         builder.Services.AddTransient<SessionPage>();
-        //builder.Services.AddTransient<VideoLibraryPage>();
+        builder.Services.AddTransient<VideoLibraryPage>();
         builder.Services.AddTransient<VideoPlayerPage>();
         builder.Services.AddTransient<CameraPage>();
         builder.Services.AddSingleton<AppShell>();
