@@ -25,9 +25,18 @@ public class PlateAnalysisService
 
     public void SetTrim(OriginalVideoRequest video)
     {
-        var (trimStart, trimFinish) = AnalyzeVideo(video);
-        video.TrimStart = trimStart;
-        video.TrimFinish = trimFinish;
+        if (video.Duration >= TimeSpan.FromSeconds(1))
+        {
+            var (trimStart, trimFinish) = AnalyzeVideo(video);
+            video.TrimStart = trimStart;
+            video.TrimFinish = trimFinish;
+        }
+        else
+        {
+            video.TrimStart = TimeSpan.Zero;
+            video.TrimFinish = video.Duration;
+        }
+        
     }
 
     public (TimeSpan TrimStart, TimeSpan TrimFinish) AnalyzeVideo(OriginalVideoRequest video)

@@ -1,4 +1,5 @@
-﻿using BarClip.Core.Interfaces;
+﻿using BackgroundTasks;
+using BarClip.Core.Interfaces;
 using BarClip.Core.Services;
 using BarClip.Maui.Platforms.iOS.Helpers;
 using BarClip.Models.Requests;
@@ -34,11 +35,9 @@ public class IOSVideoEditor : IVideoEditor
         if (video.TrimStart == TimeSpan.Zero)
         {
             try
-            {
-
-                _plateAnalysisService.SetTrim(video);
-                progress?.Report(.8);
-
+            {              
+                    _plateAnalysisService.SetTrim(video);
+                    progress?.Report(.8);               
 
             }
             catch (Exception ex)

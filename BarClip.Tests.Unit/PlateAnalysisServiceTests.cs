@@ -91,6 +91,21 @@ namespace BarClip.Tests.Unit
 
             Assert.Equal(TimeSpan.FromSeconds(10), finish);
         }
+        [Fact]
+        public void AnalyzeVideo_VideoWithDurationLessThan1Second_SkipsTrim()
+        {
+            var request = CreateRequest(TimeSpan.FromSeconds(0.5));
+
+            request.AddFrames(1);
+
+            var (start, finish) = _service.AnalyzeVideo(request);
+
+            Assert.Equal(TimeSpan.FromSeconds(0), start);
+
+            Assert.Equal(TimeSpan.FromSeconds(0.5), finish);
+        }
+        
+
         
     }
 
