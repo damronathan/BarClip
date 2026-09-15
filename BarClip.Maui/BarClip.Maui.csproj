@@ -17,7 +17,7 @@
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>4.0</ApplicationDisplayVersion>
-		<ApplicationVersion>210</ApplicationVersion>
+		<ApplicationVersion>211</ApplicationVersion>
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">13.1</SupportedOSPlatformVersion>
@@ -28,10 +28,7 @@
 	<PropertyGroup Condition="$(TargetFramework.Contains('-ios'))">
 		<CodesignEntitlements>Platforms/iOS/Entitlements.plist</CodesignEntitlements>
 	</PropertyGroup>
-	<ItemGroup>
-		<MauiXaml Remove="VideoLibraryPage.xaml" />
-		<Compile Remove="VideoLibraryPage.xaml.cs" />
-	</ItemGroup>
+
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.png" />
