@@ -28,7 +28,10 @@
 	<PropertyGroup Condition="$(TargetFramework.Contains('-ios'))">
 		<CodesignEntitlements>Platforms/iOS/Entitlements.plist</CodesignEntitlements>
 	</PropertyGroup>
-
+	<ItemGroup>
+		<MauiXaml Remove="VideoLibraryPage.xaml" />
+		<Compile Remove="VideoLibraryPage.xaml.cs" />
+	</ItemGroup>
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.png" />
