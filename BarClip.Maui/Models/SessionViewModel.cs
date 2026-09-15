@@ -19,7 +19,7 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
     private readonly IVideoEditor _videoEditor;
     private readonly LiftService _liftService;
     private readonly SessionService _sessionService;
-    private readonly UploadService _uploadService;
+    //private readonly UploadService _uploadService;
     private readonly VideoPickerService _picker;
 
     private Guid _sessionId;
@@ -61,14 +61,14 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
         IVideoEditor videoEditor,
         LiftService liftService,
         SessionService sessionService,
-        UploadService uploadService,
+        //UploadService uploadService,
         VideoPickerService picker)
     {
         _videoService = videoService;
         _videoEditor = videoEditor;
         _liftService = liftService;
         _sessionService = sessionService;
-        _uploadService = uploadService;
+        //_uploadService = uploadService;
         _picker = picker;
     }
 
@@ -213,26 +213,26 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
             await _liftService.UpdateLift(liftVideo.Lift);
     }
 
-    [RelayCommand]
-    private async Task UploadSessionAsync()
-    {
-        IsProcessing = true;
-        Progress = 0;
+    //[RelayCommand]
+    //private async Task UploadSessionAsync()
+    //{
+    //    IsProcessing = true;
+    //    Progress = 0;
 
-        var sessionPath = Path.Combine(_sessionFolderPaths.Session, $"{_sessionId}.MOV");
-        var thumbnailPath = await _videoEditor.ExtractThumbnail(_sessionFolderPaths.Session, _sessionFolderPaths.Thumbnails);
+    //    var sessionPath = Path.Combine(_sessionFolderPaths.Session, $"{_sessionId}.MOV");
+    //    var thumbnailPath = await _videoEditor.ExtractThumbnail(_sessionFolderPaths.Session, _sessionFolderPaths.Thumbnails);
 
-        if (thumbnailPath == null)
-            throw new Exception("No thumbnail found");
+    //    if (thumbnailPath == null)
+    //        throw new Exception("No thumbnail found");
 
-        Progress = 0.1;
+    //    Progress = 0.1;
 
-        await _uploadService.UploadVideo(_sessionId, sessionPath, thumbnailPath);
+    //    await _uploadService.UploadVideo(_sessionId, sessionPath, thumbnailPath);
 
-        Progress = 1;
-        await (AlertRequested?.Invoke("Success", "Video uploaded successfully!", "OK") ?? Task.CompletedTask);
-        IsProcessing = false;
-    }
+    //    Progress = 1;
+    //    await (AlertRequested?.Invoke("Success", "Video uploaded successfully!", "OK") ?? Task.CompletedTask);
+    //    IsProcessing = false;
+    //}
 
     [RelayCommand]
     private async Task ProcessSessionAsync()

@@ -2,7 +2,7 @@
 
 public partial class App : Application
 {
-    public App(AppShell shell, ApiClientService apiClientService)
+    public App(AppShell shell/*, ApiClientService apiClientService*/)
     {
         InitializeComponent();
         MainPage = shell;        

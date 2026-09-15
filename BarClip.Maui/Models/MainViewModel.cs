@@ -15,7 +15,7 @@ public partial class MainViewModel : ObservableObject
     private readonly IVideoEditor _videoEditor;
     private readonly VideoPickerService _picker;
     private readonly IAuthService _authService;
-    private readonly ApiClientService _apiClientService;
+    //private readonly ApiClientService _apiClientService;
     private readonly IVideoService _videoService;
 
     public event Func<string, string, string, Task> AlertRequested;
@@ -42,7 +42,7 @@ public partial class MainViewModel : ObservableObject
         IVideoEditor videoEditor,
         VideoPickerService picker,
         IAuthService authService,
-        ApiClientService apiClientService,
+        //ApiClientService apiClientService,
         IVideoService videoService)
     {
         _userRepository = userRepository;
@@ -50,7 +50,7 @@ public partial class MainViewModel : ObservableObject
         _videoEditor = videoEditor;
         _picker = picker;
         _authService = authService;
-        _apiClientService = apiClientService;
+        //_apiClientService = apiClientService;
         _videoService = videoService;
     }
 
@@ -93,17 +93,4 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
-    [RelayCommand]
-    private async Task TestApiAsync()
-    {
-        try
-        {
-            var response = await _apiClientService.TestAsync();
-            await (AlertRequested?.Invoke("API Response", response, "OK") ?? Task.CompletedTask);
-        }
-        catch (Exception ex)
-        {
-            await (AlertRequested?.Invoke("Error", ex.Message, "OK") ?? Task.CompletedTask);
-        }
-    }
 }
