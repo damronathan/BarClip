@@ -81,31 +81,7 @@ public static class MauiProgram
 
         builder.Configuration.AddConfiguration(configuration);
         builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
-        try
-        {
-            var authConfig = builder.Configuration.GetSection("AzureAd");
-
-            var pca = PublicClientApplicationBuilder
-                .Create(authConfig["ClientId"])
-                .WithAuthority($"https://barclip.ciamlogin.com/barclip.onmicrosoft.com/SignUpSignIn")
-                .WithRedirectUri($"msal{authConfig["ClientId"]}://auth")
-                .WithIosKeychainSecurityGroup("com.nathandamron.barclip")
-                .Build();
-
-            builder.Services.AddSingleton<IPublicClientApplication>(pca);
-            builder.Services.AddSingleton<IAuthService, AuthService>();
-            builder.Services.AddHttpClient<ApiClientService>(client =>
-            {
-                client.Timeout = TimeSpan.FromSeconds(120);
-            }); 
-            builder.Services.AddSingleton<ApiClientService>();
-            builder.Services.AddScoped<UploadService>();
-        }
-        catch (Exception ex)
-        {
-            SentrySdk.CaptureException(ex);
-            throw;
-        }
+        
         builder.Services.RegisterMauiServices(builder.Configuration);
 #if WINDOWS
         builder.Services.AddScoped<IVideoEditor, WindowsVideoEditor>();
@@ -129,7 +105,40 @@ public static class MauiProgram
         builder.Logging.AddDebug();
 #endif
 
-        var app = builder.Build();
+        builder.Services.AddSingleton<IPublicClientApplication>(sp =>
+        {
+            var authConfig = builder.Configuration.GetSection("AzureAd");
+            return PublicClientApplicationBuilder
+                .Create(authConfig["ClientId"])
+                .WithAuthority($"https://barclip.ciamlogin.com/barclip.onmicrosoft.com/SignUpSignIn")
+                .WithRedirectUri($"msal{authConfig["ClientId"]}://auth")
+                .WithIosKeychainSecurityGroup("com.nathandamron.barclip")
+                .Build();
+        });
+        builder.Services.AddSingleton<IAuthService, AuthService>();
+        builder.Services.AddHttpClient<ApiClientService>(client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(120);
+        });
+        builder.Services.AddSingleton<ApiClientService>();
+        builder.Services.AddScoped<UploadService>();
+
+        // ... rest of your existing pre-build code (RegisterMauiServices, pages, etc.) ...
+
+        var app = builder.Build();   // Sentry native handler is now live
+
+        // AFTER Build() — this is what actually touches the keychain,
+        // now that Sentry can catch a native crash if it happens
+        try
+        {
+            using var scope = app.Services.CreateScope();
+            scope.ServiceProvider.GetRequiredService<IPublicClientApplication>();
+        }
+        catch (Exception ex)
+        {
+            SentrySdk.CaptureException(ex);
+            throw;
+        }
 
         // Initialize database and extract model
         try
