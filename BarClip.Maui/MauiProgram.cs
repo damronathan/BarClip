@@ -12,6 +12,7 @@ using BarClip.Maui.Models;
 
 
 
+
 #if IOS
 using BarClip.Maui.Platforms.iOS.Services;
 #elif WINDOWS
@@ -24,6 +25,7 @@ public static class MauiProgram
 {
     public static MauiApp CreateMauiApp()
     {
+        SQLitePCL.Batteries_V2.Init();
         SentrySdk.Init(options =>
         {
             options.Dsn = "https://0c5952290b452cf311494a6a5a455c1d@o4511021185630208.ingest.us.sentry.io/4511021190283264";
@@ -165,6 +167,8 @@ public static class MauiProgram
         }
         catch (Exception ex)
         {
+            SentrySdk.CaptureException(ex);
+            SentrySdk.Flush(TimeSpan.FromSeconds(3));
             System.Diagnostics.Debug.WriteLine($"Initialization error: {ex.Message}");
             System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
         }
