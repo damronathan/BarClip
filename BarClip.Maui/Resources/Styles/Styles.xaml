@@ -55,17 +55,18 @@
         </Setter>
     </Style>
 
-    <!-- Home screen: blocky filled button — the primary action (Create Session) -->
+    <!-- Home screen: blocky filled button — the primary action (Create Session), same blue as the "Clip" wordmark -->
     <Style TargetType="Button" x:Key="ButtonPrimary">
         <Setter Property="TextColor" Value="{StaticResource White}" />
-        <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+        <Setter Property="BackgroundColor" Value="{StaticResource PrimaryLight}" />
         <Setter Property="FontAttributes" Value="Bold"/>
-        <Setter Property="FontSize" Value="22"/>
+        <Setter Property="FontSize" Value="28"/>
         <Setter Property="BorderWidth" Value="0"/>
-        <Setter Property="CornerRadius" Value="16"/>
-        <Setter Property="HeightRequest" Value="120"/>
-        <Setter Property="HorizontalOptions" Value="Fill"/>
-        <Setter Property="ContentLayout" Value="Top,8"/>
+        <Setter Property="CornerRadius" Value="20"/>
+        <Setter Property="HeightRequest" Value="170"/>
+        <Setter Property="WidthRequest" Value="220"/>
+        <Setter Property="HorizontalOptions" Value="Center"/>
+        <Setter Property="ContentLayout" Value="Top,12"/>
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
                 <VisualStateGroup x:Name="CommonStates">
@@ -86,12 +87,11 @@
         </Setter>
     </Style>
 
-    <!-- Home screen: blocky outline button — the secondary action (Session Library) -->
+    <!-- Home screen: blocky filled button — the secondary action (Sessions), lighter grey fill, white text/icon -->
     <Style TargetType="Button" x:Key="ButtonSecondary" BasedOn="{StaticResource ButtonPrimary}">
-        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryLight}}" />
-        <Setter Property="BackgroundColor" Value="Transparent" />
-        <Setter Property="BorderWidth" Value="2"/>
-        <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryLight}}" />
+        <Setter Property="TextColor" Value="{StaticResource White}" />
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray600}}" />
+        <Setter Property="BorderWidth" Value="0"/>
     </Style>
 
     <Style TargetType="CheckBox">
@@ -231,7 +231,7 @@
          <Span Text="Bar" Style="{StaticResource WordmarkBarSpan}"/><Span Text="Clip" Style="{StaticResource WordmarkClipSpan}"/>
          </FormattedString></Label.FormattedText></Label> -->
     <Style TargetType="Label" x:Key="Wordmark">
-        <Setter Property="FontSize" Value="17" />
+        <Setter Property="FontSize" Value="21" />
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="HorizontalOptions" Value="Start" />
         <Setter Property="VerticalOptions" Value="Start" />

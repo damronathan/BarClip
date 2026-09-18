@@ -7,6 +7,23 @@
     Shell.FlyoutBehavior="Disabled"
     Title="BarClip">
 
+    <Shell.Resources>
+        <ResourceDictionary>
+            <Style TargetType="Label" x:Key="Wordmark">
+                <Setter Property="FontSize" Value="21" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="HorizontalOptions" Value="Start" />
+                <Setter Property="VerticalOptions" Value="Start" />
+            </Style>
+            <Style TargetType="Span" x:Key="WordmarkBarSpan">
+                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
+            </Style>
+            <Style TargetType="Span" x:Key="WordmarkClipSpan">
+                <Setter Property="TextColor" Value="{StaticResource PrimaryLight}" />
+            </Style>
+        </ResourceDictionary>
+    </Shell.Resources>
+
     <!-- Home: no back button here, so the wordmark gets the full bar to itself -->
     <ShellContent
         Title=""
