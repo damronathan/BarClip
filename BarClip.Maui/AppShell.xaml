@@ -7,26 +7,42 @@
     Shell.FlyoutBehavior="Disabled"
     Title="BarClip">
 
+    <!-- Home: no back button here, so the wordmark gets the full bar to itself -->
     <ShellContent
-        Title="Home"
+        Title=""
         ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+        Route="MainPage">
+        <Shell.TitleView>
+            <Label Style="{StaticResource Wordmark}"
+                   VerticalOptions="Center"
+                   SemanticProperties.Description="BarClip logo">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="Bar" Style="{StaticResource WordmarkBarSpan}" />
+                        <Span Text="Clip" Style="{StaticResource WordmarkClipSpan}" />
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+        </Shell.TitleView>
+    </ShellContent>
+
+    <!-- Inner pages keep the native back button + a plain functional title, no wordmark -->
     <ShellContent
-        Title="SessionLibraryPage"
+        Title="Sessions"
         ContentTemplate="{DataTemplate local:SessionLibraryPage}"
-        Route="SessionLibraryPage"        />
+        Route="SessionLibraryPage" />
     <!--<ShellContent
         Title="VideoLibraryPage"
         ContentTemplate="{DataTemplate local:VideoLibraryPage}"
         Route="VideoLibraryPage"        />-->
     <ShellContent
-        Title="VideoPlayerPage"
+        Title="Session"
         ContentTemplate="{DataTemplate local:VideoPlayerPage}"
-        Route="VideoPlayerPage"        />
+        Route="VideoPlayerPage" />
     <!--<ShellContent
         Title="CameraPage"
         ContentTemplate="{DataTemplate local:CameraPage}"
         Route="CameraPage"        />-->
-    
+
 
 </Shell>

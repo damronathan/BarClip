@@ -6,18 +6,7 @@
 
     <Grid RowDefinitions="Auto,*">
 
-        <!-- Wordmark: small, top-left, pulled out of the centered button stack -->
-        <Label Grid.Row="0"
-               Style="{StaticResource Wordmark}"
-               Margin="20,16,0,0"
-               SemanticProperties.Description="BarClip logo">
-            <Label.FormattedText>
-                <FormattedString>
-                    <Span Text="Bar" Style="{StaticResource WordmarkBarSpan}" />
-                    <Span Text="Clip" Style="{StaticResource WordmarkClipSpan}" />
-                </FormattedString>
-            </Label.FormattedText>
-        </Label>
+        <!-- Wordmark now lives in AppShell's Shell.TitleView for the Home route -->
 
         <ScrollView Grid.Row="1">
             <VerticalStackLayout
@@ -66,6 +55,7 @@
         </Grid>
     </Grid>
 </ContentPage>
+
 
 
 <!--<ContentPage.ToolbarItems>
