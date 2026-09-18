@@ -18,7 +18,7 @@
                     x:Name="CreateBtn"
                     Text="{Binding CreateButtonText}"
                     Style="{StaticResource ButtonPrimary}"
-                    ImageSource="add-circle"
+                    ImageSource="addcircle"
                     SemanticProperties.Hint="Prompts user to select files for new session"
                     Clicked="CreateSession" />
 
@@ -26,7 +26,7 @@
                     x:Name="SessionBtn"
                     Text="Sessions"
                     Style="{StaticResource ButtonSecondary}"
-                    ImageSource="list-circle"
+                    ImageSource="listcircle"
                     SemanticProperties.Hint="Directs user to session library"
                     Clicked="NavigateToSessionLibraryPage" />
 
