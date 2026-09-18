@@ -6,18 +6,24 @@
 
     <!-- Note: For Android please see also Platforms\Android\Resources\values\colors.xml -->
 
+    <!-- Brand blue: use Primary for fills/buttons (works on light surfaces),
+         PrimaryLight for text sitting directly on dark backgrounds (title, wordmark) -->
     <Color x:Key="Primary">#1e40af</Color>
-    <Color x:Key="PrimaryDark">#2563eb</Color>
+    <Color x:Key="PrimaryLight">#5B9BD5</Color>
+    <Color x:Key="PrimaryDark">#153270</Color>
     <Color x:Key="PrimaryDarkText">#242424</Color>
-    <Color x:Key="Secondary">#DFD8F7</Color>
-    <Color x:Key="SecondaryDarkText">#1e40af</Color>
-    <Color x:Key="Tertiary">#2B0B98</Color>
 
     <Color x:Key="White">White</Color>
     <Color x:Key="Black">Black</Color>
-    <Color x:Key="Magenta">#D600AA</Color>
-    <Color x:Key="MidnightBlue">#190649</Color>
+    <!-- OffBlack is the dark-mode "black" everywhere — never use pure Black on a surface -->
     <Color x:Key="OffBlack">#1f1f1f</Color>
+    <!-- Slightly lighter than OffBlack — for cards/frames sitting on top of the dark page bg -->
+    <Color x:Key="OffBlackSurface">#2a2a2a</Color>
+    <!-- Semi-transparent overlay (processing screen) instead of solid black -->
+    <Color x:Key="OverlayScrim">#E61f1f1f</Color>
+
+    <!-- Light-mode page background: soft off-white, not pure white, so cards separate visually -->
+    <Color x:Key="OffWhite">#FAFAFA</Color>
 
     <Color x:Key="Gray100">#E1E1E1</Color>
     <Color x:Key="Gray200">#C8C8C8</Color>
@@ -27,13 +33,12 @@
     <Color x:Key="Gray600">#404040</Color>
     <Color x:Key="Gray900">#212121</Color>
     <Color x:Key="Gray950">#141414</Color>
-    
 
     <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource Primary}"/>
-    <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource Secondary}"/>
-    <SolidColorBrush x:Key="TertiaryBrush" Color="{StaticResource Tertiary}"/>
+    <SolidColorBrush x:Key="PrimaryLightBrush" Color="{StaticResource PrimaryLight}"/>
     <SolidColorBrush x:Key="WhiteBrush" Color="{StaticResource White}"/>
     <SolidColorBrush x:Key="BlackBrush" Color="{StaticResource Black}"/>
+    <SolidColorBrush x:Key="OffBlackBrush" Color="{StaticResource OffBlack}"/>
 
     <SolidColorBrush x:Key="Gray100Brush" Color="{StaticResource Gray100}"/>
     <SolidColorBrush x:Key="Gray200Brush" Color="{StaticResource Gray200}"/>

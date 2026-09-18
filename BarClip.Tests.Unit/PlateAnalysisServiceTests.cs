@@ -40,6 +40,20 @@ namespace BarClip.Tests.Unit
             Assert.Equal(TimeSpan.FromSeconds(17), finish);
         }
         [Fact]
+        public void AnalyzeVideo_50FramesWithNoPlatesFirst_ReturnsTrimmedVideo()
+        {
+            var request = CreateRequest(TimeSpan.FromSeconds(70))
+                .AddFrames(50)
+                .AddFrames(5, Detection(y: 200), Detection(x: 50, y: 200))
+                .AddFrames(11, Detection(y: 250), Detection(x: 50, y: 250))
+                .AddFrames(5, Detection(y: 200), Detection(x: 50, y: 200));
+
+            var (start, finish) = _service.AnalyzeVideo(request);
+
+            Assert.Equal(TimeSpan.FromSeconds(52.5), start);
+            Assert.Equal(TimeSpan.FromSeconds(67), finish);
+        }
+        [Fact]
         public void AnalyzeVideo_MovementEveryFrame_TwelveFramesTwelveSecondDuration_ReturnsFullVideo()
         {
             var request = CreateRequest(TimeSpan.FromSeconds(12));

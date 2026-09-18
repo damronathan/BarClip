@@ -45,6 +45,8 @@ public class PlateAnalysisService
         int? trimStartFrame = null;
         int lastFrameWithDetection = -1;
         const int LockInFrame = 15;
+        bool frameDetected = false;
+
 
         Log($"Analyzing video with {video.Frames.Count} frames.");
 
@@ -56,7 +58,7 @@ public class PlateAnalysisService
             lastFrameWithDetection = frame.FrameNumber;
             Log($"Frame {frame.FrameNumber}: {frame.PlateDetections.Count} detection(s)");
 
-            if (frame.FrameNumber <= LockInFrame)
+            if (frame.FrameNumber <= LockInFrame || frameDetected == false)
             {
                 // Identity establishment phase - match by height or create new
                 foreach (var detection in frame.PlateDetections.OrderByDescending(d => d.Height))
@@ -77,6 +79,7 @@ public class PlateAnalysisService
                             HasMoved = false
                         };
                         plates.Add(newPlate);
+                        frameDetected = true;
 
                         // Re-rank plates by baseline height descending
                         plates = plates.OrderByDescending(p => p.BaselineHeight).ToList();

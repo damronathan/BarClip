@@ -4,58 +4,46 @@
              xmlns:skia="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
              x:Class="BarClip.Maui.MainPage">
 
-    <!--<ContentPage.ToolbarItems>
-        <ToolbarItem
-            x:Name="AuthToolbarItem"
-            Text="Sign In"
-            Clicked="OnAuthButtonClicked" />
-    </ContentPage.ToolbarItems>-->
+    <Grid RowDefinitions="Auto,*">
 
-    <Grid>
-        <ScrollView>
+        <!-- Wordmark: small, top-left, pulled out of the centered button stack -->
+        <Label Grid.Row="0"
+               Style="{StaticResource Wordmark}"
+               Margin="20,16,0,0"
+               SemanticProperties.Description="BarClip logo">
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span Text="Bar" Style="{StaticResource WordmarkBarSpan}" />
+                    <Span Text="Clip" Style="{StaticResource WordmarkClipSpan}" />
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>
+
+        <ScrollView Grid.Row="1">
             <VerticalStackLayout
                 Padding="30,0"
-                Spacing="25"
+                Spacing="20"
                 VerticalOptions="Center">
-                <Label
-                    Text="BarClip"
-                    HeightRequest="100"
-                    FontSize="70"
-                    SemanticProperties.Description="Bar Clip Logo"
-                    HorizontalOptions="Center"
-                    FontAttributes="Bold" />
+
                 <Button
                     x:Name="CreateBtn"
                     Text="{Binding CreateButtonText}"
+                    Style="{StaticResource ButtonPrimary}"
                     SemanticProperties.Hint="Prompts user to select files for new session"
-                    Clicked="CreateSession"
-                    HorizontalOptions="Fill"
-                    BorderColor="White"
-                    FontAttributes="Bold"
-                    FontSize="40" />
+                    Clicked="CreateSession" />
+
                 <Button
                     x:Name="SessionBtn"
-                    Text="Session Library"
+                    Text="Sessions"
+                    Style="{StaticResource ButtonSecondary}"
                     SemanticProperties.Hint="Directs user to session library"
-                    Clicked="NavigateToSessionLibraryPage"
-                    HorizontalOptions="Fill"
-                    BorderColor="White"
-                    FontAttributes="Bold"
-                    FontSize="40" />
-                <!--<Button
-                    x:Name="VideoLibraryPageBtn"
-                    Text="Video Library"
-                    SemanticProperties.Hint="Directs user to video library"
-                    Clicked="NavigateToVideoLibraryPage"
-                    HorizontalOptions="Fill"
-                    BorderColor="White"
-                    FontAttributes="Bold"
-                    FontSize="40" />-->
+                    Clicked="NavigateToSessionLibraryPage" />
+
             </VerticalStackLayout>
         </ScrollView>
 
         <!-- Overlay while processing -->
-        <Grid BackgroundColor="Black" IsVisible="{Binding IsProcessing}">
+        <Grid Grid.RowSpan="2" BackgroundColor="{StaticResource OverlayScrim}" IsVisible="{Binding IsProcessing}">
             <VerticalStackLayout VerticalOptions="Center"
                                  HorizontalOptions="Center"
                                  Spacing="20">
@@ -73,18 +61,41 @@
                     FontAttributes="Bold"
                     FontSize="16"
                     Margin="0,0,0,60"/>
-                <!--<ProgressBar
-                    Progress="{Binding Progress}"
-                    HeightRequest="20"
-                    WidthRequest="250"
-                    Margin="0,-80,0,0"/>
-                <Label
-                    Text="{Binding Progress, StringFormat='{0:P0}'}"
-                    HorizontalOptions="Center"
-                    TextColor="White"
-                    FontAttributes="Bold"
-                    Margin="0,-10,0,0"/>-->
+
             </VerticalStackLayout>
         </Grid>
     </Grid>
 </ContentPage>
+
+
+<!--<ContentPage.ToolbarItems>
+    <ToolbarItem
+        x:Name="AuthToolbarItem"
+        Text="Sign In"
+        Clicked="OnAuthButtonClicked" />
+</ContentPage.ToolbarItems>-->
+
+
+<!--<ProgressBar
+    Progress="{Binding Progress}"
+    HeightRequest="20"
+    WidthRequest="250"
+    Margin="0,-80,0,0"/>
+<Label
+    Text="{Binding Progress, StringFormat='{0:P0}'}"
+    HorizontalOptions="Center"
+    TextColor="White"
+    FontAttributes="Bold"
+    Margin="0,-10,0,0"/>-->
+
+
+
+<!--<Button
+     x:Name="VideoLibraryPageBtn"
+     Text="Video Library"
+     SemanticProperties.Hint="Directs user to video library"
+     Clicked="NavigateToVideoLibraryPage"
+     HorizontalOptions="Fill"
+     BorderColor="White"
+     FontAttributes="Bold"
+     FontSize="40" />-->
