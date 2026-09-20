@@ -9,12 +9,18 @@
 
         <!-- Top-left label -->
         <Label Grid.Row="0"
-               Text="BarClip"
-               FontSize="21"
-               FontAttributes="Bold"
-               Margin="20,16,0,0"
-               HorizontalOptions="Start"
-               VerticalOptions="Start" />
+       FontSize="30"
+       FontAttributes="Bold"
+       Margin="20,16,0,0"
+       HorizontalOptions="Start"
+       VerticalOptions="Start">
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span Text="Bar" Style="{StaticResource WordmarkBarSpan}" />
+                    <Span Text="Clip" Style="{StaticResource WordmarkClipSpan}" />
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>
 
         <!-- Two action cards, centered as a group -->
         <Grid Grid.Row="1"
