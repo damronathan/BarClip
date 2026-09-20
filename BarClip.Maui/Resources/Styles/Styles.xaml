@@ -485,5 +485,33 @@
         <Setter Property="UnselectedTabColor" Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray950}}" />
         <Setter Property="SelectedTabColor" Value="{AppThemeBinding Light={StaticResource Gray950}, Dark={StaticResource Gray200}}" />
     </Style>
+    <!-- Home screen action cards: Border + Image + Label instead of Button.ImageSource,
+     since Button icon+text rendering is unreliable on Windows/WinUI. -->
+    <Style TargetType="Border" x:Key="ActionCardPrimary">
+        <Setter Property="BackgroundColor" Value="{StaticResource PrimaryLight}" />
+        <Setter Property="Stroke" Value="Transparent" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 20" />
+        <Setter Property="WidthRequest" Value="220" />
+        <Setter Property="HeightRequest" Value="170" />
+        <Setter Property="HorizontalOptions" Value="Center" />
+    </Style>
+
+    <Style TargetType="Border" x:Key="ActionCardSecondary" BasedOn="{StaticResource ActionCardPrimary}">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray400}, Dark={StaticResource Gray600}}" />
+    </Style>
+
+    <Style TargetType="Image" x:Key="ActionCardIcon">
+        <Setter Property="WidthRequest" Value="44" />
+        <Setter Property="HeightRequest" Value="44" />
+        <Setter Property="HorizontalOptions" Value="Center" />
+    </Style>
+
+    <Style TargetType="Label" x:Key="ActionCardLabel">
+        <Setter Property="TextColor" Value="{StaticResource White}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="28" />
+        <Setter Property="HorizontalOptions" Value="Center" />
+        <Setter Property="HorizontalTextAlignment" Value="Center" />
+    </Style>
 
 </ResourceDictionary>
