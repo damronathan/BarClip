@@ -5,35 +5,56 @@
              Shell.NavBarIsVisible="False"
              x:Class="BarClip.Maui.MainPage">
 
-    <Grid>
+    <Grid RowDefinitions="Auto,*">
 
-        <ScrollView>
-            <VerticalStackLayout
-                Padding="30,0"
-                Spacing="20"
-                VerticalOptions="Center">
+        <!-- Top-left label -->
+        <Label Grid.Row="0"
+               Text="BarClip"
+               FontSize="21"
+               FontAttributes="Bold"
+               Margin="20,16,0,0"
+               HorizontalOptions="Start"
+               VerticalOptions="Start" />
 
-                <Button
+        <!-- Two action cards, centered as a group -->
+        <Grid Grid.Row="1"
+              RowDefinitions="Auto,Auto"
+              RowSpacing="20"
+              HorizontalOptions="Center"
+              VerticalOptions="Center">
+
+            <Border Grid.Row="0"
                     x:Name="CreateBtn"
-                    Text="{Binding CreateButtonText}"
-                    Style="{StaticResource ButtonPrimary}"
-                    ImageSource="addcircle"
-                    SemanticProperties.Hint="Prompts user to select files for new session"
-                    Clicked="CreateSession" />
+                    Style="{StaticResource ActionCardPrimary}"
+                    SemanticProperties.Description="Create Session"
+                    SemanticProperties.Hint="Prompts user to select files for new session">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="CreateSession" />
+                </Border.GestureRecognizers>
+                <VerticalStackLayout Spacing="10" VerticalOptions="Center">
+                    <Image Style="{StaticResource ActionCardIcon}" Source="addcircle" />
+                    <Label Style="{StaticResource ActionCardLabel}" Text="{Binding CreateButtonText}" />
+                </VerticalStackLayout>
+            </Border>
 
-                <Button
-                    x:Name="SessionBtn"
-                    Text="Sessions"
-                    Style="{StaticResource ButtonSecondary}"
-                    ImageSource="listcircle"
-                    SemanticProperties.Hint="Directs user to session library"
-                    Clicked="NavigateToSessionLibraryPage" />
+            <Border Grid.Row="1"
+                    x:Name="SessionCard"
+                    Style="{StaticResource ActionCardSecondary}"
+                    SemanticProperties.Description="Sessions"
+                    SemanticProperties.Hint="Directs user to session library">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="NavigateToSessionLibraryPage" />
+                </Border.GestureRecognizers>
+                <VerticalStackLayout Spacing="10" VerticalOptions="Center">
+                    <Image Style="{StaticResource ActionCardIcon}" Source="listcircle" />
+                    <Label Style="{StaticResource ActionCardLabel}" Text="Sessions" />
+                </VerticalStackLayout>
+            </Border>
 
-            </VerticalStackLayout>
-        </ScrollView>
+        </Grid>
 
         <!-- Overlay while processing -->
-        <Grid BackgroundColor="{StaticResource OverlayScrim}" IsVisible="{Binding IsProcessing}">
+        <Grid Grid.RowSpan="2" BackgroundColor="{StaticResource OverlayScrim}" IsVisible="{Binding IsProcessing}">
             <VerticalStackLayout VerticalOptions="Center"
                                  HorizontalOptions="Center"
                                  Spacing="20">
@@ -56,6 +77,7 @@
         </Grid>
     </Grid>
 </ContentPage>
+
 
 
 
