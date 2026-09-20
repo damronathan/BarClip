@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:skia="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
              Shell.NavBarIsVisible="False"
              x:Class="BarClip.Maui.MainPage">
@@ -30,29 +31,39 @@
               VerticalOptions="Center">
 
             <Border Grid.Row="0"
-                    x:Name="CreateBtn"
-                    Style="{StaticResource ActionCardPrimary}"
-                    SemanticProperties.Description="Create Session"
-                    SemanticProperties.Hint="Prompts user to select files for new session">
+x:Name="CreateBtn"
+Style="{StaticResource ActionCardPrimary}"
+SemanticProperties.Description="Create Session"
+SemanticProperties.Hint="Prompts user to select files for new session">
                 <Border.GestureRecognizers>
                     <TapGestureRecognizer Tapped="CreateSession" />
                 </Border.GestureRecognizers>
+                <Border.Behaviors>
+                    <toolkit:TouchBehavior
+    PressedScale="0.96"
+    DefaultAnimationDuration="120" />
+                </Border.Behaviors>
                 <VerticalStackLayout Spacing="10" VerticalOptions="Center">
-                    <Image Style="{StaticResource ActionCardIcon}" Source="addcircle" />
-                    <Label Style="{StaticResource ActionCardLabel}" Text="{Binding CreateButtonText}" />
+                    <Image Style="{StaticResource ActionCardIcon}" Source="addcircle.png" />
+                    <Label Style="{StaticResource ActionCardLabel}" Text="Create Session" />
                 </VerticalStackLayout>
             </Border>
 
             <Border Grid.Row="1"
-                    x:Name="SessionCard"
-                    Style="{StaticResource ActionCardSecondary}"
-                    SemanticProperties.Description="Sessions"
-                    SemanticProperties.Hint="Directs user to session library">
+x:Name="SessionCard"
+Style="{StaticResource ActionCardSecondary}"
+SemanticProperties.Description="Sessions"
+SemanticProperties.Hint="Directs user to session library">
                 <Border.GestureRecognizers>
                     <TapGestureRecognizer Tapped="NavigateToSessionLibraryPage" />
                 </Border.GestureRecognizers>
+                <Border.Behaviors>
+                    <toolkit:TouchBehavior
+    PressedScale="0.96"
+    DefaultAnimationDuration="120" />
+                </Border.Behaviors>
                 <VerticalStackLayout Spacing="10" VerticalOptions="Center">
-                    <Image Style="{StaticResource ActionCardIcon}" Source="listcircle" />
+                    <Image Style="{StaticResource ActionCardIcon}" Source="listcircle.png" />
                     <Label Style="{StaticResource ActionCardLabel}" Text="Sessions" />
                 </VerticalStackLayout>
             </Border>

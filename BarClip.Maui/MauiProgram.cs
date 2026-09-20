@@ -54,6 +54,7 @@ public static class MauiProgram
 
             .UseMauiApp<App>()
             .UseMauiCommunityToolkitMediaElement()
+            .UseMauiCommunityToolkit()
             .UseSkiaSharp()
             .UseSentry(options =>
             {
