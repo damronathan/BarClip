@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:skia="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
-             xmlns:converters="clr-namespace:BarClip.Maui.Converters;assembly=BarClip.Maui"
+             xmlns:converters="clr-namespace:BarClip.Maui.Converters;assembly=BarClip.Maui" xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="BarClip.Maui.SessionPage"
              Title="Session">
     <ContentPage.ToolbarItems>
@@ -36,81 +36,36 @@
                                    WidthRequest="200" />
 
                             <!-- Play icon centered over the thumbnail (scrim + shadow) -->
-                            <Border Grid.Column="0"
-                                    IsVisible="{Binding IsProcessed}"
-                                    BackgroundColor="#80000000"
-                                    Stroke="Transparent"
-                                    StrokeThickness="0"
-                                    StrokeShape="RoundRectangle 32"
-                                    Padding="0"
-                                    HeightRequest="64"
-                                    WidthRequest="64"
-                                    HorizontalOptions="Center"
-                                    VerticalOptions="Center">
-                                <Border.Shadow>
-                                    <Shadow Brush="Black" Opacity="0.6" Radius="8" Offset="0,2" />
-                                </Border.Shadow>
-                                <ImageButton Source="playcircle"
-                                             Command="{Binding ProcessCommand}"
-                                             BackgroundColor="Transparent"
-                                             Padding="0"
-                                             Aspect="AspectFit"
-                                             HeightRequest="40"
-                                             WidthRequest="40"
-                                             HorizontalOptions="Center"
-                                             VerticalOptions="Center" />
-                            </Border>
-
                             <!-- Trim: same slot as Save, shown only before processing -->
                             <Border Grid.Column="1"
-                                    IsVisible="{Binding IsProcessed, Converter={StaticResource InvertedBoolConverter}}"
-                                    BackgroundColor="#80000000"
-                                    Stroke="Transparent"
-                                    StrokeThickness="0"
-                                    StrokeShape="RoundRectangle 24"
-                                    Padding="0"
-                                    HeightRequest="48"
-                                    WidthRequest="48"
-                                    HorizontalOptions="End"
-                                    VerticalOptions="Center">
-                                <Border.Shadow>
-                                    <Shadow Brush="Black" Opacity="0.6" Radius="6" Offset="0,2" />
-                                </Border.Shadow>
-                                <ImageButton Source="trim"
-                                             Command="{Binding ProcessCommand}"
-                                             BackgroundColor="Transparent"
-                                             Padding="0"
-                                             Aspect="AspectFit"
-                                             HeightRequest="28"
-                                             WidthRequest="28"
-                                             HorizontalOptions="Center"
-                                             VerticalOptions="Center" />
+        Style="{StaticResource ActionCardSmall}"
+        IsVisible="{Binding IsProcessed, Converter={StaticResource InvertedBoolConverter}}"
+        SemanticProperties.Description="Trim"
+        SemanticProperties.Hint="Trims this video">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ProcessCommand}" />
+                                </Border.GestureRecognizers>
+                                <Border.Behaviors>
+                                    <toolkit:TouchBehavior PressedScale="0.85"
+                               DefaultAnimationDuration="80" />
+                                </Border.Behaviors>
+                                <Image Style="{StaticResource ActionCardIconSmall}" Source="trim" />
                             </Border>
 
                             <!-- Save: same slot as Trim, shown only after processing -->
                             <Border Grid.Column="1"
-                                    IsVisible="{Binding IsProcessed}"
-                                    BackgroundColor="#80000000"
-                                    Stroke="Transparent"
-                                    StrokeThickness="0"
-                                    StrokeShape="RoundRectangle 24"
-                                    Padding="0"
-                                    HeightRequest="48"
-                                    WidthRequest="48"
-                                    HorizontalOptions="End"
-                                    VerticalOptions="Center">
-                                <Border.Shadow>
-                                    <Shadow Brush="Black" Opacity="0.6" Radius="6" Offset="0,2" />
-                                </Border.Shadow>
-                                <ImageButton Source="download"
-                                             Command="{Binding SaveCommand}"
-                                             BackgroundColor="Transparent"
-                                             Padding="0"
-                                             Aspect="AspectFit"
-                                             HeightRequest="28"
-                                             WidthRequest="28"
-                                             HorizontalOptions="Center"
-                                             VerticalOptions="Center" />
+        Style="{StaticResource ActionCardSmall}"
+        IsVisible="{Binding IsProcessed}"
+        SemanticProperties.Description="Save"
+        SemanticProperties.Hint="Saves this video to your library">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SaveCommand}" />
+                                </Border.GestureRecognizers>
+                                <Border.Behaviors>
+                                    <toolkit:TouchBehavior PressedScale="0.85"
+                               DefaultAnimationDuration="80" />
+                                </Border.Behaviors>
+                                <Image Style="{StaticResource ActionCardIconSmall}" Source="download" />
                             </Border>
 
                         </Grid>
