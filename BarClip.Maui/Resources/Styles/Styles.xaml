@@ -513,7 +513,7 @@
         <Setter Property="HorizontalOptions" Value="Center" />
         <Setter Property="HorizontalTextAlignment" Value="Center" />
     </Style>
-    <Style TargetType="Border" x:Key="ActionCardSmall" BasedOn="{StaticResource ActionCardSecondary}">
+    <Style TargetType="Border" x:Key="ActionCardSmall" BasedOn="{StaticResource ActionCardPrimary}">
         <Setter Property="HeightRequest" Value="56" />
         <Setter Property="WidthRequest" Value="56" />
         <Setter Property="Padding" Value="0" />
