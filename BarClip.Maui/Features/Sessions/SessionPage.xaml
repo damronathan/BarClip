@@ -28,48 +28,90 @@
                         <Grid ColumnDefinitions="200,*"
                               RowDefinitions="Auto">
 
+                            <!-- Thumbnail -->
                             <Image Grid.Column="0"
                                    Source="{Binding ThumbnailPath}"
                                    Aspect="AspectFit"
                                    HeightRequest="200"
                                    WidthRequest="200" />
 
-                            <VerticalStackLayout Grid.Column="1"
-                                                 Spacing="10"
-                                                 Padding="10,0"
-                                                 VerticalOptions="Center">
+                            <!-- Play icon centered over the thumbnail (scrim + shadow) -->
+                            <Border Grid.Column="0"
+                                    IsVisible="{Binding IsProcessed}"
+                                    BackgroundColor="#80000000"
+                                    Stroke="Transparent"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 32"
+                                    Padding="0"
+                                    HeightRequest="64"
+                                    WidthRequest="64"
+                                    HorizontalOptions="Center"
+                                    VerticalOptions="Center">
+                                <Border.Shadow>
+                                    <Shadow Brush="Black" Opacity="0.6" Radius="8" Offset="0,2" />
+                                </Border.Shadow>
+                                <ImageButton Source="playcircle"
+                                             Command="{Binding ProcessCommand}"
+                                             BackgroundColor="Transparent"
+                                             Padding="0"
+                                             Aspect="AspectFit"
+                                             HeightRequest="40"
+                                             WidthRequest="40"
+                                             HorizontalOptions="Center"
+                                             VerticalOptions="Center" />
+                            </Border>
 
-                                <Button Text="Trim"
-                                        IsVisible="{Binding IsProcessed, Converter={StaticResource InvertedBoolConverter}}"
-                                        Command="{Binding ProcessCommand}"
-                                        BackgroundColor="{DynamicResource Primary}"
-                                        TextColor="White"
-                                        FontAttributes="Bold"
-                                        HeightRequest="30"
-                                        CornerRadius="8"
-                                        HorizontalOptions="Fill" />
+                            <!-- Trim: same slot as Save, shown only before processing -->
+                            <Border Grid.Column="1"
+                                    IsVisible="{Binding IsProcessed, Converter={StaticResource InvertedBoolConverter}}"
+                                    BackgroundColor="#80000000"
+                                    Stroke="Transparent"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 24"
+                                    Padding="0"
+                                    HeightRequest="48"
+                                    WidthRequest="48"
+                                    HorizontalOptions="End"
+                                    VerticalOptions="Center">
+                                <Border.Shadow>
+                                    <Shadow Brush="Black" Opacity="0.6" Radius="6" Offset="0,2" />
+                                </Border.Shadow>
+                                <ImageButton Source="trim"
+                                             Command="{Binding ProcessCommand}"
+                                             BackgroundColor="Transparent"
+                                             Padding="0"
+                                             Aspect="AspectFit"
+                                             HeightRequest="28"
+                                             WidthRequest="28"
+                                             HorizontalOptions="Center"
+                                             VerticalOptions="Center" />
+                            </Border>
 
-                                <Button Text="Play"
-                                        IsVisible="{Binding IsProcessed}"
-                                        Command="{Binding ProcessCommand}"
-                                        BackgroundColor="{DynamicResource Primary}"
-                                        TextColor="White"
-                                        FontAttributes="Bold"
-                                        HeightRequest="30"
-                                        CornerRadius="8"
-                                        HorizontalOptions="Fill" />
-
-                                <Button Text="Save"
-                                        IsVisible="{Binding IsProcessed}"
-                                        Command="{Binding SaveCommand}"
-                                        BackgroundColor="{DynamicResource Primary}"
-                                        TextColor="White"
-                                        FontAttributes="Bold"
-                                        HeightRequest="30"
-                                        CornerRadius="8"
-                                        HorizontalOptions="Fill" />
-
-                            </VerticalStackLayout>
+                            <!-- Save: same slot as Trim, shown only after processing -->
+                            <Border Grid.Column="1"
+                                    IsVisible="{Binding IsProcessed}"
+                                    BackgroundColor="#80000000"
+                                    Stroke="Transparent"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 24"
+                                    Padding="0"
+                                    HeightRequest="48"
+                                    WidthRequest="48"
+                                    HorizontalOptions="End"
+                                    VerticalOptions="Center">
+                                <Border.Shadow>
+                                    <Shadow Brush="Black" Opacity="0.6" Radius="6" Offset="0,2" />
+                                </Border.Shadow>
+                                <ImageButton Source="download"
+                                             Command="{Binding SaveCommand}"
+                                             BackgroundColor="Transparent"
+                                             Padding="0"
+                                             Aspect="AspectFit"
+                                             HeightRequest="28"
+                                             WidthRequest="28"
+                                             HorizontalOptions="Center"
+                                             VerticalOptions="Center" />
+                            </Border>
 
                         </Grid>
 
@@ -128,30 +170,30 @@
 
         <!-- Bottom Tab Bar -->
         <Grid Grid.Row="1"
-      ColumnDefinitions="*,*"
-      ColumnSpacing="10"
-      BackgroundColor="Black"
-      Padding="10,12,10,12">
+              ColumnDefinitions="*,*"
+              ColumnSpacing="10"
+              BackgroundColor="Black"
+              Padding="10,12,10,12">
 
             <Button Grid.Column="0"
-            Text="Add Videos"
-            Command="{Binding PickVideosForSessionCommand}"
-            BackgroundColor="{DynamicResource Primary}"
-            TextColor="White"
-            FontAttributes="Bold"
-            HeightRequest="50"
-            CornerRadius="12"
-            HorizontalOptions="Fill" />
+                    Text="Add Videos"
+                    Command="{Binding PickVideosForSessionCommand}"
+                    BackgroundColor="{DynamicResource Primary}"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    HeightRequest="50"
+                    CornerRadius="12"
+                    HorizontalOptions="Fill" />
 
             <Button Grid.Column="1"
-            Text="Record"
-            Command="{Binding CaptureVideoForSessionCommand}"
-            BackgroundColor="{DynamicResource Primary}"
-            TextColor="White"
-            FontAttributes="Bold"
-            HeightRequest="50"
-            CornerRadius="12"
-            HorizontalOptions="Fill" />
+                    Text="Record"
+                    Command="{Binding CaptureVideoForSessionCommand}"
+                    BackgroundColor="{DynamicResource Primary}"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    HeightRequest="50"
+                    CornerRadius="12"
+                    HorizontalOptions="Fill" />
 
         </Grid>
 
