@@ -121,81 +121,99 @@
 
         <!-- Bottom Tab Bar -->
         <Grid Grid.Row="1"
-              ColumnDefinitions="*,Auto,*"
-              BackgroundColor="Black"
-              Padding="10,12,10,12"
-              IgnoreSafeArea="True">
+      ColumnDefinitions="*,Auto,*"
+      BackgroundColor="Black"
+      Padding="10,12,10,12"
+      IgnoreSafeArea="True">
 
             <!-- Left slot: Merge -> Play -->
             <Grid Grid.Column="0" HorizontalOptions="End" VerticalOptions="Center" Margin="0,0,16,0">
 
                 <Border Style="{StaticResource ActionCardTab}"
-                        IsVisible="{Binding CanCreateFullVideo}"
-                        SemanticProperties.Description="Create Full Video"
-                        SemanticProperties.Hint="Merges the session's videos into one">
+                IsVisible="{Binding CanCreateFullVideo}"
+                SemanticProperties.Description="Create Full Video"
+                SemanticProperties.Hint="Merges the session's videos into one">
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding ProcessSessionCommand}" />
                     </Border.GestureRecognizers>
                     <Border.Behaviors>
                         <toolkit:TouchBehavior PressedScale="0.85"
-                                               DefaultAnimationDuration="80" />
+                                       DefaultAnimationDuration="80" />
                     </Border.Behaviors>
-                    <Image Style="{StaticResource ActionCardIconSmall}" Source="merge" />
+                    <VerticalStackLayout Spacing="2" HorizontalOptions="Center">
+                        <Image Style="{StaticResource ActionCardIconSmall}" Source="merge" />
+                        <Label Text="Merge"
+                       FontSize="9"
+                       TextColor="White"
+                       HorizontalOptions="Center" />
+                    </VerticalStackLayout>
                 </Border>
 
                 <Border Style="{StaticResource ActionCardTab}"
-                        IsVisible="{Binding IsSessionProcessed}"
-                        SemanticProperties.Description="Play Full Video"
-                        SemanticProperties.Hint="Plays the merged session video">
+                IsVisible="{Binding IsSessionProcessed}"
+                SemanticProperties.Description="Play Full Video"
+                SemanticProperties.Hint="Plays the merged session video">
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding ProcessSessionCommand}" />
                     </Border.GestureRecognizers>
                     <Border.Behaviors>
                         <toolkit:TouchBehavior PressedScale="0.85"
-                                               DefaultAnimationDuration="80" />
+                                       DefaultAnimationDuration="80" />
                     </Border.Behaviors>
-                    <Image Style="{StaticResource ActionCardIconSmall}" Source="playcircle" />
+                    <VerticalStackLayout Spacing="2" HorizontalOptions="Center">
+                        <Image Style="{StaticResource ActionCardIconSmall}" Source="playcircle" />
+                        <Label Text="Play"
+                       FontSize="9"
+                       TextColor="White"
+                       HorizontalOptions="Center" />
+                    </VerticalStackLayout>
                 </Border>
 
             </Grid>
 
             <!-- Center: Add -->
             <Border Grid.Column="1"
-                    Style="{StaticResource ActionCardTab}"
-                    WidthRequest="85"
-                    HeightRequest="85"
-                    HorizontalOptions="Center"
-                    VerticalOptions="Center"
-                    SemanticProperties.Description="Add Video"
-                    SemanticProperties.Hint="Record a new video or choose one from your library">
+            Style="{StaticResource ActionCardTab}"
+            WidthRequest="85"
+            HeightRequest="85"
+            HorizontalOptions="Center"
+            VerticalOptions="Center"
+            SemanticProperties.Description="Add Video"
+            SemanticProperties.Hint="Record a new video or choose one from your library">
                 <Border.GestureRecognizers>
                     <TapGestureRecognizer Tapped="OnAddTapped" />
                 </Border.GestureRecognizers>
                 <Border.Behaviors>
                     <toolkit:TouchBehavior PressedScale="0.85"
-                                           DefaultAnimationDuration="80" />
+                                   DefaultAnimationDuration="80" />
                 </Border.Behaviors>
                 <Image Style="{StaticResource ActionCardIconSmall}"
-                       WidthRequest="85"
-                       HeightRequest="85"
-                       Source="addcircle" />
+               WidthRequest="85"
+               HeightRequest="85"
+               Source="addcircle" />
             </Border>
 
             <!-- Right slot: Save -->
             <Grid Grid.Column="2" HorizontalOptions="Start" VerticalOptions="Center" Margin="16,0,0,0">
 
                 <Border Style="{StaticResource ActionCardTab}"
-                        IsVisible="{Binding IsSessionProcessed}"
-                        SemanticProperties.Description="Save"
-                        SemanticProperties.Hint="Saves the full video to your library">
+                IsVisible="{Binding IsSessionProcessed}"
+                SemanticProperties.Description="Save"
+                SemanticProperties.Hint="Saves the full video to your library">
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding SaveVideoCommand}" />
                     </Border.GestureRecognizers>
                     <Border.Behaviors>
                         <toolkit:TouchBehavior PressedScale="0.85"
-                                               DefaultAnimationDuration="80" />
+                                       DefaultAnimationDuration="80" />
                     </Border.Behaviors>
-                    <Image Style="{StaticResource ActionCardIconSmall}" Source="download" />
+                    <VerticalStackLayout Spacing="2" HorizontalOptions="Center">
+                        <Image Style="{StaticResource ActionCardIconSmall}" Source="download" />
+                        <Label Text="Save"
+                       FontSize="9"
+                       TextColor="White"
+                       HorizontalOptions="Center" />
+                    </VerticalStackLayout>
                 </Border>
 
             </Grid>
