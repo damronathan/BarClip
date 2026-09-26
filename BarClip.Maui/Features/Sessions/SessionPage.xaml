@@ -162,8 +162,8 @@
             <!-- Center: Add -->
             <Border Grid.Column="1"
                     Style="{StaticResource ActionCardTab}"
-                    WidthRequest="76"
-                    HeightRequest="76"
+                    WidthRequest="85"
+                    HeightRequest="85"
                     HorizontalOptions="Center"
                     VerticalOptions="Center"
                     SemanticProperties.Description="Add Video"
@@ -176,8 +176,8 @@
                                            DefaultAnimationDuration="80" />
                 </Border.Behaviors>
                 <Image Style="{StaticResource ActionCardIconSmall}"
-                       WidthRequest="60"
-                       HeightRequest="60"
+                       WidthRequest="85"
+                       HeightRequest="85"
                        Source="addcircle" />
             </Border>
 
