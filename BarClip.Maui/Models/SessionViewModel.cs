@@ -84,6 +84,7 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
         await LoadVideosAsync();
         await CreateLiftVideoViewModelsAsync();
     }
+
     private async Task LoadVideosAsync()
     {
         _sessionFolderPaths = FileHelper.CreateSessionFolders(FileSystem.AppDataDirectory, _sessionId);

@@ -44,6 +44,18 @@ public partial class SessionPage : ContentPage
         };
     }
 
+    private async void OnAddTapped(object sender, EventArgs e)
+    {
+        string action = await DisplayActionSheet("Add Video", "Cancel", null, "Take Video", "Choose from Library");
+
+        if (BindingContext is not SessionViewModel vm) // replace with your actual VM type
+            return;
+
+        if (action == "Take Video" && vm.CaptureVideoForSessionCommand.CanExecute(null))
+            vm.CaptureVideoForSessionCommand.Execute(null);
+        else if (action == "Choose from Library" && vm.PickVideosForSessionCommand.CanExecute(null))
+            vm.PickVideosForSessionCommand.Execute(null);
+    }
     protected override async void OnAppearing()
     {
         base.OnAppearing();

@@ -4,6 +4,7 @@
              xmlns:skia="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
              xmlns:converters="clr-namespace:BarClip.Maui.Converters;assembly=BarClip.Maui"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
              x:Class="BarClip.Maui.SessionPage"
              Title="Session">
     <ContentPage.ToolbarItems>
@@ -103,36 +104,6 @@
                 <VerticalStackLayout Spacing="10"
                                      Padding="10,10,10,20">
 
-                    <Button Text="Create Full Video"
-                            IsVisible="{Binding CanCreateFullVideo}"
-                            Command="{Binding ProcessSessionCommand}"
-                            BackgroundColor="{DynamicResource Primary}"
-                            TextColor="White"
-                            FontAttributes="Bold"
-                            HeightRequest="55"
-                            CornerRadius="12"
-                            HorizontalOptions="Fill" />
-
-                    <Button Text="Play Full Video"
-                            IsVisible="{Binding IsSessionProcessed}"
-                            Command="{Binding ProcessSessionCommand}"
-                            BackgroundColor="{DynamicResource Primary}"
-                            TextColor="White"
-                            FontAttributes="Bold"
-                            HeightRequest="55"
-                            CornerRadius="12"
-                            HorizontalOptions="Fill" />
-
-                    <Button Text="Save Full Video"
-                            IsVisible="{Binding IsSessionProcessed}"
-                            Command="{Binding SaveVideoCommand}"
-                            BackgroundColor="{DynamicResource Primary}"
-                            TextColor="White"
-                            FontAttributes="Bold"
-                            HeightRequest="55"
-                            CornerRadius="12"
-                            HorizontalOptions="Fill" />
-
                     <!--<Button Text="Upload Session"
                             IsVisible="{Binding HasVideos}"
                             Command="{Binding UploadSessionCommand}"
@@ -150,30 +121,84 @@
 
         <!-- Bottom Tab Bar -->
         <Grid Grid.Row="1"
-              ColumnDefinitions="*,*"
-              ColumnSpacing="10"
+              ColumnDefinitions="*,Auto,*"
               BackgroundColor="Black"
-              Padding="10,12,10,12">
+              Padding="10,12,10,12"
+              IgnoreSafeArea="True">
 
-            <Button Grid.Column="0"
-                    Text="Add Videos"
-                    Command="{Binding PickVideosForSessionCommand}"
-                    BackgroundColor="{DynamicResource Primary}"
-                    TextColor="White"
-                    FontAttributes="Bold"
-                    HeightRequest="50"
-                    CornerRadius="12"
-                    HorizontalOptions="Fill" />
+            <!-- Left slot: Merge -> Play -->
+            <Grid Grid.Column="0" HorizontalOptions="End" VerticalOptions="Center" Margin="0,0,16,0">
 
-            <Button Grid.Column="1"
-                    Text="Record"
-                    Command="{Binding CaptureVideoForSessionCommand}"
-                    BackgroundColor="{DynamicResource Primary}"
-                    TextColor="White"
-                    FontAttributes="Bold"
-                    HeightRequest="50"
-                    CornerRadius="12"
-                    HorizontalOptions="Fill" />
+                <Border Style="{StaticResource ActionCardSmall}"
+                        IsVisible="{Binding CanCreateFullVideo}"
+                        SemanticProperties.Description="Create Full Video"
+                        SemanticProperties.Hint="Merges the session's videos into one">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ProcessSessionCommand}" />
+                    </Border.GestureRecognizers>
+                    <Border.Behaviors>
+                        <toolkit:TouchBehavior PressedScale="0.85"
+                                               DefaultAnimationDuration="80" />
+                    </Border.Behaviors>
+                    <Image Style="{StaticResource ActionCardIconSmall}" Source="merge" />
+                </Border>
+
+                <Border Style="{StaticResource ActionCardSmall}"
+                        IsVisible="{Binding IsSessionProcessed}"
+                        SemanticProperties.Description="Play Full Video"
+                        SemanticProperties.Hint="Plays the merged session video">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ProcessSessionCommand}" />
+                    </Border.GestureRecognizers>
+                    <Border.Behaviors>
+                        <toolkit:TouchBehavior PressedScale="0.85"
+                                               DefaultAnimationDuration="80" />
+                    </Border.Behaviors>
+                    <Image Style="{StaticResource ActionCardIconSmall}" Source="addcircle" />
+                </Border>
+
+            </Grid>
+
+            <!-- Center: Add -->
+            <Border Grid.Column="1"
+                    Style="{StaticResource ActionCardSmall}"
+                    WidthRequest="76"
+                    HeightRequest="76"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    SemanticProperties.Description="Add Video"
+                    SemanticProperties.Hint="Record a new video or choose one from your library">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnAddTapped" />
+                </Border.GestureRecognizers>
+                <Border.Behaviors>
+                    <toolkit:TouchBehavior PressedScale="0.85"
+                                           DefaultAnimationDuration="80" />
+                </Border.Behaviors>
+                <Image Style="{StaticResource ActionCardIconSmall}"
+                       WidthRequest="34"
+                       HeightRequest="34"
+                       Source="add" />
+            </Border>
+
+            <!-- Right slot: Save -->
+            <Grid Grid.Column="2" HorizontalOptions="Start" VerticalOptions="Center" Margin="16,0,0,0">
+
+                <Border Style="{StaticResource ActionCardSmall}"
+                        IsVisible="{Binding IsSessionProcessed}"
+                        SemanticProperties.Description="Save"
+                        SemanticProperties.Hint="Saves the full video to your library">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding SaveVideoCommand}" />
+                    </Border.GestureRecognizers>
+                    <Border.Behaviors>
+                        <toolkit:TouchBehavior PressedScale="0.85"
+                                               DefaultAnimationDuration="80" />
+                    </Border.Behaviors>
+                    <Image Style="{StaticResource ActionCardIconSmall}" Source="download" />
+                </Border>
+
+            </Grid>
 
         </Grid>
 
