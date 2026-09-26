@@ -129,7 +129,7 @@
             <!-- Left slot: Merge -> Play -->
             <Grid Grid.Column="0" HorizontalOptions="End" VerticalOptions="Center" Margin="0,0,16,0">
 
-                <Border Style="{StaticResource ActionCardSmall}"
+                <Border Style="{StaticResource ActionCardTab}"
                         IsVisible="{Binding CanCreateFullVideo}"
                         SemanticProperties.Description="Create Full Video"
                         SemanticProperties.Hint="Merges the session's videos into one">
@@ -143,7 +143,7 @@
                     <Image Style="{StaticResource ActionCardIconSmall}" Source="merge" />
                 </Border>
 
-                <Border Style="{StaticResource ActionCardSmall}"
+                <Border Style="{StaticResource ActionCardTab}"
                         IsVisible="{Binding IsSessionProcessed}"
                         SemanticProperties.Description="Play Full Video"
                         SemanticProperties.Hint="Plays the merged session video">
@@ -154,14 +154,14 @@
                         <toolkit:TouchBehavior PressedScale="0.85"
                                                DefaultAnimationDuration="80" />
                     </Border.Behaviors>
-                    <Image Style="{StaticResource ActionCardIconSmall}" Source="addcircle" />
+                    <Image Style="{StaticResource ActionCardIconSmall}" Source="playcircle" />
                 </Border>
 
             </Grid>
 
             <!-- Center: Add -->
             <Border Grid.Column="1"
-                    Style="{StaticResource ActionCardSmall}"
+                    Style="{StaticResource ActionCardTab}"
                     WidthRequest="76"
                     HeightRequest="76"
                     HorizontalOptions="Center"
@@ -178,13 +178,13 @@
                 <Image Style="{StaticResource ActionCardIconSmall}"
                        WidthRequest="34"
                        HeightRequest="34"
-                       Source="add" />
+                       Source="addcircle" />
             </Border>
 
             <!-- Right slot: Save -->
             <Grid Grid.Column="2" HorizontalOptions="Start" VerticalOptions="Center" Margin="16,0,0,0">
 
-                <Border Style="{StaticResource ActionCardSmall}"
+                <Border Style="{StaticResource ActionCardTab}"
                         IsVisible="{Binding IsSessionProcessed}"
                         SemanticProperties.Description="Save"
                         SemanticProperties.Hint="Saves the full video to your library">
