@@ -176,8 +176,8 @@
                                            DefaultAnimationDuration="80" />
                 </Border.Behaviors>
                 <Image Style="{StaticResource ActionCardIconSmall}"
-                       WidthRequest="34"
-                       HeightRequest="34"
+                       WidthRequest="60"
+                       HeightRequest="60"
                        Source="addcircle" />
             </Border>
 
