@@ -75,8 +75,8 @@
                             </Border.GestureRecognizers>
                             <Image Style="{StaticResource ActionCardIconSmall}"
                                 Source="trim"
-                                WidthRequest="16"
-                                HeightRequest="16" />
+                                WidthRequest="22"
+                                HeightRequest="22" />
 
                         </Border>
 
@@ -100,8 +100,8 @@
                             </Border.GestureRecognizers>
                             <Image Style="{StaticResource ActionCardIconSmall}"
                                 Source="download"
-                                WidthRequest="16"
-                                HeightRequest="16" />
+                                WidthRequest="22"
+                                HeightRequest="22" />
                         </Border>
 
                     </Grid>
