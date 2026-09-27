@@ -179,8 +179,8 @@
                         VerticalOptions="Center">
 
                 <Border Style="{StaticResource ActionCardTab}"
-            WidthRequest="56"
-            HeightRequest="56"
+            WidthRequest="85"
+            HeightRequest="85"
             SemanticProperties.Description="Record Video"
             SemanticProperties.Hint="Opens the camera to record a new video">
                     <Border.GestureRecognizers>
@@ -192,8 +192,8 @@
                     </Border.Behaviors>
                     <Image Style="{StaticResource ActionCardIconSmall}"
                Source="camera"
-               WidthRequest="26"
-               HeightRequest="26" />
+               WidthRequest="85"
+               HeightRequest="85" />
                 </Border>
 
                 <Border Style="{StaticResource ActionCardTab}"
