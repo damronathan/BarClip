@@ -73,7 +73,11 @@
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding ProcessCommand}" />
                             </Border.GestureRecognizers>
-                            <Image Style="{StaticResource ActionCardIconSmall}" Source="trim" />
+                            <Image Style="{StaticResource ActionCardIconSmall}"
+                                Source="trim"
+                                WidthRequest="16"
+                                HeightRequest="16" />
+
                         </Border>
 
                         <!-- Save: bottom-right corner, shown only after processing -->
@@ -94,7 +98,10 @@
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SaveCommand}" />
                             </Border.GestureRecognizers>
-                            <Image Style="{StaticResource ActionCardIconSmall}" Source="download" />
+                            <Image Style="{StaticResource ActionCardIconSmall}"
+                                Source="download"
+                                WidthRequest="16"
+                                HeightRequest="16" />
                         </Border>
 
                     </Grid>
