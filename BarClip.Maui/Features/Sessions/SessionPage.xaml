@@ -120,7 +120,7 @@
 
             <CollectionView.Footer>
                 <!-- Reserves space so the last row of clips can scroll clear of the floating pill bar -->
-                <BoxView HeightRequest="120" Color="Transparent" />
+                <BoxView HeightRequest="120" Color="{StaticResource OffBlack}" />
             </CollectionView.Footer>
 
         </CollectionView>
@@ -129,7 +129,7 @@
         <Border Background="{StaticResource ScrimColor}"
                 Stroke="Transparent"
                 StrokeThickness="0"
-                Margin="16,0,16,0"
+                Margin="16,0,16,16"
                 Padding="10,12,10,12"
                 HeightRequest="86"
                 HorizontalOptions="Fill"
