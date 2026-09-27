@@ -37,71 +37,82 @@
 
                         <!-- Play icon centered over the thumbnail (scrim + shadow) -->
                         <Border IsVisible="{Binding IsProcessed}"
-                                BackgroundColor="#80000000"
-                                Stroke="Transparent"
-                                StrokeThickness="0"
-                                StrokeShape="RoundRectangle 32"
-                                Padding="0"
-                                HeightRequest="64"
-                                WidthRequest="64"
-                                HorizontalOptions="Center"
-                                VerticalOptions="Center">
+        BackgroundColor="#80000000"
+        Stroke="Transparent"
+        StrokeThickness="0"
+        StrokeShape="RoundRectangle 32"
+        Padding="0"
+        HeightRequest="64"
+        WidthRequest="64"
+        HorizontalOptions="Center"
+        VerticalOptions="Center">
                             <Border.Shadow>
                                 <Shadow Brush="Black" Opacity="0.6" Radius="8" Offset="0,2" />
                             </Border.Shadow>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding ProcessCommand}" />
                             </Border.GestureRecognizers>
+                            <Border.Behaviors>
+                                <toolkit:TouchBehavior PressedScale="0.85"
+                               DefaultAnimationDuration="80" />
+                            </Border.Behaviors>
                             <Image Style="{StaticResource ActionCardIconSmall}" Source="playcircle" />
                         </Border>
 
                         <!-- Trim: bottom-right corner, shown only before processing -->
                         <Border IsVisible="{Binding IsProcessed, Converter={StaticResource InvertedBoolConverter}}"
-                                BackgroundColor="#80000000"
-                                Stroke="Transparent"
-                                StrokeThickness="0"
-                                StrokeShape="RoundRectangle 20"
-                                Padding="0"
-                                HeightRequest="32"
-                                WidthRequest="32"
-                                HorizontalOptions="End"
-                                VerticalOptions="End"
-                                Margin="0,0,6,6">
+        BackgroundColor="#80000000"
+        Stroke="Transparent"
+        StrokeThickness="0"
+        StrokeShape="RoundRectangle 20"
+        Padding="0"
+        HeightRequest="32"
+        WidthRequest="32"
+        HorizontalOptions="End"
+        VerticalOptions="End"
+        Margin="0,0,6,6">
                             <Border.Shadow>
                                 <Shadow Brush="Black" Opacity="0.6" Radius="8" Offset="0,2" />
                             </Border.Shadow>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding ProcessCommand}" />
                             </Border.GestureRecognizers>
+                            <Border.Behaviors>
+                                <toolkit:TouchBehavior PressedScale="0.85"
+                               DefaultAnimationDuration="80" />
+                            </Border.Behaviors>
                             <Image Style="{StaticResource ActionCardIconSmall}"
-                                Source="trim"
-                                WidthRequest="22"
-                                HeightRequest="22" />
-
+           Source="trim"
+           WidthRequest="16"
+           HeightRequest="16" />
                         </Border>
 
                         <!-- Save: bottom-right corner, shown only after processing -->
                         <Border IsVisible="{Binding IsProcessed}"
-                                BackgroundColor="#80000000"
-                                Stroke="Transparent"
-                                StrokeThickness="0"
-                                StrokeShape="RoundRectangle 20"
-                                Padding="0"
-                                HeightRequest="32"
-                                WidthRequest="32"
-                                HorizontalOptions="End"
-                                VerticalOptions="End"
-                                Margin="0,0,6,6">
+        BackgroundColor="#80000000"
+        Stroke="Transparent"
+        StrokeThickness="0"
+        StrokeShape="RoundRectangle 20"
+        Padding="0"
+        HeightRequest="32"
+        WidthRequest="32"
+        HorizontalOptions="End"
+        VerticalOptions="End"
+        Margin="0,0,6,6">
                             <Border.Shadow>
                                 <Shadow Brush="Black" Opacity="0.6" Radius="8" Offset="0,2" />
                             </Border.Shadow>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding SaveCommand}" />
                             </Border.GestureRecognizers>
+                            <Border.Behaviors>
+                                <toolkit:TouchBehavior PressedScale="0.85"
+                               DefaultAnimationDuration="80" />
+                            </Border.Behaviors>
                             <Image Style="{StaticResource ActionCardIconSmall}"
-                                Source="download"
-                                WidthRequest="22"
-                                HeightRequest="22" />
+           Source="download"
+           WidthRequest="16"
+           HeightRequest="16" />
                         </Border>
 
                     </Grid>
