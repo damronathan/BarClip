@@ -4,7 +4,6 @@
              xmlns:skia="clr-namespace:SkiaSharp.Extended.UI.Controls;assembly=SkiaSharp.Extended.UI"
              xmlns:converters="clr-namespace:BarClip.Maui.Converters;assembly=BarClip.Maui"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
              x:Class="BarClip.Maui.SessionPage"
              Title="Session">
     <ContentPage.ToolbarItems>
@@ -118,32 +117,15 @@
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
-
-            <CollectionView.Footer>
-                <VerticalStackLayout Spacing="10"
-                                     Padding="10,10,10,20">
-
-                    <!--<Button Text="Upload Session"
-                            IsVisible="{Binding HasVideos}"
-                            Command="{Binding UploadSessionCommand}"
-                            BackgroundColor="{DynamicResource Primary}"
-                            TextColor="White"
-                            FontAttributes="Bold"
-                            HeightRequest="55"
-                            CornerRadius="12"
-                            HorizontalOptions="Fill" />-->
-
-                </VerticalStackLayout>
-            </CollectionView.Footer>
-
+            
         </CollectionView>
 
         <!-- Bottom Tab Bar -->
         <Grid Grid.Row="1"
-              ColumnDefinitions="*,Auto,*"
-              BackgroundColor="Black"
-              Padding="10,12,10,12"
-              IgnoreSafeArea="True">
+      ColumnDefinitions="*,Auto,*"
+      BackgroundColor="Black"
+      Padding="10,12,10,12"
+      SafeAreaEdges="None">
 
             <!-- Left slot: Merge -> Play -->
             <Grid Grid.Column="0" HorizontalOptions="End" VerticalOptions="Center" Margin="0,0,16,0">
@@ -190,27 +172,49 @@
 
             </Grid>
 
-            <!-- Center: Add -->
-            <Border Grid.Column="1"
-                    Style="{StaticResource ActionCardTab}"
-                    WidthRequest="85"
-                    HeightRequest="85"
-                    HorizontalOptions="Center"
-                    VerticalOptions="Center"
-                    SemanticProperties.Description="Add Video"
-                    SemanticProperties.Hint="Record a new video or choose one from your library">
-                <Border.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="OnAddTapped" />
-                </Border.GestureRecognizers>
-                <Border.Behaviors>
-                    <toolkit:TouchBehavior PressedScale="0.85"
-                                           DefaultAnimationDuration="80" />
-                </Border.Behaviors>
-                <Image Style="{StaticResource ActionCardIconSmall}"
-                       WidthRequest="85"
-                       HeightRequest="85"
-                       Source="addcircle" />
-            </Border>
+            <!-- Center: Camera + Add -->
+            <HorizontalStackLayout Grid.Column="1"
+                        Spacing="16"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center">
+
+                <Border Style="{StaticResource ActionCardTab}"
+            WidthRequest="56"
+            HeightRequest="56"
+            SemanticProperties.Description="Record Video"
+            SemanticProperties.Hint="Opens the camera to record a new video">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding CaptureVideoForSessionCommand}" />
+                    </Border.GestureRecognizers>
+                    <Border.Behaviors>
+                        <toolkit:TouchBehavior PressedScale="0.85"
+                                   DefaultAnimationDuration="80" />
+                    </Border.Behaviors>
+                    <Image Style="{StaticResource ActionCardIconSmall}"
+               Source="camera"
+               WidthRequest="26"
+               HeightRequest="26" />
+                </Border>
+
+                <Border Style="{StaticResource ActionCardTab}"
+            WidthRequest="85"
+            HeightRequest="85"
+            SemanticProperties.Description="Add Video"
+            SemanticProperties.Hint="Choose a video from your library">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding PickVideosForSessionCommand}" />
+                    </Border.GestureRecognizers>
+                    <Border.Behaviors>
+                        <toolkit:TouchBehavior PressedScale="0.85"
+                                   DefaultAnimationDuration="80" />
+                    </Border.Behaviors>
+                    <Image Style="{StaticResource ActionCardIconSmall}"
+               WidthRequest="85"
+               HeightRequest="85"
+               Source="addcircle" />
+                </Border>
+
+            </HorizontalStackLayout>
 
             <!-- Right slot: Save -->
             <Grid Grid.Column="2" HorizontalOptions="Start" VerticalOptions="Center" Margin="16,0,0,0">
