@@ -329,30 +329,74 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
         await (AlertRequested?.Invoke("Success", "Video saved successfully!", "OK") ?? Task.CompletedTask);
 
     }
-
     [RelayCommand]
-
     private async Task PickVideosForSessionAsync()
     {
-        var videos = await _picker.PickVideosAsync();
-        if (videos != null && videos.Any())
+        try
         {
-            await AddVideosToSessionAsync(videos);
+            var progress = new Progress<double>(value => Progress = value);
+
+            var videos = await _picker.PickVideosAsync(
+                onSelectionConfirmed: () => MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    IsProcessing = true;
+                    Progress = 0;
+                    StatusText = "Loading from iCloud...";
+                }),
+                progress: progress);
+
+            // Empty list means the user cancelled the picker.
+            if (videos.Count > 0)
+            {
+                await AddVideosToSessionAsync(videos);
+            }
+        }
+        catch (OutOfSpaceException)
+        {
+            await (AlertRequested?.Invoke(
+                "Not Enough Storage",
+                "Your device is out of storage. Free up some space and try again.",
+                "OK") ?? Task.CompletedTask);
+        }
+        catch (Exception ex)
+        {
+            // The picker already reported this to Sentry.
+            System.Diagnostics.Debug.WriteLine($"Pick error: {ex}");
+            await (AlertRequested?.Invoke(
+                "Couldn't Load Video",
+                "The video couldn't be loaded. If it's stored in iCloud, check your connection and try again.",
+                "OK") ?? Task.CompletedTask);
+        }
+        finally
+        {
+            IsProcessing = false;
         }
     }
+
     [RelayCommand]
     private async Task CaptureVideoForSessionAsync()
     {
         var video = await _picker.CaptureVideoAsync();
         if (video != null)
         {
-            await AddVideosToSessionAsync(new List<FileResult> { video });
+            // A video that was just recorded was filmed "now".
+            await AddVideosToSessionAsync(new List<PickedVideo>
+        {
+            new PickedVideo(video.FullPath, DateTime.Now)
+        });
         }
     }
 
-
-    private async Task AddVideosToSessionAsync(List<FileResult> videos)
+    private async Task AddVideosToSessionAsync(List<PickedVideo> videos)
     {
+        // Temp files that haven't been moved into the session folder yet.
+        // Anything left here when we exit gets deleted.
+        var pendingTempFiles = videos.Select(v => v.Path).ToList();
+
+        // Files for the video currently being processed, so a mid-video failure can clean up.
+        string? currentOriginalPath = null;
+        string? currentCompressedPath = null;
+
         try
         {
             if (videos == null || !videos.Any())
@@ -364,34 +408,10 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
             Progress = 0;
             StatusText = "Adding Videos...";
 
-            var videoList = videos
-                .OrderBy(v => new FileInfo(v.FullPath).CreationTime)
-                .ToList();
-
-            int totalVideos = videoList.Count;
+            int totalVideos = videos.Count;
             int currentVideo = 0;
 
-            var stablePaths = new List<(string stablePath, DateTime createdTime)>();
-
-            foreach (var result in videoList)
-            {
-                currentVideo++;
-                SentrySdk.AddBreadcrumb($"Copying video {currentVideo}: {result.FileName}");
-
-                var stablePath = Path.Combine(FileSystem.CacheDirectory, Guid.NewGuid() + ".MOV");
-                var createdTime = new FileInfo(result.FullPath).CreationTime;
-
-                using (var sourceStream = File.OpenRead(result.FullPath))
-                using (var destStream = File.Create(stablePath))
-                    await sourceStream.CopyToAsync(destStream);
-
-                stablePaths.Add((stablePath, createdTime));
-                SentrySdk.AddBreadcrumb($"Secured video {currentVideo} to: {stablePath}");
-            }
-
-            currentVideo = 0;
-
-            foreach (var (stablePath, createdTime) in stablePaths)
+            foreach (var picked in videos)
             {
                 currentVideo++;
                 double rangeStart = (double)(currentVideo - 1) / totalVideos;
@@ -402,34 +422,23 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
                 SentrySdk.AddBreadcrumb($"Processing video {currentVideo}");
 
                 var (user, session) = await _sessionService.GetSession(_sessionId);
-                var video = await _videoService.CreateOriginalVideo(user, session, createdTime);
+                var video = await _videoService.CreateOriginalVideo(user, session, picked.CreatedTime);
                 SentrySdk.AddBreadcrumb($"Video record created: {video.Id}");
 
-                var originalVideoPath = Path.Combine(_sessionFolderPaths.Original, $"{video.Id}.MOV");
+                currentOriginalPath = Path.Combine(_sessionFolderPaths.Original, $"{video.Id}.MOV");
+                currentCompressedPath = Path.Combine(_sessionFolderPaths.Compressed, $"compressed_{video.Id}.MOV");
 
-                using (var sourceStream = File.OpenRead(stablePath))
-                using (var destStream = File.Create(originalVideoPath))
-                    await sourceStream.CopyToAsync(destStream);
+                // Same volume, so this is a rename rather than a second full copy.
+                File.Move(picked.Path, currentOriginalPath);
+                pendingTempFiles.Remove(picked.Path);
+                SentrySdk.AddBreadcrumb($"Moved video {currentVideo} into session");
 
-                SentrySdk.AddBreadcrumb($"Copy complete for video {currentVideo}");
-
-                var compressedVideoPath = Path.Combine(_sessionFolderPaths.Compressed, $"compressed_{video.Id}.MOV");
-                await _videoEditor.CompressVideo(originalVideoPath, compressedVideoPath, videoProgress);
+                await _videoEditor.CompressVideo(currentOriginalPath, currentCompressedPath, videoProgress);
                 SentrySdk.AddBreadcrumb($"Compression complete for video {currentVideo}");
 
-            }
-
-            foreach (var (stablePath, _) in stablePaths)
-            {
-                try
-                {
-                    if (File.Exists(stablePath))
-                        File.Delete(stablePath);
-                }
-                catch (Exception ex)
-                {
-                    SentrySdk.AddBreadcrumb($"Failed to delete cache file {stablePath}: {ex.Message}");
-                }
+                // This video is fully done.
+                currentOriginalPath = null;
+                currentCompressedPath = null;
             }
 
             await _videoEditor.ExtractThumbnails(_sessionFolderPaths.Original, _sessionFolderPaths.Thumbnails);
@@ -438,18 +447,28 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
 
             await (AlertRequested?.Invoke("Success", "New videos added!", "OK") ?? Task.CompletedTask);
             await LoadLiftVideos();
-
-
         }
         catch (Exception ex)
         {
             SentrySdk.CaptureException(ex);
+
+            // Remove the half-processed video's files so they don't eat storage.
+            // TODO: also delete its DB record with whatever delete method you have,
+            // otherwise you'll have a lift with no video behind it.
+            TryDeleteFile(currentOriginalPath);
+            TryDeleteFile(currentCompressedPath);
+
             await (AlertRequested?.Invoke("Error", ex.Message, "OK") ?? Task.CompletedTask);
             System.Diagnostics.Debug.WriteLine($"Processing Error: {ex}");
             System.Diagnostics.Debug.WriteLine($"Stack: {ex.StackTrace}");
         }
         finally
         {
+            foreach (var path in pendingTempFiles)
+            {
+                TryDeleteFile(path);
+            }
+
             var fullVideoPath = Path.Combine(_sessionFolderPaths.Session, $"{_sessionId}.MOV");
             if (File.Exists(fullVideoPath))
             {
@@ -457,6 +476,19 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
             }
             IsSessionProcessed = false;
             IsProcessing = false;
+        }
+    }
+
+    private static void TryDeleteFile(string? path)
+    {
+        try
+        {
+            if (!string.IsNullOrEmpty(path) && File.Exists(path))
+                File.Delete(path);
+        }
+        catch (Exception ex)
+        {
+            SentrySdk.AddBreadcrumb($"Failed to delete {path}: {ex.Message}");
         }
     }
 

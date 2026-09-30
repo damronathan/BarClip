@@ -4,11 +4,21 @@ using Photos;
 using PhotosUI;
 using UIKit;
 
+
+public record PickedVideo(string Path, DateTime CreatedTime);
+
+public class OutOfSpaceException : IOException
+{
+    public OutOfSpaceException() : base("Not enough storage space to import this video.") { }
+}
+
 public class VideoPickerService
 {
-    public async Task<List<FileResult>> PickVideosAsync()
+        public async Task<List<PickedVideo>> PickVideosAsync(
+        Action? onSelectionConfirmed = null,
+        IProgress<double>? progress = null)
     {
-        var tcs = new TaskCompletionSource<List<FileResult>>();
+        var tcs = new TaskCompletionSource<List<PickedVideo>>();
 
         var config = new PHPickerConfiguration(PHPhotoLibrary.SharedPhotoLibrary)
         {
@@ -17,7 +27,7 @@ public class VideoPickerService
         };
 
         var picker = new PHPickerViewController(config);
-        picker.Delegate = new PickerDelegate(tcs);
+        picker.Delegate = new PickerDelegate(tcs, onSelectionConfirmed, progress);
 
         var vc = Platform.GetCurrentUIViewController();
         vc?.PresentViewController(picker, true, null);
@@ -124,61 +134,134 @@ public class VideoPickerService
 
     private class PickerDelegate : PHPickerViewControllerDelegate
     {
-        private readonly TaskCompletionSource<List<FileResult>> _tcs;
+        private readonly TaskCompletionSource<List<PickedVideo>> _tcs;
+        private readonly Action? _onSelectionConfirmed;
+        private readonly IProgress<double>? _progress;
 
-        public PickerDelegate(TaskCompletionSource<List<FileResult>> tcs) => _tcs = tcs;
+        public PickerDelegate(
+            TaskCompletionSource<List<PickedVideo>> tcs,
+            Action? onSelectionConfirmed,
+            IProgress<double>? progress)
+        {
+            _tcs = tcs;
+            _onSelectionConfirmed = onSelectionConfirmed;
+            _progress = progress;
+        }
 
         public override async void DidFinishPicking(PHPickerViewController picker, PHPickerResult[] results)
         {
             picker.DismissViewController(true, null);
 
+            // User cancelled the picker: not an error, just nothing to do.
             if (results == null || results.Length == 0)
             {
-                _tcs.SetResult(new List<FileResult>());
+                _tcs.SetResult(new List<PickedVideo>());
                 return;
             }
 
-            var identifiers = results.Select(r => r.AssetIdentifier).ToArray();
-            var fetchResult = PHAsset.FetchAssetsUsingLocalIdentifiers(identifiers, null);
-            var assets = Enumerable.Range(0, (int)fetchResult.Count)
-                .Select(i => fetchResult.ObjectAt(i) as PHAsset)
-                .Where(a => a != null)
-                .OrderBy(a => (DateTime)a!.CreationDate)
-                .ToList();
+            var written = new List<PickedVideo>();
 
-            SentrySdk.AddBreadcrumb($"Starting copy of {assets.Count} videos");
-
-            var fileResults = new List<FileResult>();
-
-            foreach (var asset in assets)
+            try
             {
-                var resources = PHAssetResource.GetAssetResources(asset!);
-                var videoResource = resources.FirstOrDefault(r => r.ResourceType == PHAssetResourceType.Video);
+                // Let the caller show the loading screen before any (possibly slow) iCloud download starts.
+                _onSelectionConfirmed?.Invoke();
 
-                if (videoResource == null)
+                var identifiers = results.Select(r => r.AssetIdentifier).ToArray();
+                var fetchResult = PHAsset.FetchAssetsUsingLocalIdentifiers(identifiers, null);
+                var assets = Enumerable.Range(0, (int)fetchResult.Count)
+                    .Select(i => fetchResult.ObjectAt(i) as PHAsset)
+                    .Where(a => a != null)
+                    .OrderBy(a => (DateTime)a!.CreationDate)
+                    .ToList();
+
+                SentrySdk.AddBreadcrumb($"Starting copy of {assets.Count} videos");
+
+                for (int i = 0; i < assets.Count; i++)
                 {
-                    SentrySdk.AddBreadcrumb($"No video resource found for asset: {asset!.LocalIdentifier}");
-                    continue;
-                }
+                    var asset = assets[i]!;
+                    var resources = PHAssetResource.GetAssetResources(asset);
+                    var videoResource = resources.FirstOrDefault(r => r.ResourceType == PHAssetResourceType.Video);
 
-                var tempPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".MOV");
-                var tempUrl = NSUrl.FromFilename(tempPath);
-                var options = new PHAssetResourceRequestOptions { NetworkAccessAllowed = true };
+                    if (videoResource == null)
+                    {
+                        SentrySdk.AddBreadcrumb($"No video resource found for asset: {asset.LocalIdentifier}");
+                        continue;
+                    }
 
-                try
-                {
-                    await PHAssetResourceManager.DefaultManager.WriteDataAsync(videoResource, tempUrl, options);
+                    var tempPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".MOV");
+                    int index = i;
+                    int total = assets.Count;
+
+                    await WriteResourceAsync(
+                        videoResource,
+                        tempPath,
+                        fileProgress => _progress?.Report((index + fileProgress) / total));
+
                     SentrySdk.AddBreadcrumb($"WriteData complete: {tempPath}");
-                    fileResults.Add(new FileResult(tempPath));
+                    written.Add(new PickedVideo(tempPath, (DateTime)asset.CreationDate));
                 }
-                catch (Exception ex)
-                {
-                    SentrySdk.CaptureException(ex);
-                    SentrySdk.AddBreadcrumb($"WriteData failed for asset {asset!.LocalIdentifier}: {ex.Message}");
-                }
-            }
 
-            _tcs.SetResult(fileResults);
+                _tcs.SetResult(written);
+            }
+            catch (Exception ex)
+            {
+                SentrySdk.CaptureException(ex);
+                SentrySdk.AddBreadcrumb($"Picker import failed: {ex.Message}");
+
+                // Don't leave already-written temp files behind when the batch fails.
+                foreach (var video in written)
+                    TryDelete(video.Path);
+
+                // Surface the failure so the caller can tell it apart from a cancel.
+                _tcs.SetException(ex);
+            }
+        }
+
+        private static Task WriteResourceAsync(PHAssetResource resource, string path, Action<double> onProgress)
+        {
+            var tcs = new TaskCompletionSource();
+
+            var options = new PHAssetResourceRequestOptions
+            {
+                NetworkAccessAllowed = true,
+                ProgressHandler = p => onProgress(p)
+            };
+
+            PHAssetResourceManager.DefaultManager.WriteData(resource, NSUrl.FromFilename(path), options, error =>
+            {
+                if (error == null)
+                {
+                    tcs.SetResult();
+                    return;
+                }
+
+                // Remove any partially written file.
+                TryDelete(path);
+
+                // 640 = NSFileWriteOutOfSpaceError (Cocoa), 28 = ENOSPC (POSIX)
+                bool outOfSpace =
+                    (error.Domain == "NSCocoaErrorDomain" && error.Code == 640) ||
+                    (error.Domain == "NSPOSIXErrorDomain" && error.Code == 28);
+
+                tcs.SetException(outOfSpace
+                    ? new OutOfSpaceException()
+                    : new IOException(error.LocalizedDescription));
+            });
+
+            return tcs.Task;
+        }
+
+        private static void TryDelete(string path)
+        {
+            try
+            {
+                if (File.Exists(path))
+                    File.Delete(path);
+            }
+            catch
+            {
+                // Best effort cleanup.
+            }
         }
     }
 
