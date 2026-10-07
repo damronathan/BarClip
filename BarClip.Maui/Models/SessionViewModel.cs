@@ -200,8 +200,8 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
 
     public async Task SaveLiftVideoAsync(LiftVideoViewModel vm)
     {
-        var processedPath = Path.Combine(_sessionFolderPaths.Processed, $"{vm.Video.Id}.MOV");
-        //var processedPath = Path.Combine(_sessionFolderPaths.Original, $"{vm.Video.Id}.MOV");
+        //var processedPath = Path.Combine(_sessionFolderPaths.Processed, $"{vm.Video.Id}.MOV");
+        var processedPath = Path.Combine(_sessionFolderPaths.Original, $"{vm.Video.Id}.MOV");
 
         await _videoEditor.SaveVideo(processedPath);
         await (AlertRequested?.Invoke("Success", "Video saved successfully!", "OK") ?? Task.CompletedTask);
