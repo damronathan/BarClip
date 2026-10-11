@@ -42,6 +42,8 @@ public partial class SessionPage : ContentPage
             await Shell.Current.GoToAsync("..");
             await Shell.Current.GoToAsync($"SessionPage?SessionId={id}");
         };
+        _viewModel.ActionSheetRequested += (title, cancel, options) =>
+    DisplayActionSheet(title, cancel, null, options);
     }
 
     private async void OnAddTapped(object sender, EventArgs e)

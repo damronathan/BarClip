@@ -60,15 +60,15 @@
 
                         <!--Trim-->
                         <Border IsVisible="{Binding IsProcessed, Converter={StaticResource InvertedBoolConverter}}"
-        Background="{StaticResource ScrimColor}"
-        Stroke="Transparent"
-        StrokeThickness="0"
-        StrokeShape="RoundRectangle 32"
-        Padding="0"
-        HeightRequest="64"
-        WidthRequest="64"
-        HorizontalOptions="Center"
-        VerticalOptions="Center">
+                                Background="{StaticResource ScrimColor}"
+                                Stroke="Transparent"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 32"
+                                Padding="0"
+                                HeightRequest="64"
+                                WidthRequest="64"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center">
                             <Border.Shadow>
                                 <Shadow Brush="Black" Opacity="0.6" Radius="8" Offset="0,2" />
                             </Border.Shadow>

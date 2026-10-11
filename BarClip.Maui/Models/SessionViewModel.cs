@@ -54,6 +54,7 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
     public event Action NavigateBackRequested;
     public event Action<string> NavigateToPlayerRequested;
     public event Action<Guid> NavigateToSessionRequested;
+    public event Func<string, string, string[], Task<string>>? ActionSheetRequested;
 
 
     public SessionViewModel(
@@ -200,13 +201,27 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
 
     public async Task SaveLiftVideoAsync(LiftVideoViewModel vm)
     {
-        var processedPath = Path.Combine(_sessionFolderPaths.Processed, $"{vm.Video.Id}.MOV");
-        //var processedPath = Path.Combine(_sessionFolderPaths.Original, $"{vm.Video.Id}.MOV");
+        if (ActionSheetRequested is null)
+            return;
 
-        await _videoEditor.SaveVideo(processedPath);
+        var choice = await ActionSheetRequested(
+            "Save Video", "Cancel", new[] { "Save Trimmed", "Save Original" });
+
+        var folder = choice switch
+        {
+            "Save Trimmed" => _sessionFolderPaths.Processed,
+            "Save Original" => _sessionFolderPaths.Original,
+            _ => null // Cancel
+        };
+
+        if (folder is null)
+            return;
+
+        var path = Path.Combine(folder, $"{vm.Video.Id}.MOV");
+
+        await _videoEditor.SaveVideo(path);
         await (AlertRequested?.Invoke("Success", "Video saved successfully!", "OK") ?? Task.CompletedTask);
     }
-
     [RelayCommand]
     private async Task SubmitSessionAsync()
     {
