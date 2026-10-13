@@ -109,6 +109,32 @@
                                    WidthRequest="16"
                                    HeightRequest="16" />
                         </Border>
+                        <!-- Delete: top-right corner, always visible -->
+                        <Border Background="{StaticResource ScrimColor}"
+        Stroke="Transparent"
+        StrokeThickness="0"
+        StrokeShape="RoundRectangle 20"
+        Padding="0"
+        HeightRequest="32"
+        WidthRequest="32"
+        HorizontalOptions="End"
+        VerticalOptions="Start"
+        Margin="0,6,6,0">
+                            <Border.Shadow>
+                                <Shadow Brush="Black" Opacity="0.6" Radius="8" Offset="0,2" />
+                            </Border.Shadow>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding DeleteCommand}" />
+                            </Border.GestureRecognizers>
+                            <Border.Behaviors>
+                                <toolkit:TouchBehavior PressedScale="0.85"
+                               DefaultAnimationDuration="80" />
+                            </Border.Behaviors>
+                            <Image Style="{StaticResource ActionCardIconSmall}"
+           Source="trash"
+           WidthRequest="16"
+           HeightRequest="16" />
+                        </Border>
 
                     </Grid>
                 </DataTemplate>

@@ -6,4 +6,5 @@ public interface IVideoLiftActions
 {
     Task ProcessLiftVideoAsync(LiftVideoViewModel vm);
     Task SaveLiftVideoAsync(LiftVideoViewModel vm);
+    Task DeleteLiftVideoAsync(LiftVideoViewModel vm);
 }

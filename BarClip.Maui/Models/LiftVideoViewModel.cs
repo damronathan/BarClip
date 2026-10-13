@@ -33,4 +33,6 @@ public partial class LiftVideoViewModel : ObservableObject
     private Task ProcessAsync() => _actions.ProcessLiftVideoAsync(this);
     [RelayCommand]
     private Task SaveAsync() => _actions.SaveLiftVideoAsync(this);
+    [RelayCommand]
+    private Task Delete() => _actions.DeleteLiftVideoAsync(this);
 }

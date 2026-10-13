@@ -204,20 +204,26 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
         if (ActionSheetRequested is null)
             return;
 
-        var choice = await ActionSheetRequested(
-            "Save Video", "Cancel", new[] { "Save Trimmed", "Save Original" });
+        var fileName = $"{vm.Video.Id}.MOV";
+        var trimmedPath = Path.Combine(_sessionFolderPaths.Processed, fileName);
+        var originalPath = Path.Combine(_sessionFolderPaths.Original, fileName);
 
-        var folder = choice switch
+        var options = new Dictionary<string, string>();
+        if (File.Exists(trimmedPath))
+            options["Save Trimmed"] = trimmedPath;
+        if (File.Exists(originalPath))
+            options["Save Original"] = originalPath;
+
+        if (options.Count == 0)
         {
-            "Save Trimmed" => _sessionFolderPaths.Processed,
-            "Save Original" => _sessionFolderPaths.Original,
-            _ => null // Cancel
-        };
-
-        if (folder is null)
+            await (AlertRequested?.Invoke("Not Found", "Neither version of this video could be found.", "OK") ?? Task.CompletedTask);
             return;
+        }
 
-        var path = Path.Combine(folder, $"{vm.Video.Id}.MOV");
+        var choice = await ActionSheetRequested("Save Video", "Cancel", options.Keys.ToArray());
+
+        if (choice is null || !options.TryGetValue(choice, out var path))
+            return;
 
         await _videoEditor.SaveVideo(path);
         await (AlertRequested?.Invoke("Success", "Video saved successfully!", "OK") ?? Task.CompletedTask);
@@ -335,6 +341,66 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
         Directory.Delete(_sessionFolderPaths.Session, recursive: true);
         await _sessionService.DeleteSession(_sessionId);
         NavigateBackRequested?.Invoke();
+    }
+    [RelayCommand]
+    public async Task DeleteLiftVideoAsync(LiftVideoViewModel vm)
+    {
+        if (ActionSheetRequested is null)
+            return;
+
+        const string DeleteTrimmed = "Delete Trimmed Video";
+        const string DeleteOriginal = "Delete Original Video";
+        const string DeleteAll = "Delete All";
+
+        var fileName = $"{vm.Video.Id}.MOV";
+        var trimmedPath = Path.Combine(_sessionFolderPaths.Processed, fileName);
+        var originalPath = Path.Combine(_sessionFolderPaths.Original, fileName);
+        var thumbnailPath = Path.Combine(_sessionFolderPaths.Thumbnails, $"{vm.Video.Id}.png");
+        var compressedPath = _sessionFolderPaths.Compressed is null
+            ? null
+            : Path.Combine(_sessionFolderPaths.Compressed, $"compressed_{vm.Video.Id}.MOV");
+
+        var options = new List<string>();
+        if (File.Exists(trimmedPath))
+            options.Add(DeleteTrimmed);
+        if (File.Exists(originalPath))
+            options.Add(DeleteOriginal);
+        options.Add(DeleteAll);
+
+        var choice = await ActionSheetRequested("Delete Video", "Cancel", options.ToArray());
+
+        switch (choice)
+        {
+            case DeleteTrimmed:
+                File.Delete(trimmedPath);
+                break;
+
+            case DeleteOriginal:
+                File.Delete(originalPath);
+                break;
+
+            case DeleteAll:
+                var confirmed = await (ConfirmRequested?.Invoke(
+                    "Delete All", "This permanently deletes the video and all of its files.", "Delete")
+                    ?? Task.FromResult(false));
+                if (!confirmed)
+                    return;
+
+                await _videoService.DeleteVideo(vm.Video.Id);
+                File.Delete(trimmedPath);
+                File.Delete(originalPath);
+                File.Delete(thumbnailPath);
+                if (compressedPath is not null)
+                    File.Delete(compressedPath);
+
+                LiftVideos.Remove(vm);
+                break;
+
+            default:
+                return; // Cancel
+        }
+
+        await (AlertRequested?.Invoke("Deleted", "Video deleted.", "OK") ?? Task.CompletedTask);
     }
     [RelayCommand]
     private async Task SaveVideoAsync()
@@ -507,4 +573,5 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
         }
     }
 
+    
 }

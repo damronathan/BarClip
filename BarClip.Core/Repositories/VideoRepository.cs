@@ -68,6 +68,11 @@ public class VideoRepository
         return await _context.OriginalVideos
             .FirstOrDefaultAsync(v => v.CurrentProcessedVideoId == trimmedVideoId);
     }
+    public async Task<OriginalVideo?> GetOriginalVideoByIdAsync(Guid id)
+    {
+        return await _context.OriginalVideos
+            .FirstOrDefaultAsync(v => v.Id == id);
+    }
     public async Task<ICollection<Video>> GetAllVideosAsync()
     {
         return await _context.Videos
@@ -94,6 +99,19 @@ public class VideoRepository
             }
         }
 
+        await _context.SaveChangesAsync();
+    }
+    public async Task DeleteVideoAsync(Guid id)
+    {
+        var video = await GetOriginalVideoByIdAsync(id);
+        if (video != null)
+        {
+            _context.OriginalVideos.Remove(video);
+        }
+        else
+        {
+            throw new InvalidOperationException("No video found");
+        }
         await _context.SaveChangesAsync();
     }
 

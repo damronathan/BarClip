@@ -20,6 +20,7 @@ public interface IVideoService
     Task<ICollection<Video>> GetAllVideos();
     Task UpsertVideos(IEnumerable<VideoResponse> videos);
     Task UpdateOriginalVideo(OriginalVideo originalVideo);
+    Task DeleteVideo(Guid id);
 }
 
 public class VideoService : IVideoService
@@ -87,6 +88,10 @@ public class VideoService : IVideoService
     public async Task UpsertVideos(IEnumerable<VideoResponse> videos)
     {
         await _repo.UpsertVideosAsync(videos);
+    }
+    public async Task DeleteVideo(Guid id)
+    {
+        await _repo.DeleteVideoAsync(id);
     }
 
     //public async Task<ProcessedVideoRequest> ProcessVideo(SessionFolderPaths sessionFolderPaths, OriginalVideoRequest video)
