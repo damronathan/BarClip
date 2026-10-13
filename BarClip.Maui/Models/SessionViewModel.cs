@@ -345,6 +345,20 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
     [RelayCommand]
     public async Task DeleteLiftVideoAsync(LiftVideoViewModel vm)
     {
+        // Not processed yet: nothing to choose between, so confirm and delete everything
+        if (!vm.IsProcessed)
+        {
+            var confirmed = await (ConfirmRequested?.Invoke(
+                "Delete Video", "Are you sure you want to delete this video?", "Yes")
+                ?? Task.FromResult(false));
+            if (!confirmed)
+                return;
+
+            await DeleteAllAsync(vm);
+            await (AlertRequested?.Invoke("Deleted", "Video deleted.", "OK") ?? Task.CompletedTask);
+            return;
+        }
+
         if (ActionSheetRequested is null)
             return;
 
@@ -355,11 +369,9 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
         var fileName = $"{vm.Video.Id}.MOV";
         var trimmedPath = Path.Combine(_sessionFolderPaths.Processed, fileName);
         var originalPath = Path.Combine(_sessionFolderPaths.Original, fileName);
-        var thumbnailPath = Path.Combine(_sessionFolderPaths.Thumbnails, $"{vm.Video.Id}.png");
-        var compressedPath = _sessionFolderPaths.Compressed is null
-            ? null
-            : Path.Combine(_sessionFolderPaths.Compressed, $"compressed_{vm.Video.Id}.MOV");
 
+        // Only offer per-file deletes for files that still exist.
+        // Delete All is always offered so leftover records can still be cleaned up.
         var options = new List<string>();
         if (File.Exists(trimmedPath))
             options.Add(DeleteTrimmed);
@@ -386,14 +398,7 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
                 if (!confirmed)
                     return;
 
-                await _videoService.DeleteVideo(vm.Video.Id);
-                File.Delete(trimmedPath);
-                File.Delete(originalPath);
-                File.Delete(thumbnailPath);
-                if (compressedPath is not null)
-                    File.Delete(compressedPath);
-
-                LiftVideos.Remove(vm);
+                await DeleteAllAsync(vm);
                 break;
 
             default:
@@ -401,6 +406,21 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
         }
 
         await (AlertRequested?.Invoke("Deleted", "Video deleted.", "OK") ?? Task.CompletedTask);
+    }
+
+    private async Task DeleteAllAsync(LiftVideoViewModel vm)
+    {
+        var fileName = $"{vm.Video.Id}.MOV";
+
+        await _videoService.DeleteVideo(vm.Video.Id);
+
+        File.Delete(Path.Combine(_sessionFolderPaths.Processed, fileName));
+        File.Delete(Path.Combine(_sessionFolderPaths.Original, fileName));
+        File.Delete(Path.Combine(_sessionFolderPaths.Thumbnails, $"{vm.Video.Id}.png"));
+        if (_sessionFolderPaths.Compressed is not null)
+            File.Delete(Path.Combine(_sessionFolderPaths.Compressed, $"compressed_{vm.Video.Id}.MOV"));
+
+        LiftVideos.Remove(vm);
     }
     [RelayCommand]
     private async Task SaveVideoAsync()
