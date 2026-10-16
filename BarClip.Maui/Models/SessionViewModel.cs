@@ -345,8 +345,11 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
     [RelayCommand]
     public async Task DeleteLiftVideoAsync(LiftVideoViewModel vm)
     {
-        // Not processed yet: nothing to choose between, so confirm and delete everything
-        if (!vm.IsProcessed)
+        var fileName = $"{vm.Video.Id}.MOV";
+        var trimmedPath = Path.Combine(_sessionFolderPaths.Processed, fileName);
+        var originalPath = Path.Combine(_sessionFolderPaths.Original, fileName);
+
+        if (!File.Exists(trimmedPath) || !File.Exists(originalPath))
         {
             var confirmed = await (ConfirmRequested?.Invoke(
                 "Delete Video", "Are you sure you want to delete this video?", "Yes")
@@ -362,36 +365,23 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
         if (ActionSheetRequested is null)
             return;
 
-        const string DeleteTrimmed = "Delete Trimmed Video";
-        const string DeleteOriginal = "Delete Original Video";
-        const string DeleteAll = "Delete All";
+        
 
-        var fileName = $"{vm.Video.Id}.MOV";
-        var trimmedPath = Path.Combine(_sessionFolderPaths.Processed, fileName);
-        var originalPath = Path.Combine(_sessionFolderPaths.Original, fileName);
-
-        // Only offer per-file deletes for files that still exist.
-        // Delete All is always offered so leftover records can still be cleaned up.
-        var options = new List<string>();
-        if (File.Exists(trimmedPath))
-            options.Add(DeleteTrimmed);
-        if (File.Exists(originalPath))
-            options.Add(DeleteOriginal);
-        options.Add(DeleteAll);
-
-        var choice = await ActionSheetRequested("Delete Video", "Cancel", options.ToArray());
+        var choice = await ActionSheetRequested("Delete Video", "Cancel", ["Trimmed", "Original", "All"]);
 
         switch (choice)
         {
-            case DeleteTrimmed:
+            case "Trimmed":
                 File.Delete(trimmedPath);
                 break;
 
-            case DeleteOriginal:
+            case "Original":
                 File.Delete(originalPath);
+                if (_sessionFolderPaths.Compressed is not null)
+                    File.Delete(Path.Combine(_sessionFolderPaths.Compressed, $"compressed_{vm.Video.Id}.MOV"));
                 break;
 
-            case DeleteAll:
+            case "All":
                 var confirmed = await (ConfirmRequested?.Invoke(
                     "Delete All", "This permanently deletes the video and all of its files.", "Delete")
                     ?? Task.FromResult(false));
@@ -402,7 +392,7 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
                 break;
 
             default:
-                return; // Cancel
+                return;
         }
 
         await (AlertRequested?.Invoke("Deleted", "Video deleted.", "OK") ?? Task.CompletedTask);

@@ -36,7 +36,7 @@ public partial class SessionPage : ContentPage
         _viewModel.NavigateToPlayerRequested += async (path) =>
         {
             await Shell.Current.GoToAsync($"VideoPlayerPage?VideoUrl={Uri.EscapeDataString(path)}");
-        };
+        };  
         _viewModel.NavigateToSessionRequested += async (id) =>
         {
             await Shell.Current.GoToAsync("..");
