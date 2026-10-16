@@ -133,6 +133,7 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
         var index = LiftVideos.IndexOf(vm) + 1;
 
         var processedPath = Path.Combine(_sessionFolderPaths.Processed, $"{vm.Video.Id}.MOV");
+        var originalPath = Path.Combine(_sessionFolderPaths.Original, $"{vm.Video.Id}.MOV");
 
 
 
@@ -160,8 +161,8 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
 
         if (vm.Video.IsProcessed && !File.Exists(processedPath))
         {
-            vm.IsProcessed = false;
-            await _videoService.UpdateOriginalVideo(vm.Video);
+            NavigateToPlayerRequested?.Invoke(originalPath);
+            return;
         }
 
         IsProcessing = true;
@@ -188,8 +189,6 @@ public partial class SessionViewModel : ObservableObject, IVideoLiftActions
 
             vm.IsProcessed = true;
             await _videoService.UpdateOriginalVideo(vm.Video);
-
-            await (AlertRequested?.Invoke("Success", "Video trimmed!", "OK") ?? Task.CompletedTask);
 
             NavigateToPlayerRequested?.Invoke(processedVideo.FilePath);
         }
