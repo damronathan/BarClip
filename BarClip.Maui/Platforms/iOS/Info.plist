@@ -7,7 +7,6 @@
 	<key>UIDeviceFamily</key>
 	<array>
 		<integer>1</integer>
-		<integer>2</integer>
 	</array>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
@@ -19,23 +18,18 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>UISupportedInterfaceOrientations~ipad</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
 	<key>XSAppIconAssets</key>
 	<string>Assets.xcassets/appicon.appiconset</string>
 	<key>NSCameraUsageDescription</key>
-	<string>This app needs access to the camera to take photos.</string>
+	<string>BarClip uses the camera to record your lifts.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>This app needs access to microphone for taking videos.</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>This app needs access to the photo gallery for picking photos and videos.</string>
+	<string>BarClip records audio along with your lift videos.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app needs access to photos gallery for picking photos and videos.</string>
+	<string>BarClip reads videos from your photo library so it can find and trim your lifts.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>BarClip saves your trimmed videos to your photo library.</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>NSSupportsHevcMedia</key>
 	<true/>
 	<key>CFBundleIdentifier</key>
